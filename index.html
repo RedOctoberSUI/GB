@@ -6,37 +6,43 @@
   <title>30 Jahre Philipp G.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:         #f5f2ec;
+      --pine:       #0c191f;
+      --holly:      #1d3d38;
+      --mint-bg:    #c7ead2;
+      --lime:       #b4dc3b;
       --surface:    #ffffff;
-      --ink:        #1c2b1e;
-      --ink-soft:   #5a6b5c;
-      --green:      #2d4a30;
-      --green-mid:  #4a7a4e;
-      --green-light:#e8f0e8;
-      --green-dim:  rgba(45,74,48,0.15);
-      --border:     #d8ddd8;
-      --border-soft:#e8ebe8;
+      --ink:        #0c191f;
+      --ink-soft:   #3a5a50;
+      --border:     rgba(12,25,31,0.15);
+      --border-soft:rgba(12,25,31,0.08);
       --radius:     2px;
       --trans:      0.3s ease;
     }
 
-    html, body { height: 100%; background: var(--bg); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; }
+    html, body {
+      height: 100%;
+      background: var(--mint-bg);
+      color: var(--ink);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+    }
 
     body::before {
       content: '';
-      position: fixed; top: 0; left: 0; right: 0; height: 4px;
-      background: var(--green);
+      position: fixed; top: 0; left: 0; right: 0; height: 5px;
+      background: var(--pine);
       z-index: 100;
     }
 
     .stage {
-      min-height: 100vh; position: relative; z-index: 1;
-      display: flex; align-items: center; justify-content: center; padding: 2.5rem 1rem;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2.5rem 1rem;
     }
 
     .card {
@@ -45,7 +51,7 @@
       border-radius: var(--radius);
       padding: 3rem 2.5rem;
       width: 100%; max-width: 500px;
-      box-shadow: 0 2px 24px rgba(45,74,48,0.08);
+      box-shadow: 0 4px 32px rgba(12,25,31,0.12);
       animation: fadeUp 0.5s ease both;
       position: relative;
     }
@@ -53,32 +59,31 @@
     .card::before, .card::after {
       content: '';
       position: absolute;
-      width: 16px; height: 16px;
-      border-color: var(--green);
+      width: 20px; height: 20px;
+      border-color: var(--lime);
       border-style: solid;
-      opacity: 0.3;
     }
-    .card::before { top: 10px; left: 10px; border-width: 1px 0 0 1px; }
-    .card::after  { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
+    .card::before { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+    .card::after  { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
 
     @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
 
     .ornament {
       display: flex; align-items: center; gap: 0.75rem;
-      margin: 1.6rem 0; color: var(--green-mid);
+      margin: 1.6rem 0; color: var(--holly);
     }
     .ornament::before, .ornament::after { content: ''; flex: 1; height: 1px; background: var(--border); }
     .ornament-inner { font-size: 0.65rem; letter-spacing: 0.3em; white-space: nowrap; }
 
     .eyebrow {
       font-size: 0.65rem; font-weight: 500; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--green); margin-bottom: 0.5rem;
+      text-transform: uppercase; color: var(--holly); margin-bottom: 0.5rem;
     }
 
     h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.1rem; font-weight: 400; line-height: 1.15;
-      color: var(--ink); margin-bottom: 0.4rem;
+      font-family: 'IM Fell English', serif;
+      font-size: 2.2rem; font-weight: 400; line-height: 1.15;
+      color: var(--pine); margin-bottom: 0.4rem;
     }
 
     .subtitle { font-size: 0.87rem; color: var(--ink-soft); line-height: 1.6; }
@@ -86,13 +91,14 @@
     label {
       display: block; font-size: 0.68rem; font-weight: 500;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--green); margin-bottom: 0.35rem; margin-top: 1.1rem;
+      color: var(--holly); margin-bottom: 0.35rem; margin-top: 1.1rem;
     }
     label:first-of-type { margin-top: 0; }
 
-    input[type="text"], input[type="email"], input[type="tel"], input[type="password"], textarea, select {
+    input[type="text"], input[type="email"], input[type="tel"],
+    input[type="password"], textarea, select {
       width: 100%; padding: 0.7rem 1rem;
-      background: var(--bg); border: 1px solid var(--border);
+      background: var(--mint-bg); border: 1px solid var(--border);
       border-radius: var(--radius);
       font-family: 'Jost', sans-serif; font-size: 0.92rem; font-weight: 300;
       color: var(--ink); outline: none;
@@ -100,8 +106,8 @@
     }
     input::placeholder, textarea::placeholder { color: var(--ink-soft); opacity: 0.5; }
     input:focus, textarea:focus, select:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(45,74,48,0.1);
+      border-color: var(--holly);
+      box-shadow: 0 0 0 3px rgba(29,61,56,0.12);
     }
     textarea { resize: vertical; min-height: 90px; }
     .input-error { border-color: #a33 !important; }
@@ -110,97 +116,91 @@
     /* Name pill */
     .name-pill {
       display: inline-flex; align-items: center; gap: 0.6rem;
-      background: var(--green-light); border: 1px solid var(--border);
-      border-radius: 30px; padding: 0.45rem 1.1rem; margin-bottom: 1.5rem;
-      font-family: 'EB Garamond', serif; font-size: 1.05rem; font-style: italic;
-      color: var(--green);
+      background: var(--pine); border-radius: 30px;
+      padding: 0.45rem 1.1rem; margin-bottom: 1.5rem;
+      font-family: 'IM Fell English', serif; font-size: 1.05rem; font-style: italic;
+      color: var(--mint-bg);
     }
 
     /* RSVP select */
     #rsvp-select {
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%232d4a30' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231d3d38' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 1rem center;
       padding-right: 2.5rem;
-      font-family: 'EB Garamond', serif; font-size: 1rem;
+      font-family: 'IM Fell English', serif; font-size: 1rem;
       cursor: pointer;
     }
     #rsvp-select option { background: var(--surface); color: var(--ink); }
 
     /* Info block */
     .info-block {
-      background: var(--green-light); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.3rem 1.4rem;
+      background: var(--pine); border-radius: var(--radius);
+      padding: 1.3rem 1.4rem;
     }
-    .info-title { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 1rem; }
+    .info-title { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--lime); margin-bottom: 1rem; }
     .info-grid { display: flex; flex-direction: column; gap: 0.55rem; }
     .info-row { display: flex; gap: 0.8rem; align-items: baseline; }
-    .info-key { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green-mid); min-width: 60px; flex-shrink: 0; }
-    .info-val { font-size: 0.9rem; color: var(--ink); line-height: 1.4; }
-    .info-addr { font-size: 0.8rem; color: var(--ink-soft); }
+    .info-key { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(199,234,210,0.5); min-width: 60px; flex-shrink: 0; }
+    .info-val { font-size: 0.9rem; color: var(--mint-bg); line-height: 1.4; }
+    .info-addr { font-size: 0.8rem; color: rgba(199,234,210,0.6); }
     .maps-link {
       display: inline-flex; align-items: center; gap: 0.4rem;
       margin-top: 1rem; font-size: 0.75rem; font-weight: 500;
       letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--green); text-decoration: none;
-      border: 1px solid var(--green); border-radius: 20px;
+      color: var(--lime); text-decoration: none;
+      border: 1px solid var(--lime); border-radius: 20px;
       padding: 0.35rem 0.9rem;
       transition: background var(--trans), color var(--trans);
     }
-    .maps-link:hover { background: var(--green); color: #fff; }
+    .maps-link:hover { background: var(--lime); color: var(--pine); }
 
     /* Companion block */
     .companion-block {
-      background: var(--bg); border: 1px solid var(--border);
+      background: var(--mint-bg); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 1.2rem 1.1rem; margin-top: 1.2rem;
     }
-    .companion-block .block-title { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 0.8rem; }
-
-    /* Bier row */
-    .bier-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 1.1rem; flex-wrap: nowrap; }
-    .bier-label { font-size: 0.92rem; color: var(--ink); white-space: nowrap; flex-shrink: 0; font-weight: 400; }
-    .bier-input {
-      width: 80px; flex-shrink: 0; padding: 0.7rem 0.7rem;
-      text-align: center; font-size: 0.92rem;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--radius); font-family: 'Jost', sans-serif;
-      font-weight: 300; color: var(--ink); outline: none;
-      -moz-appearance: textfield;
-      transition: border-color var(--trans), box-shadow var(--trans);
-    }
-    .bier-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,74,48,0.1); }
-    .bier-input::-webkit-inner-spin-button, .bier-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .companion-block .block-title { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--holly); margin-bottom: 0.8rem; }
 
     /* Button */
     .btn-primary {
       display: block; width: 100%; margin-top: 1.8rem; padding: 0.9rem;
-      background: var(--green); color: #fff; border: none;
+      background: var(--pine); color: var(--mint-bg); border: none;
       border-radius: var(--radius);
       font-family: 'Jost', sans-serif; font-size: 0.75rem; font-weight: 500;
       letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
       transition: background var(--trans), transform 0.15s ease;
     }
-    .btn-primary:hover { background: var(--green-mid); transform: translateY(-1px); }
+    .btn-primary:hover { background: var(--holly); transform: translateY(-1px); }
     .btn-primary:active { transform: translateY(0); }
-    .btn-primary:disabled { background: var(--border); cursor: not-allowed; transform: none; }
+    .btn-primary:disabled { background: var(--border); cursor: not-allowed; transform: none; color: var(--ink-soft); }
 
     .screen { display: none; }
     .screen.active { display: block; }
 
-    .bye-wrap, .success-wrap { text-align: center; padding: 1rem 0; }
+    .success-wrap { text-align: center; padding: 1rem 0; }
     .big-emoji { font-size: 2.5rem; margin-bottom: 1.2rem; }
 
     .spinner {
       display: inline-block; width: 14px; height: 14px;
-      border: 1px solid rgba(255,255,255,0.4); border-top-color: #fff;
+      border: 1px solid rgba(199,234,210,0.4); border-top-color: var(--mint-bg);
       border-radius: 50%; animation: spin 0.7s linear infinite;
       vertical-align: middle; margin-right: 6px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .pw-footer { margin-top: 1.5rem; text-align: center; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--border); }
-    .version-tag { position: fixed; bottom: 0.7rem; right: 0.9rem; font-size: 0.6rem; color: var(--border); pointer-events: none; letter-spacing: 0.1em; }
+    .version-tag { position: fixed; bottom: 0.7rem; right: 0.9rem; font-size: 0.6rem; color: rgba(12,25,31,0.3); pointer-events: none; letter-spacing: 0.1em; }
+
+    /* Lime accent line under eyebrow headings */
+    h1::after {
+      content: '';
+      display: block;
+      width: 32px; height: 2px;
+      background: var(--lime);
+      margin-top: 0.5rem;
+    }
 
     @media (max-width: 520px) { .card { padding: 2.2rem 1.5rem; } h1 { font-size: 1.75rem; } }
   </style>
@@ -219,7 +219,7 @@
       <input type="password" id="pw-input" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort. Versuch's nochmal.</div>
       <button class="btn-primary" onclick="checkPassword()">wiiter gahts da</button>
-      <div class="pw-footer">CLv0.022 · © Pippos Lustige Hundeshow</div>
+      <div class="pw-footer">CLv0.023 · © Pippos Lustige Hundeshow</div>
     </div>
 
     <!-- ══ SCREEN 2: Name ══ -->
@@ -232,12 +232,7 @@
       <input type="text" id="n-vorname" placeholder="z.B. Anna" autocomplete="given-name" />
       <label for="n-nachname">Nachname</label>
       <input type="text" id="n-nachname" placeholder="z.B. Muster" autocomplete="family-name" />
-      <div class="bier-row">
-        <span class="bier-label">Ich trinke a dem Abig</span>
-        <input type="number" id="n-bier" min="0" max="999" placeholder="0" class="bier-input" />
-        <span class="bier-label">Stange Bier. Versproche!</span>
-      </div>
-      <div class="error-msg" id="name-error" style="display:none">Isch das din volle Ernscht? Du chasch din Name nöd schriibe oder trinksch 0 Bier? Vollpfoschte! Machs nomal....</div>
+      <div class="error-msg" id="name-error" style="display:none">Isch das din volle Ernscht? Du chasch din Name nöd schriibe? Vollpfoschte! Machs nomal....</div>
       <button class="btn-primary" onclick="submitName()">wiiter gahts da</button>
     </div>
 
@@ -334,18 +329,18 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.022</div>
+<div class="version-tag">CLv0.023</div>
 
 <script>
-  const PASSWORD        = '69Bier';
+  const PASSWORD        = 'OhTannenbaum';
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTv6EPU4YIAl--U-hShJMLWtgFlD_nTe7xzcAtIrX5uy3DsyzR8IfeZkz5N7GYp6lEpg/exec';
 
   let currentRsvp = null;
-  let userName    = { vorname: '', nachname: '', bier: 0 };
+  let userName    = { vorname: '', nachname: '' };
 
   document.getElementById('pw-input').addEventListener('keydown',   e => { if (e.key==='Enter') checkPassword(); });
   document.getElementById('n-vorname').addEventListener('keydown',  e => { if (e.key==='Enter') document.getElementById('n-nachname').focus(); });
-  document.getElementById('n-nachname').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('n-bier').focus(); });
+  document.getElementById('n-nachname').addEventListener('keydown', e => { if (e.key==='Enter') submitName(); });
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -368,11 +363,10 @@
   function submitName() {
     const vn = document.getElementById('n-vorname').value.trim();
     const nn = document.getElementById('n-nachname').value.trim();
-    const bierVal = document.getElementById('n-bier').value.trim();
     const err = document.getElementById('name-error');
-    if (!vn || !nn || bierVal === '') { err.style.display = 'block'; return; }
+    if (!vn || !nn) { err.style.display = 'block'; return; }
     err.style.display = 'none';
-    userName = { vorname: vn, nachname: nn, bier: parseInt(bierVal) || 0 };
+    userName = { vorname: vn, nachname: nn };
     document.getElementById('rsvp-nametext').textContent = fullName();
     showScreen('screen-rsvp');
   }
@@ -429,7 +423,7 @@
       email: val('f-email'), tel: val('f-tel'),
       b_vorname: currentRsvp === 'b' ? val('f-b-vorname') : '',
       b_nachname: currentRsvp === 'b' ? val('f-b-nachname') : '',
-      bier: userName.bier,
+      bier: 0,
       kommentar: val('f-kommentar'),
       timestamp: new Date().toLocaleString('de-CH'),
     };
@@ -458,7 +452,7 @@
     const payload = {
       typ:'Absage', vorname:userName.vorname, nachname:userName.nachname,
       email:'', tel:'', b_vorname:'', b_nachname:'',
-      bier: userName.bier,
+      bier: 0,
       kommentar:grund, timestamp:new Date().toLocaleString('de-CH'),
     };
     try {
