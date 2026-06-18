@@ -250,6 +250,52 @@
       color: var(--mint-dim);
     }
 
+    /* ── Passwort-Modal ── */
+    .pw-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; padding: 1rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--trans);
+    }
+    .pw-modal-overlay.open { opacity: 1; pointer-events: all; }
+    .pw-modal {
+      background: var(--holly);
+      border-radius: 18px;
+      padding: 2.5rem 2rem 2rem;
+      width: 100%; max-width: 440px;
+      position: relative;
+      transform: translateY(16px);
+      transition: transform var(--trans);
+      box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+    }
+    .pw-modal::before {
+      content: '';
+      position: absolute; inset: 10px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      pointer-events: none;
+    }
+    .pw-modal > * { position: relative; z-index: 1; }
+    .pw-modal-overlay.open .pw-modal { transform: translateY(0); }
+
+    .pw-quote {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.15rem; font-style: italic;
+      line-height: 1.5;
+      color: var(--mint);
+      text-align: center;
+      margin-bottom: 0.9rem;
+    }
+    .pw-quote-author {
+      font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--mint-dim); text-align: center;
+      margin-bottom: 1.8rem;
+    }
+
+
 
     /* ── Buttons ── */
     .btn-row { display: flex; gap: 0.75rem; margin-top: 2.5rem; }
@@ -407,10 +453,8 @@
         <div class="ornament"><span class="ornament-inner">✦</span></div>
         <p class="text-block" style="text-align:center;margin-bottom:1.5rem;">Willkommen zur Wirtschaft zum Grünen Baum.<br><br>Wir öffnen dieses Jahr vom 20.11. 19:00 bis zum 21.11. 04:00.</p>
         <div style="margin-top:1.3rem;"></div>
-        <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
-        <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
-        <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.035 · @ Schmutzli and Santas Little Helpers</p>
+        <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
+        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.036 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -574,13 +618,40 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.035</div>
+
+<!-- ══ Passwort-Modal ══ -->
+<div class="pw-modal-overlay" id="pw-modal-overlay" onclick="closePwModalOnOverlay(event)">
+  <div class="pw-modal">
+    <p class="pw-quote">„Der gute Gast mit heitrem Sein, kennt das Wort und tritt hier ein."</p>
+    <p class="pw-quote-author">— Laird Peter Jansen II</p>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
+    <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
+    <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
+    <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
+  </div>
+</div>
+
+<div class="version-tag">CLv0.036</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTv6EPU4YIAl--U-hShJMLWtgFlD_nTe7xzcAtIrX5uy3DsyzR8IfeZkz5N7GYp6lEpg/exec';
 
   document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key==='Enter') checkPassword(); });
+
+  function openPwModal() {
+    document.getElementById('pw-modal-overlay').classList.add('open');
+    setTimeout(() => document.getElementById('pw-input').focus(), 50);
+  }
+  function closePwModal() {
+    document.getElementById('pw-modal-overlay').classList.remove('open');
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').classList.remove('input-error');
+    document.getElementById('pw-error').style.display = 'none';
+  }
+  function closePwModalOnOverlay(e) {
+    if (e.target === document.getElementById('pw-modal-overlay')) closePwModal();
+  }
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -593,8 +664,14 @@
   function checkPassword() {
     const v = document.getElementById('pw-input').value;
     const err = document.getElementById('pw-error');
-    if (v === PASSWORD) { err.style.display = 'none'; showScreen('screen-invite'); }
-    else { err.style.display = 'block'; document.getElementById('pw-input').classList.add('input-error'); }
+    if (v === PASSWORD) {
+      err.style.display = 'none';
+      closePwModal();
+      showScreen('screen-invite');
+    } else {
+      err.style.display = 'block';
+      document.getElementById('pw-input').classList.add('input-error');
+    }
   }
 
   function toggleBegleitung() {
@@ -723,6 +800,7 @@
 </script>
 </body>
 </html>
+
 
 
 
