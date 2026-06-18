@@ -359,7 +359,7 @@
         <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
         <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
         <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;">CLv0.026 · © Pippos Lustige Hundeshow</p>
+        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;">CLv0.027 · © Pippos Lustige Hundeshow</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -380,15 +380,15 @@
 
         <div class="program">
           <div class="program-row">
-            <span class="program-time">XX:00</span>
+            <span class="program-time">19:00</span>
             <span class="program-desc">Ruhiges Warm-up inkl. Verpflegung im Bierkeller «zum Grünen Baum»</span>
           </div>
           <div class="program-row">
-            <span class="program-time">XX:00</span>
+            <span class="program-time">21:00</span>
             <span class="program-desc">Baumfeier mit allen Gästen und Glühwein</span>
           </div>
           <div class="program-row">
-            <span class="program-time">XX:00</span>
+            <span class="program-time">22:00</span>
             <span class="program-desc">Dann geht's richtig los im Bierkeller «zum Grünen Baum»</span>
           </div>
         </div>
@@ -401,8 +401,7 @@
         <div class="ornament"><span class="ornament-inner">✦</span></div>
 
         <div class="text-block">
-          <p>Auch kleine Gäste sind bis XX:00 Uhr herzlich willkommen.</p>
-          <p>Herzlichen Dank für Eure Rückmeldung bis <strong>XXX</strong>.</p>
+          <p>Auch kleine Gäste sind bis 22:00 Uhr herzlich willkommen.</p>
           <p>Wir freuen uns auf einen grossartigen Abend mit Euch.</p>
         </div>
 
@@ -508,20 +507,22 @@
         <div class="logo-wrap" style="margin-bottom:2rem;">
           <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
         </div>
-        <div class="est-mark">EST. 1980</div>
+        <div class="est-mark" style="margin-bottom:2rem;">EST. 1980</div>
         <div class="eyebrow">Vielen Dank</div>
-        <h1>Wir freuen uns<br>auf Sie.</h1>
+        <h1>Wir freuen uns<br>auf Euch!</h1>
         <div class="ornament"><span class="ornament-inner">✦</span></div>
         <p class="text-block" style="text-align:center;" id="success-msg">Bis am 26. November im Bierkeller zum Grünen Baum.</p>
         <div class="ornament"><span class="ornament-inner">✦</span></div>
         <p class="signoff">Peter &amp; Lars</p>
+
+        <button class="btn-submit" style="margin-top:2.5rem;" onclick="downloadICS()">📅 Zum Kalender hinzufügen</button>
       </div>
 
     </div>
   </div>
 </div>
 
-<div class="version-tag">CLv0.026</div>
+<div class="version-tag">CLv0.027</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
@@ -633,7 +634,37 @@
       err.style.display = 'block';
     }
   }
+
+  function downloadICS() {
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Wirtschaft zum Grünen Baum//Fest 2026//DE',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      'UID:wgb-2026-' + Date.now() + '@zumgruenenbaum.ch',
+      'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z',
+      'DTSTART:20261126T190000',
+      'DTEND:20261127T040000',
+      'SUMMARY:Wirtschaft zum Grünen Baum 2026',
+      'LOCATION:Rämistrasse 50\\, 8001 Zürich',
+      'DESCRIPTION:Fest zum Grünen Baum\\n\\n19:00 — Ruhiges Warm-up inkl. Verpflegung\\n21:00 — Baumfeier mit allen Gästen und Glühwein\\n22:00 — Feier im Bierkeller «zum Grünen Baum»\\n\\nEure Gastgeber\\nPeter & Lars',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'WGB-Fest-2026.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 </script>
 </body>
 </html>
+
 
