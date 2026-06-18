@@ -206,6 +206,25 @@
       text-align: center;
     }
 
+    /* ── Quote ── */
+    .quote-block {
+      text-align: center;
+      margin: 1rem 0;
+    }
+    .quote-text {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.15rem; font-style: italic;
+      line-height: 1.6;
+      color: var(--mint);
+      margin-bottom: 0.9rem;
+    }
+    .quote-author {
+      font-size: 0.65rem; font-weight: 500;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--mint-dim);
+    }
+
+
     /* ── Buttons ── */
     .btn-row { display: flex; gap: 0.75rem; margin-top: 2.5rem; }
     .btn {
@@ -360,7 +379,7 @@
         <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
         <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
         <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.030 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.031 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -510,7 +529,10 @@
         <div class="eyebrow" style="margin-top:1.5rem;">Vielen Dank</div>
         <h1>Wir freuen uns<br>auf Euch!</h1>
         <div class="ornament"><span class="ornament-inner">✦</span></div>
-        <p class="text-block" style="text-align:center;" id="success-msg">Bis am 26. November im Bierkeller zum Grünen Baum.</p>
+        <div class="quote-block">
+          <p class="quote-text" id="success-msg">„Ein Gentleman trinkt nie allein. Weihnachten sorgt dafür."</p>
+          <p class="quote-author">— Laird Peter Jansen II</p>
+        </div>
         <div class="ornament"><span class="ornament-inner">✦</span></div>
         <p class="signoff">Peter &amp; Lars</p>
 
@@ -521,7 +543,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.030</div>
+<div class="version-tag">CLv0.031</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
@@ -594,8 +616,8 @@
         body: JSON.stringify(payload)
       });
       document.getElementById('success-msg').textContent = mit
-        ? 'Bis am 26. November im Bierkeller zum Grünen Baum. Wir freuen uns auf Sie und Ihre Begleitung.'
-        : 'Bis am 26. November im Bierkeller zum Grünen Baum.';
+        ? '„An Weihnachten zählen nicht die Kalorien, die Geschenke oder die Promille – sondern die Geschichten danach."'
+        : '„Ein Gentleman trinkt nie allein. Weihnachten sorgt dafür."';
       showScreen('screen-success');
     } catch(e) {
       btn.disabled = false; btn.innerHTML = 'Anmeldung absenden';
@@ -665,6 +687,7 @@
 </script>
 </body>
 </html>
+
 
 
 
