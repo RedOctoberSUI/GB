@@ -68,19 +68,15 @@
     /* ── Banderole (Betriebsferien) ── */
     .banderole {
       position: absolute;
-      top: 58px;
-      right: -68px;
-      width: 280px;
-      padding: 0.4rem 0;
+      top: 50px;
+      right: -90px;
+      width: 360px;
+      padding: 0.55rem 0;
       background: #b8392b;
       color: #fff;
       font-family: 'Jost', sans-serif;
-      font-size: 0.62rem;
-      font-weight: 500;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
       text-align: center;
-      transform: rotate(35deg);
+      transform: rotate(45deg);
       transform-origin: center;
       box-shadow: 0 3px 12px rgba(0,0,0,0.4);
       z-index: 10;
@@ -88,8 +84,8 @@
       border-top: 1px solid rgba(255,255,255,0.2);
       border-bottom: 1px solid rgba(0,0,0,0.25);
     }
-    .banderole-line1 { display: block; font-size: 0.6rem; opacity: 0.85; letter-spacing: 0.22em; margin-bottom: 1px; }
-    .banderole-line2 { display: block; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; }
+    .banderole-line1 { display: block; font-size: 0.62rem; opacity: 0.85; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 2px; }
+    .banderole-line2 { display: block; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
 
     /* Card muss overflow-hidden, damit Banderole nicht ausreisst */
     .card.has-banderole { overflow: hidden; }
@@ -400,7 +396,7 @@
 
       <div class="banderole" id="banderole">
         <span class="banderole-line1">Achtung</span>
-        <span class="banderole-line2">Betriebsferien 27.11. – 26.11.</span>
+        <span class="banderole-line2">Betriebsferien 21.11. – 20.11.</span>
       </div>
 
       <!-- ══ SCREEN 1: Passwort ══ -->
@@ -409,12 +405,12 @@
           <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
         </div>
         <div class="ornament"><span class="ornament-inner">✦</span></div>
-        <p class="text-block" style="text-align:center;margin-bottom:1.5rem;">Willkommen zur Wirtschaft zum Grünen Baum.<br><br>Wir öffnen dieses Jahr vom 26.11. 19:00 bis zum 27.11. 04:00.</p>
+        <p class="text-block" style="text-align:center;margin-bottom:1.5rem;">Willkommen zur Wirtschaft zum Grünen Baum.<br><br>Wir öffnen dieses Jahr vom 20.11. 19:00 bis zum 21.11. 04:00.</p>
         <div style="margin-top:1.3rem;"></div>
         <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
         <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
         <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.033 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.034 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -429,7 +425,7 @@
         <div class="text-block">
           <p>Seit über vier Jahrzehnten feiern wir mit dem <strong>Fest zum Grünen Baum</strong> den Beginn der Weihnachtszeit. Gerne möchten wir diesen besonderen Moment gemeinsam mit Euch feiern — auf das vergangene Jahr, die bevorstehende Weihnachtszeit und die Zukunft anstossen.</p>
           <p>Wir treffen uns mit Menschen, die uns im vergangenen Jahr begleitet haben, und solchen, die wir schon viel zu lange nicht mehr sehen durften.</p>
-          <p>Wir laden Euch herzlich ein, mit uns am <strong>Donnerstag, 26. November 2026</strong> zu feiern:</p>
+          <p>Wir laden Euch herzlich ein, mit uns am <strong>Freitag, 20. November 2026</strong> zu feiern:</p>
         </div>
 
         <div class="program">
@@ -578,7 +574,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.033</div>
+<div class="version-tag">CLv0.034</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
@@ -703,8 +699,8 @@
       'BEGIN:VEVENT',
       'UID:wgb-2026-' + Date.now() + '@zumgruenenbaum.ch',
       'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z',
-      'DTSTART:20261126T190000',
-      'DTEND:20261127T040000',
+      'DTSTART:20261120T190000',
+      'DTEND:20261121T040000',
       'SUMMARY:Wirtschaft zum Grünen Baum 2026',
       'LOCATION:Rämistrasse 50\\, 8001 Zürich',
       'DESCRIPTION:Fest zum Grünen Baum\\n\\n19:00 — Ruhiges Warm-up inkl. Verpflegung\\n21:00 — Baumfeier mit allen Gästen und Glühwein\\n22:00 — Feier im Bierkeller «zum Grünen Baum»\\n\\nEure Gastgeber\\nPeter & Lars',
@@ -724,6 +720,7 @@
 </script>
 </body>
 </html>
+
 
 
 
