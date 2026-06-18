@@ -65,6 +65,36 @@
     }
     .card > * { position: relative; z-index: 1; }
 
+    /* ── Banderole (Betriebsferien) ── */
+    .banderole {
+      position: absolute;
+      top: 28px;
+      right: -52px;
+      width: 240px;
+      padding: 0.4rem 0;
+      background: #b8392b;
+      color: #fff;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-align: center;
+      transform: rotate(35deg);
+      transform-origin: center;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.4);
+      z-index: 10;
+      pointer-events: none;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      border-bottom: 1px solid rgba(0,0,0,0.25);
+    }
+    .banderole-line1 { display: block; font-size: 0.6rem; opacity: 0.85; letter-spacing: 0.22em; margin-bottom: 1px; }
+    .banderole-line2 { display: block; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; }
+
+    /* Card muss overflow-hidden, damit Banderole nicht ausreisst */
+    .card.has-banderole { overflow: hidden; }
+
+
     /* ── Logo ── */
     .logo-wrap { text-align: center; margin-bottom: 2.5rem; }
     .logo-wrap img {
@@ -366,7 +396,12 @@
 <body>
 <div class="stage">
   <div class="wrap">
-    <div class="card">
+    <div class="card has-banderole">
+
+      <div class="banderole" id="banderole">
+        <span class="banderole-line1">Achtung</span>
+        <span class="banderole-line2">Betriebsferien 27.11. – 26.11.</span>
+      </div>
 
       <!-- ══ SCREEN 1: Passwort ══ -->
       <div id="screen-pw" class="screen active">
@@ -374,12 +409,12 @@
           <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
         </div>
         <div class="ornament"><span class="ornament-inner">✦</span></div>
-        <p class="text-block" style="text-align:center;margin-bottom:1.5rem;">Willkommen zur Wirtschaft zum Grünen Baum.<br><br>Wir öffnen dieses Jahr vom 26.11. 19:00 bis zum 27.11. 04:00.<br><br><strong>Achtung: wir haben Betriebsferien vom 27.11. bis zum 26.11.!</strong></p>
+        <p class="text-block" style="text-align:center;margin-bottom:1.5rem;">Willkommen zur Wirtschaft zum Grünen Baum.<br><br>Wir öffnen dieses Jahr vom 26.11. 19:00 bis zum 27.11. 04:00.</p>
         <div style="margin-top:1.3rem;"></div>
         <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
         <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
         <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.031 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.032 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -543,7 +578,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.031</div>
+<div class="version-tag">CLv0.032</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
@@ -554,6 +589,8 @@
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    document.querySelector('.card').classList.toggle('has-banderole', id === 'screen-pw');
+    document.querySelector('#banderole').style.display = (id === 'screen-pw') ? 'block' : 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -687,6 +724,7 @@
 </script>
 </body>
 </html>
+
 
 
 
