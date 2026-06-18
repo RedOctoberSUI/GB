@@ -15,55 +15,143 @@
     :root {
       --pine:       #0c191f;
       --holly:      #1d3d38;
+      --holly-light:#234740;
       --mint:       #c7ead2;
-      --mint-dim:   rgba(199,234,210,0.55);
+      --mint-dim:   rgba(199,234,210,0.6);
       --mint-faint: rgba(199,234,210,0.12);
       --lime:       #b4dc3b;
       --red:        #c0392b;
-      --red-dim:    rgba(192,57,43,0.18);
-      --border:     rgba(199,234,210,0.14);
+      --border:     rgba(199,234,210,0.22);
       --trans:      0.3s ease;
     }
 
     html, body {
       min-height: 100%;
-      background: var(--pine);
+      background: var(--holly);
       color: var(--mint);
       font-family: 'Jost', sans-serif;
       font-weight: 300;
     }
 
+    /* Stage: dark holly green outside, bierdeckel-card inside */
     .stage {
       min-height: 100vh;
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 5rem 1.5rem 4rem;
+      padding: 2.5rem 1.5rem;
     }
 
-    .wrap { width: 100%; max-width: 480px; }
+    .wrap {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    /* Bierdeckel-Rahmen: abgerundete Ecken, doppelter feiner Inset-Rahmen */
+    .card {
+      background: var(--holly);
+      border-radius: 22px;
+      padding: 3rem 2.25rem;
+      position: relative;
+      box-shadow: 0 6px 40px rgba(0,0,0,0.25);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      pointer-events: none;
+    }
+    .card > * { position: relative; z-index: 1; }
 
     /* ── Logo ── */
-    .logo-wrap { text-align: center; margin-bottom: 3.5rem; }
+    .logo-wrap { text-align: center; margin-bottom: 2.5rem; }
     .logo-wrap img {
-      width: 150px;
+      width: 160px;
       filter: brightness(0) saturate(100%) invert(91%) sepia(10%) saturate(350%) hue-rotate(95deg) brightness(105%);
-      opacity: 0.92;
+    }
+
+    /* ── Apothekenstempel-Headline ── */
+    .stamp-headline {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .stamp-original {
+      font-family: 'IM Fell English', serif;
+      font-size: 1rem;
+      color: var(--mint);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.2rem;
+    }
+    .stamp-name {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.6rem;
+      color: var(--mint);
+      letter-spacing: 0.02em;
+      margin-bottom: 1.6rem;
+    }
+    .stamp-big {
+      font-family: 'IM Fell English', serif;
+      font-size: 3.4rem;
+      color: var(--mint);
+      letter-spacing: 0.02em;
+      line-height: 0.95;
+      margin-bottom: 1.4rem;
+      /* Subtiler Tiefenversatz wie auf den Bierdeckeln */
+      text-shadow:
+        2px 2px 0 var(--holly-light),
+        3px 3px 0 rgba(199,234,210,0.15);
+    }
+    .stamp-sub {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.05rem;
+      color: var(--mint-dim);
+      line-height: 1.5;
+    }
+    .stamp-tagline {
+      font-family: 'IM Fell English', serif;
+      font-size: 0.78rem;
+      color: var(--mint-dim);
+      letter-spacing: 0.02em;
+      margin-top: 1.6rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
+      font-style: italic;
+    }
+
+    /* ── EST 1980 Markierung ── */
+    .est-mark {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.6rem;
+      font-family: 'IM Fell English', serif;
+      font-size: 0.7rem;
+      color: var(--mint-dim);
+      letter-spacing: 0.3em;
+      margin-bottom: 0.4rem;
+    }
+    .est-mark::before, .est-mark::after {
+      content: ''; width: 24px; height: 1px;
+      background: var(--border);
     }
 
     /* ── Ornament ── */
     .ornament {
       display: flex; align-items: center; gap: 1rem;
-      margin: 2rem 0; color: var(--mint-dim);
+      margin: 1.75rem 0;
     }
-    .ornament::before, .ornament::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .ornament::before, .ornament::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border);
+    }
     .ornament-inner { font-size: 0.6rem; letter-spacing: 0.4em; color: var(--lime); }
 
     /* ── Eyebrow ── */
     .eyebrow {
-      font-size: 0.6rem; font-weight: 500;
+      font-size: 0.62rem; font-weight: 500;
       letter-spacing: 0.28em; text-transform: uppercase;
       color: var(--lime); margin-bottom: 0.6rem;
+      text-align: center;
     }
 
     /* ── Headings ── */
@@ -71,33 +159,38 @@
       font-family: 'IM Fell English', serif;
       font-size: 2.4rem; font-weight: 400; line-height: 1.15;
       color: var(--mint);
+      text-align: center;
     }
 
-    /* ── Body text ── */
-    .text-block { font-size: 0.92rem; line-height: 1.85; color: var(--mint-dim); }
-    .text-block p { margin-bottom: 1.1rem; }
+    /* ── Body ── */
+    .text-block { font-size: 0.93rem; line-height: 1.8; color: var(--mint-dim); }
+    .text-block p { margin-bottom: 1rem; }
     .text-block p:last-child { margin-bottom: 0; }
     .text-block strong { color: var(--mint); font-weight: 400; }
 
-    /* ── Program ── */
-    .program { margin: 2rem 0; border-top: 1px solid var(--border); }
+    /* ── Programm ── */
+    .program { margin: 2rem 0; }
     .program-row {
       display: flex; gap: 1.5rem; align-items: baseline;
-      padding: 0.9rem 0; border-bottom: 1px solid var(--border);
+      padding: 0.85rem 0;
+      border-bottom: 1px dashed var(--border);
     }
+    .program-row:first-child { border-top: 1px dashed var(--border); }
     .program-time {
       font-family: 'IM Fell English', serif;
-      font-size: 0.95rem; color: var(--lime);
-      min-width: 52px; flex-shrink: 0; font-style: italic;
+      font-size: 1rem; color: var(--lime);
+      min-width: 56px; flex-shrink: 0; font-style: italic;
     }
-    .program-desc { font-size: 0.88rem; color: var(--mint-dim); line-height: 1.5; }
+    .program-desc { font-size: 0.9rem; color: var(--mint-dim); line-height: 1.5; }
 
     /* ── Location ── */
-    .location { margin-top: 1.6rem; font-size: 0.82rem; color: var(--mint-dim); }
+    .location { margin-top: 1.4rem; font-size: 0.85rem; color: var(--mint-dim); text-align: center; }
     .location a {
       color: var(--lime); text-decoration: none;
-      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
-      font-weight: 500; border-bottom: 1px solid rgba(180,220,59,0.3); padding-bottom: 1px;
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(180,220,59,0.35);
+      padding-bottom: 1px;
       transition: border-color var(--trans);
     }
     .location a:hover { border-color: var(--lime); }
@@ -105,51 +198,50 @@
     /* ── Signoff ── */
     .signoff {
       font-family: 'IM Fell English', serif;
-      font-size: 1.05rem; font-style: italic;
+      font-size: 1.1rem; font-style: italic;
       color: var(--mint-dim); line-height: 1.7;
+      text-align: center;
     }
 
-    /* ── Button row ── */
+    /* ── Buttons ── */
     .btn-row { display: flex; gap: 0.75rem; margin-top: 2.5rem; }
-
     .btn {
       flex: 1; padding: 0.9rem 1rem;
       background: transparent; border: 1px solid var(--border);
-      color: var(--mint); border-radius: 1px;
+      color: var(--mint); border-radius: 4px;
       font-family: 'Jost', sans-serif; font-size: 0.68rem; font-weight: 500;
       letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer;
-      transition: border-color var(--trans), color var(--trans), background var(--trans);
+      transition: all var(--trans);
     }
     .btn-anmeldung {
-      border-color: rgba(180,220,59,0.4);
+      border-color: rgba(180,220,59,0.45);
       color: var(--lime);
     }
-    .btn-anmeldung:hover { background: rgba(180,220,59,0.1); border-color: var(--lime); }
-
+    .btn-anmeldung:hover { background: rgba(180,220,59,0.12); border-color: var(--lime); }
     .btn-absage {
-      border-color: rgba(192,57,43,0.35);
-      color: rgba(220,100,90,0.8);
+      border-color: rgba(220,100,90,0.4);
+      color: rgba(230,150,140,0.85);
     }
-    .btn-absage:hover { background: rgba(192,57,43,0.1); border-color: var(--red); color: #e07060; }
+    .btn-absage:hover { background: rgba(192,57,43,0.12); border-color: rgba(220,100,90,0.7); color: #f0b0a5; }
 
     .btn-submit {
       display: block; width: 100%; margin-top: 2rem;
-      padding: 0.9rem; background: rgba(180,220,59,0.1);
-      border: 1px solid rgba(180,220,59,0.4); color: var(--lime);
-      border-radius: 1px;
+      padding: 0.95rem;
+      background: rgba(180,220,59,0.12);
+      border: 1px solid rgba(180,220,59,0.45);
+      color: var(--lime); border-radius: 4px;
       font-family: 'Jost', sans-serif; font-size: 0.7rem; font-weight: 500;
       letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer;
-      transition: border-color var(--trans), background var(--trans);
+      transition: all var(--trans);
     }
-    .btn-submit:hover { background: rgba(180,220,59,0.18); border-color: var(--lime); }
-    .btn-submit:disabled { opacity: 0.35; cursor: not-allowed; }
-
+    .btn-submit:hover { background: rgba(180,220,59,0.22); border-color: var(--lime); }
+    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-submit-red {
-      background: rgba(192,57,43,0.1);
-      border-color: rgba(192,57,43,0.35);
-      color: rgba(220,100,90,0.9);
+      background: rgba(192,57,43,0.12);
+      border-color: rgba(220,100,90,0.4);
+      color: rgba(230,150,140,0.95);
     }
-    .btn-submit-red:hover { background: rgba(192,57,43,0.18); border-color: var(--red); }
+    .btn-submit-red:hover { background: rgba(192,57,43,0.22); border-color: rgba(220,100,90,0.8); }
 
     /* ── Form ── */
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; }
@@ -164,19 +256,23 @@
 
     input[type="text"], input[type="email"], input[type="tel"],
     input[type="number"], input[type="password"], textarea, select {
-      width: 100%; padding: 0.75rem 0;
+      width: 100%; padding: 0.7rem 0;
       background: transparent; border: none;
       border-bottom: 1px solid var(--border); border-radius: 0;
-      font-family: 'Jost', sans-serif; font-size: 0.92rem; font-weight: 300;
+      font-family: 'Jost', sans-serif; font-size: 0.95rem; font-weight: 300;
       color: var(--mint); outline: none;
       transition: border-color var(--trans);
       appearance: none;
     }
-    input::placeholder, textarea::placeholder { color: rgba(199,234,210,0.2); }
+    input::placeholder, textarea::placeholder { color: rgba(199,234,210,0.25); }
     input:focus, textarea:focus, select:focus { border-color: var(--lime); }
-    textarea { resize: none; min-height: 80px; border: 1px solid var(--border); padding: 0.75rem; margin-top: 0.2rem; }
+    textarea {
+      resize: none; min-height: 80px;
+      border: 1px solid var(--border);
+      padding: 0.75rem; margin-top: 0.2rem;
+      border-radius: 3px;
+    }
     textarea:focus { border-color: var(--lime); }
-
     input[type="number"] { -moz-appearance: textfield; }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
@@ -187,31 +283,36 @@
       background-position: right 0 center;
       padding-right: 1.5rem; cursor: pointer;
     }
-    select option { background: var(--pine); color: var(--mint); }
+    select option { background: var(--holly); color: var(--mint); }
 
-    .input-error { border-color: rgba(200,80,80,0.7) !important; }
-    .error-msg { font-size: 0.8rem; color: rgba(220,130,130,0.9); margin-top: 0.8rem; }
+    .input-error { border-color: rgba(220,100,90,0.8) !important; }
+    .error-msg { font-size: 0.82rem; color: rgba(230,150,140,0.95); margin-top: 0.8rem; }
 
-    /* ── Companion block ── */
-    .companion-fields {
+    /* ── Begleitung & Kinder dependent ── */
+    .companion-fields, .kinder-block {
       display: none;
       grid-column: 1 / -1;
-      grid-template-columns: 1fr 1fr;
-      gap: 0 1.5rem;
     }
-    .companion-fields.visible { display: grid; }
+    .companion-fields { grid-template-columns: 1fr 1fr; gap: 0 1.5rem; }
+    .companion-fields.visible, .kinder-block.visible { display: grid; }
+    .kinder-block.visible { display: block; }
     .companion-divider {
       grid-column: 1 / -1;
       font-size: 0.6rem; font-weight: 500; letter-spacing: 0.2em;
       text-transform: uppercase; color: var(--mint-dim);
       padding-top: 1.5rem; margin-top: 0.5rem;
-      border-top: 1px solid var(--border);
+      border-top: 1px dashed var(--border);
+    }
+
+    .small-note {
+      text-transform: none; letter-spacing: 0; font-size: 0.85em;
+      opacity: 0.5; font-weight: 300;
     }
 
     /* ── Screens ── */
     .screen { display: none; }
     .screen.active { display: block; animation: fadeIn 0.45s ease both; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
     /* ── Spinner ── */
     .spinner {
@@ -224,13 +325,16 @@
 
     .version-tag {
       position: fixed; bottom: 0.8rem; right: 1rem;
-      font-size: 0.55rem; color: rgba(199,234,210,0.15);
+      font-size: 0.55rem; color: rgba(199,234,210,0.2);
       pointer-events: none; letter-spacing: 0.08em;
     }
 
-    @media (max-width: 480px) {
-      .stage { padding: 3.5rem 1.25rem 3rem; }
+    @media (max-width: 520px) {
+      .stage { padding: 1.5rem 1rem; }
+      .card { padding: 2.25rem 1.5rem; border-radius: 16px; }
+      .card::before { inset: 8px; border-radius: 10px; }
       h1 { font-size: 2rem; }
+      .stamp-big { font-size: 2.6rem; }
       .form-grid { grid-template-columns: 1fr; }
       .companion-fields { grid-template-columns: 1fr; }
       .btn-row { flex-direction: column; }
@@ -240,179 +344,184 @@
 <body>
 <div class="stage">
   <div class="wrap">
+    <div class="card">
 
-    <!-- ══ SCREEN 1: Passwort ══ -->
-    <div id="screen-pw" class="screen active">
-      <div class="logo-wrap">
-        <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
-      </div>
-      <div class="eyebrow">Est. 1980</div>
-      <h1>Wirtschaft zum<br>Grünen Baum</h1>
-      <div class="ornament"><span class="ornament-inner">✦</span></div>
-      <p class="text-block" style="margin-bottom:2rem;">Offen dieses Jahr vom 26.11. bis zum 26.11.2026.</p>
-      <label for="pw-input">Zugang</label>
-      <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
-      <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
-      <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
-      <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.15);letter-spacing:0.1em;text-align:center;">CLv0.024 · © Pippos Lustige Hundeshow</p>
-    </div>
-
-    <!-- ══ SCREEN 2: Einladung ══ -->
-    <div id="screen-invite" class="screen">
-      <div class="logo-wrap">
-        <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
-      </div>
-      <div class="eyebrow">Es ist wieder soweit</div>
-      <h1>Herzlich<br>willkommen.</h1>
-      <div class="ornament"><span class="ornament-inner">✦</span></div>
-      <div class="text-block">
-        <p>Seit über vier Jahrzehnten feiern wir mit dem <strong>Fest zum Grünen Baum</strong> den Beginn der Weihnachtszeit. Gerne möchten wir diesen besonderen Moment gemeinsam mit Euch feiern — auf das vergangene Jahr, die bevorstehende Weihnachtszeit und die Zukunft anstossen.</p>
-        <p>Wir treffen uns mit Menschen, die uns im vergangenen Jahr begleitet haben, und solchen, die wir schon viel zu lange nicht mehr sehen durften.</p>
-        <p>Wir laden Euch herzlich ein, mit uns am <strong>Donnerstag, 26. November 2026</strong> zu feiern:</p>
+      <!-- ══ SCREEN 1: Passwort ══ -->
+      <div id="screen-pw" class="screen active">
+        <div class="logo-wrap">
+          <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
+        </div>
+        <div class="est-mark">EST. 1980</div>
+        <h1>Wirtschaft zum<br>Grünen Baum</h1>
+        <div class="ornament"><span class="ornament-inner">✦</span></div>
+        <p class="text-block" style="text-align:center;margin-bottom:1.5rem;">Offen dieses Jahr<br>vom 26.11. bis zum 26.11.2026.</p>
+        <label for="pw-input">Zugang</label>
+        <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
+        <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
+        <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
+        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;">CLv0.025 · © Pippos Lustige Hundeshow</p>
       </div>
 
-      <div class="program">
-        <div class="program-row">
-          <span class="program-time">XX:00</span>
-          <span class="program-desc">Ruhiges Warm-up inkl. Verpflegung im Bierkeller «zum Grünen Baum»</span>
+      <!-- ══ SCREEN 2: Einladung ══ -->
+      <div id="screen-invite" class="screen">
+        <div class="logo-wrap">
+          <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
         </div>
-        <div class="program-row">
-          <span class="program-time">XX:00</span>
-          <span class="program-desc">Baumfeier mit allen Gästen und Glühwein</span>
-        </div>
-        <div class="program-row">
-          <span class="program-time">XX:00</span>
-          <span class="program-desc">Dann geht's richtig los im Bierkeller «zum Grünen Baum»</span>
-        </div>
-      </div>
+        <div class="est-mark">EST. 1980</div>
+        <div class="eyebrow">Es ist wieder soweit</div>
+        <h1>Herzlich<br>willkommen.</h1>
+        <div class="ornament"><span class="ornament-inner">✦</span></div>
 
-      <div class="location">
-        Rämistrasse 50, 8001 Zürich &nbsp;·&nbsp;
-        <a href="https://maps.google.com/?q=Rämistrasse+50,+8001+Zürich" target="_blank">Auf Karte öffnen</a>
-      </div>
-
-      <div class="ornament"><span class="ornament-inner">✦</span></div>
-
-      <div class="text-block">
-        <p>Auch kleine Gäste sind bis XX:00 Uhr herzlich willkommen.</p>
-        <p>Herzlichen Dank für Eure Rückmeldung bis <strong>XXX</strong>.</p>
-        <p>Wir freuen uns auf einen grossartigen Abend mit Euch.</p>
-      </div>
-
-      <div class="ornament"><span class="ornament-inner">✦</span></div>
-
-      <p class="signoff">Eure Gastgeber<br>Peter &amp; Lars</p>
-
-      <div class="btn-row">
-        <button class="btn btn-anmeldung" onclick="showScreen('screen-form')">Zur Anmeldung</button>
-        <button class="btn btn-absage" onclick="showScreen('screen-absage')">Zur Abmeldung</button>
-      </div>
-    </div>
-
-    <!-- ══ SCREEN 3: Anmeldung (ein Screen) ══ -->
-    <div id="screen-form" class="screen">
-      <div class="eyebrow">Anmeldung</div>
-      <h1>Ihre Angaben</h1>
-      <div class="ornament"><span class="ornament-inner">✦</span></div>
-
-      <div class="form-grid">
-
-        <div>
-          <label for="f-vorname">Vorname</label>
-          <input type="text" id="f-vorname" placeholder="Anna" autocomplete="given-name" />
-        </div>
-        <div>
-          <label for="f-nachname">Nachname</label>
-          <input type="text" id="f-nachname" placeholder="Muster" autocomplete="family-name" />
+        <div class="text-block">
+          <p>Seit über vier Jahrzehnten feiern wir mit dem <strong>Fest zum Grünen Baum</strong> den Beginn der Weihnachtszeit. Gerne möchten wir diesen besonderen Moment gemeinsam mit Euch feiern — auf das vergangene Jahr, die bevorstehende Weihnachtszeit und die Zukunft anstossen.</p>
+          <p>Wir treffen uns mit Menschen, die uns im vergangenen Jahr begleitet haben, und solchen, die wir schon viel zu lange nicht mehr sehen durften.</p>
+          <p>Wir laden Euch herzlich ein, mit uns am <strong>Donnerstag, 26. November 2026</strong> zu feiern:</p>
         </div>
 
-        <div>
-          <label for="f-email">E-Mail</label>
-          <input type="email" id="f-email" placeholder="anna@beispiel.ch" autocomplete="email" />
-        </div>
-        <div>
-          <label for="f-tel">Telefon</label>
-          <input type="tel" id="f-tel" placeholder="+41 79 000 00 00" autocomplete="tel" />
-        </div>
-
-        <div class="form-full">
-          <label for="f-begleitung">Teilnahme</label>
-          <select id="f-begleitung" onchange="toggleBegleitung()">
-            <option value="solo">Ich komme alleine</option>
-            <option value="mit">Ich komme mit Begleitung</option>
-          </select>
-        </div>
-
-        <div class="companion-fields" id="companion-fields">
-          <div class="companion-divider">Begleitperson</div>
-          <div>
-            <label for="f-b-vorname">Vorname</label>
-            <input type="text" id="f-b-vorname" placeholder="Vorname" />
+        <div class="program">
+          <div class="program-row">
+            <span class="program-time">XX:00</span>
+            <span class="program-desc">Ruhiges Warm-up inkl. Verpflegung im Bierkeller «zum Grünen Baum»</span>
           </div>
-          <div>
-            <label for="f-b-nachname">Nachname</label>
-            <input type="text" id="f-b-nachname" placeholder="Nachname" />
+          <div class="program-row">
+            <span class="program-time">XX:00</span>
+            <span class="program-desc">Baumfeier mit allen Gästen und Glühwein</span>
+          </div>
+          <div class="program-row">
+            <span class="program-time">XX:00</span>
+            <span class="program-desc">Dann geht's richtig los im Bierkeller «zum Grünen Baum»</span>
           </div>
         </div>
 
-        <div class="form-full">
-          <label for="f-kinder">Anzahl Kinder unter 25 Jahren</label>
-          <input type="number" id="f-kinder" min="0" max="20" placeholder="0" style="width:80px" />
+        <div class="location">
+          Rämistrasse 50, 8001 Zürich<br>
+          <a href="https://maps.google.com/?q=Rämistrasse+50,+8001+Zürich" target="_blank" style="display:inline-block;margin-top:0.6rem;">Auf Karte öffnen</a>
         </div>
 
-        <div class="form-full">
-          <label for="f-kommentar">Kommentar <span style="text-transform:none;letter-spacing:0;font-size:0.9em;opacity:0.45;font-weight:300">(optional)</span></label>
-          <textarea id="f-kommentar" placeholder="Was auch immer Sie uns noch mitteilen möchten …"></textarea>
+        <div class="ornament"><span class="ornament-inner">✦</span></div>
+
+        <div class="text-block">
+          <p>Auch kleine Gäste sind bis XX:00 Uhr herzlich willkommen.</p>
+          <p>Herzlichen Dank für Eure Rückmeldung bis <strong>XXX</strong>.</p>
+          <p>Wir freuen uns auf einen grossartigen Abend mit Euch.</p>
         </div>
 
-      </div>
+        <div class="ornament"><span class="ornament-inner">✦</span></div>
 
-      <div class="error-msg" id="form-error" style="display:none">Bitte alle Pflichtfelder ausfüllen.</div>
-      <button class="btn-submit" id="submit-btn" onclick="submitForm()">Anmeldung absenden</button>
-    </div>
+        <p class="signoff">Eure Gastgeber<br>Peter &amp; Lars</p>
 
-    <!-- ══ SCREEN 4: Absage ══ -->
-    <div id="screen-absage" class="screen">
-      <div class="eyebrow">Abmeldung</div>
-      <h1>Absage</h1>
-      <div class="ornament"><span class="ornament-inner">✦</span></div>
-
-      <div class="form-grid">
-        <div>
-          <label for="a-vorname">Vorname</label>
-          <input type="text" id="a-vorname" placeholder="Anna" autocomplete="given-name" />
-        </div>
-        <div>
-          <label for="a-nachname">Nachname</label>
-          <input type="text" id="a-nachname" placeholder="Muster" autocomplete="family-name" />
-        </div>
-        <div class="form-full">
-          <label for="a-grund">Möchten Sie uns den Grund mitteilen?</label>
-          <textarea id="a-grund" placeholder="Ich bin leider verhindert, weil …"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-anmeldung" onclick="showScreen('screen-form')">Zur Anmeldung</button>
+          <button class="btn btn-absage" onclick="showScreen('screen-absage')">Zur Abmeldung</button>
         </div>
       </div>
 
-      <div class="error-msg" id="absage-error" style="display:none">Bitte Vor- und Nachname angeben.</div>
-      <button class="btn-submit btn-submit-red" id="absage-btn" onclick="submitAbsage()">Absage absenden</button>
-    </div>
+      <!-- ══ SCREEN 3: Anmeldung ══ -->
+      <div id="screen-form" class="screen">
+        <div class="est-mark">EST. 1980</div>
+        <div class="eyebrow">Anmeldung</div>
+        <h1>Ihre Angaben</h1>
+        <div class="ornament"><span class="ornament-inner">✦</span></div>
 
-    <!-- ══ SCREEN 5: Erfolg ══ -->
-    <div id="screen-success" class="screen">
-      <div class="logo-wrap" style="margin-bottom:2.5rem;">
-        <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
+        <div class="form-grid">
+          <div>
+            <label for="f-vorname">Vorname</label>
+            <input type="text" id="f-vorname" placeholder="Anna" autocomplete="given-name" />
+          </div>
+          <div>
+            <label for="f-nachname">Nachname</label>
+            <input type="text" id="f-nachname" placeholder="Muster" autocomplete="family-name" />
+          </div>
+
+          <div>
+            <label for="f-email">E-Mail</label>
+            <input type="email" id="f-email" placeholder="anna@beispiel.ch" autocomplete="email" />
+          </div>
+          <div>
+            <label for="f-tel">Telefon</label>
+            <input type="tel" id="f-tel" placeholder="+41 79 000 00 00" autocomplete="tel" />
+          </div>
+
+          <div class="form-full">
+            <label for="f-begleitung">Teilnahme</label>
+            <select id="f-begleitung" onchange="toggleBegleitung()">
+              <option value="solo">Ich komme alleine</option>
+              <option value="mit">Ich komme mit Begleitung</option>
+            </select>
+          </div>
+
+          <div class="companion-fields" id="companion-fields">
+            <div class="companion-divider">Begleitperson</div>
+            <div>
+              <label for="f-b-vorname">Vorname</label>
+              <input type="text" id="f-b-vorname" placeholder="Vorname" />
+            </div>
+            <div>
+              <label for="f-b-nachname">Nachname</label>
+              <input type="text" id="f-b-nachname" placeholder="Nachname" />
+            </div>
+          </div>
+
+          <div class="kinder-block" id="kinder-block">
+            <label for="f-kinder">Anzahl Kinder unter 55 und sonstige alkoholfreie Hilfspersonen</label>
+            <input type="number" id="f-kinder" min="0" max="20" placeholder="0" style="width:80px" />
+          </div>
+
+          <div class="form-full">
+            <label for="f-kommentar">Kommentar <span class="small-note">(optional)</span></label>
+            <textarea id="f-kommentar" placeholder="Was auch immer Sie uns noch mitteilen möchten …"></textarea>
+          </div>
+        </div>
+
+        <div class="error-msg" id="form-error" style="display:none">Bitte alle Pflichtfelder ausfüllen.</div>
+        <button class="btn-submit" id="submit-btn" onclick="submitForm()">Anmeldung absenden</button>
       </div>
-      <div class="eyebrow">Vielen Dank</div>
-      <h1>Wir freuen uns<br>auf Sie.</h1>
-      <div class="ornament"><span class="ornament-inner">✦</span></div>
-      <p class="text-block" id="success-msg">Bis am 26. November im Bierkeller zum Grünen Baum.</p>
-      <div class="ornament"><span class="ornament-inner">✦</span></div>
-      <p class="signoff">Peter &amp; Lars</p>
-    </div>
 
+      <!-- ══ SCREEN 4: Absage ══ -->
+      <div id="screen-absage" class="screen">
+        <div class="est-mark">EST. 1980</div>
+        <div class="eyebrow">Abmeldung</div>
+        <h1>Absage</h1>
+        <div class="ornament"><span class="ornament-inner">✦</span></div>
+
+        <div class="form-grid">
+          <div>
+            <label for="a-vorname">Vorname</label>
+            <input type="text" id="a-vorname" placeholder="Anna" autocomplete="given-name" />
+          </div>
+          <div>
+            <label for="a-nachname">Nachname</label>
+            <input type="text" id="a-nachname" placeholder="Muster" autocomplete="family-name" />
+          </div>
+          <div class="form-full">
+            <label for="a-grund">Möchten Sie uns den Grund mitteilen?</label>
+            <textarea id="a-grund" placeholder="Ich bin leider verhindert, weil …"></textarea>
+          </div>
+        </div>
+
+        <div class="error-msg" id="absage-error" style="display:none">Bitte Vor- und Nachname angeben.</div>
+        <button class="btn-submit btn-submit-red" id="absage-btn" onclick="submitAbsage()">Absage absenden</button>
+      </div>
+
+      <!-- ══ SCREEN 5: Erfolg ══ -->
+      <div id="screen-success" class="screen">
+        <div class="logo-wrap" style="margin-bottom:2rem;">
+          <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
+        </div>
+        <div class="est-mark">EST. 1980</div>
+        <div class="eyebrow">Vielen Dank</div>
+        <h1>Wir freuen uns<br>auf Sie.</h1>
+        <div class="ornament"><span class="ornament-inner">✦</span></div>
+        <p class="text-block" style="text-align:center;" id="success-msg">Bis am 26. November im Bierkeller zum Grünen Baum.</p>
+        <div class="ornament"><span class="ornament-inner">✦</span></div>
+        <p class="signoff">Peter &amp; Lars</p>
+      </div>
+
+    </div>
   </div>
 </div>
 
-<div class="version-tag">CLv0.024</div>
+<div class="version-tag">CLv0.025</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
@@ -435,11 +544,13 @@
 
   function toggleBegleitung() {
     const val = document.getElementById('f-begleitung').value;
-    const cf  = document.getElementById('companion-fields');
-    cf.classList.toggle('visible', val === 'mit');
-    if (val !== 'mit') {
+    const mit = val === 'mit';
+    document.getElementById('companion-fields').classList.toggle('visible', mit);
+    document.getElementById('kinder-block').classList.toggle('visible', mit);
+    if (!mit) {
       document.getElementById('f-b-vorname').value = '';
       document.getElementById('f-b-nachname').value = '';
+      document.getElementById('f-kinder').value = '';
     }
   }
 
@@ -448,11 +559,9 @@
   async function submitForm() {
     const err = document.getElementById('form-error');
     err.style.display = 'none';
-    const mitBegleitung = document.getElementById('f-begleitung').value === 'mit';
-
+    const mit = document.getElementById('f-begleitung').value === 'mit';
     const required = ['f-vorname','f-nachname','f-email','f-tel'];
-    if (mitBegleitung) required.push('f-b-vorname','f-b-nachname');
-
+    if (mit) required.push('f-b-vorname','f-b-nachname');
     let valid = true;
     required.forEach(id => {
       const el = document.getElementById(id);
@@ -466,14 +575,14 @@
     btn.innerHTML = '<span class="spinner"></span>Wird gesendet …';
 
     const payload = {
-      typ:       mitBegleitung ? 'Mit Begleitung' : 'Solo',
+      typ:       mit ? 'Mit Begleitung' : 'Solo',
       vorname:   val('f-vorname'),
       nachname:  val('f-nachname'),
       email:     val('f-email'),
       tel:       val('f-tel'),
-      b_vorname: mitBegleitung ? val('f-b-vorname') : '',
-      b_nachname:mitBegleitung ? val('f-b-nachname') : '',
-      bier:      val('f-kinder') || '0',
+      b_vorname: mit ? val('f-b-vorname') : '',
+      b_nachname:mit ? val('f-b-nachname') : '',
+      bier:      mit ? (val('f-kinder') || '0') : '0',
       kommentar: val('f-kommentar'),
       timestamp: new Date().toLocaleString('de-CH'),
     };
@@ -484,7 +593,7 @@
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify(payload)
       });
-      document.getElementById('success-msg').textContent = mitBegleitung
+      document.getElementById('success-msg').textContent = mit
         ? 'Bis am 26. November im Bierkeller zum Grünen Baum. Wir freuen uns auf Sie und Ihre Begleitung.'
         : 'Bis am 26. November im Bierkeller zum Grünen Baum.';
       showScreen('screen-success');
@@ -517,7 +626,7 @@
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify(payload)
       });
-      window.location.href = 'https://www.pampers.com';
+      window.location.href = 'https://www.pampers.ch';
     } catch(e) {
       btn.disabled = false; btn.innerHTML = 'Absage absenden';
       err.textContent = 'Fehler beim Senden. Bitte erneut versuchen.';
