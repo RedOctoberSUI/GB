@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>30 Jahre Philipp G.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f5f2ec;
+      --surface:    #ffffff;
+      --ink:        #1c2b1e;
+      --ink-soft:   #5a6b5c;
+      --green:      #2d4a30;
+      --green-mid:  #4a7a4e;
+      --green-light:#e8f0e8;
+      --green-dim:  rgba(45,74,48,0.15);
+      --border:     #d8ddd8;
+      --border-soft:#e8ebe8;
+      --radius:     2px;
+      --trans:      0.3s ease;
+    }
+
+    html, body { height: 100%; background: var(--bg); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; }
+
+    body::before {
+      content: '';
+      position: fixed; top: 0; left: 0; right: 0; height: 4px;
+      background: var(--green);
+      z-index: 100;
+    }
+
+    .stage {
+      min-height: 100vh; position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center; padding: 2.5rem 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 3rem 2.5rem;
+      width: 100%; max-width: 500px;
+      box-shadow: 0 2px 24px rgba(45,74,48,0.08);
+      animation: fadeUp 0.5s ease both;
+      position: relative;
+    }
+
+    .card::before, .card::after {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border-color: var(--green);
+      border-style: solid;
+      opacity: 0.3;
+    }
+    .card::before { top: 10px; left: 10px; border-width: 1px 0 0 1px; }
+    .card::after  { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    .ornament {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin: 1.6rem 0; color: var(--green-mid);
+    }
+    .ornament::before, .ornament::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .ornament-inner { font-size: 0.65rem; letter-spacing: 0.3em; white-space: nowrap; }
+
+    .eyebrow {
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--green); margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem; font-weight: 400; line-height: 1.15;
+      color: var(--ink); margin-bottom: 0.4rem;
+    }
+
+    .subtitle { font-size: 0.87rem; color: var(--ink-soft); line-height: 1.6; }
+
+    label {
+      display: block; font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 0.35rem; margin-top: 1.1rem;
+    }
+    label:first-of-type { margin-top: 0; }
+
+    input[type="text"], input[type="email"], input[type="tel"], input[type="password"], textarea, select {
+      width: 100%; padding: 0.7rem 1rem;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'Jost', sans-serif; font-size: 0.92rem; font-weight: 300;
+      color: var(--ink); outline: none;
+      transition: border-color var(--trans), box-shadow var(--trans);
+    }
+    input::placeholder, textarea::placeholder { color: var(--ink-soft); opacity: 0.5; }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(45,74,48,0.1);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+    .input-error { border-color: #a33 !important; }
+    .error-msg { font-size: 0.88rem; color: #a33; margin-top: 0.6rem; line-height: 1.5; }
+
+    /* Name pill */
+    .name-pill {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--green-light); border: 1px solid var(--border);
+      border-radius: 30px; padding: 0.45rem 1.1rem; margin-bottom: 1.5rem;
+      font-family: 'EB Garamond', serif; font-size: 1.05rem; font-style: italic;
+      color: var(--green);
+    }
+
+    /* RSVP select */
+    #rsvp-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%232d4a30' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+      font-family: 'EB Garamond', serif; font-size: 1rem;
+      cursor: pointer;
+    }
+    #rsvp-select option { background: var(--surface); color: var(--ink); }
+
+    /* Info block */
+    .info-block {
+      background: var(--green-light); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.3rem 1.4rem;
+    }
+    .info-title { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 1rem; }
+    .info-grid { display: flex; flex-direction: column; gap: 0.55rem; }
+    .info-row { display: flex; gap: 0.8rem; align-items: baseline; }
+    .info-key { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green-mid); min-width: 60px; flex-shrink: 0; }
+    .info-val { font-size: 0.9rem; color: var(--ink); line-height: 1.4; }
+    .info-addr { font-size: 0.8rem; color: var(--ink-soft); }
+    .maps-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 1rem; font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--green); text-decoration: none;
+      border: 1px solid var(--green); border-radius: 20px;
+      padding: 0.35rem 0.9rem;
+      transition: background var(--trans), color var(--trans);
+    }
+    .maps-link:hover { background: var(--green); color: #fff; }
+
+    /* Companion block */
+    .companion-block {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.2rem 1.1rem; margin-top: 1.2rem;
+    }
+    .companion-block .block-title { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); margin-bottom: 0.8rem; }
+
+    /* Bier row */
+    .bier-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 1.1rem; flex-wrap: nowrap; }
+    .bier-label { font-size: 0.92rem; color: var(--ink); white-space: nowrap; flex-shrink: 0; font-weight: 400; }
+    .bier-input {
+      width: 80px; flex-shrink: 0; padding: 0.7rem 0.7rem;
+      text-align: center; font-size: 0.92rem;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); font-family: 'Jost', sans-serif;
+      font-weight: 300; color: var(--ink); outline: none;
+      -moz-appearance: textfield;
+      transition: border-color var(--trans), box-shadow var(--trans);
+    }
+    .bier-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,74,48,0.1); }
+    .bier-input::-webkit-inner-spin-button, .bier-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    /* Button */
+    .btn-primary {
+      display: block; width: 100%; margin-top: 1.8rem; padding: 0.9rem;
+      background: var(--green); color: #fff; border: none;
+      border-radius: var(--radius);
+      font-family: 'Jost', sans-serif; font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+      transition: background var(--trans), transform 0.15s ease;
+    }
+    .btn-primary:hover { background: var(--green-mid); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { background: var(--border); cursor: not-allowed; transform: none; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .bye-wrap, .success-wrap { text-align: center; padding: 1rem 0; }
+    .big-emoji { font-size: 2.5rem; margin-bottom: 1.2rem; }
+
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 1px solid rgba(255,255,255,0.4); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .pw-footer { margin-top: 1.5rem; text-align: center; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--border); }
+    .version-tag { position: fixed; bottom: 0.7rem; right: 0.9rem; font-size: 0.6rem; color: var(--border); pointer-events: none; letter-spacing: 0.1em; }
+
+    @media (max-width: 520px) { .card { padding: 2.2rem 1.5rem; } h1 { font-size: 1.75rem; } }
+  </style>
+</head>
+<body>
+<div class="stage">
+  <div class="card">
+
+    <!-- ══ SCREEN 1: Passwort ══ -->
+    <div id="screen-pw" class="screen active">
+      <div class="eyebrow">IIladig</div>
+      <h1>Willkomme</h1>
+      <p class="subtitle">Grüezi zu Bier und Spass mit em Philipp.<br><br>Dä wo weiss, dä weiss!</p>
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <label for="pw-input">Passwort</label>
+      <input type="password" id="pw-input" placeholder="••••••••" autocomplete="current-password" />
+      <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort. Versuch's nochmal.</div>
+      <button class="btn-primary" onclick="checkPassword()">wiiter gahts da</button>
+      <div class="pw-footer">CLv0.022 · © Pippos Lustige Hundeshow</div>
+    </div>
+
+    <!-- ══ SCREEN 2: Name ══ -->
+    <div id="screen-name" class="screen">
+      <div class="eyebrow">Wär bisch du eigentli?</div>
+      <h1>Din Name</h1>
+      <p class="subtitle">Füll doch s Formular mal us!</p>
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <label for="n-vorname">Vorname</label>
+      <input type="text" id="n-vorname" placeholder="z.B. Anna" autocomplete="given-name" />
+      <label for="n-nachname">Nachname</label>
+      <input type="text" id="n-nachname" placeholder="z.B. Muster" autocomplete="family-name" />
+      <div class="bier-row">
+        <span class="bier-label">Ich trinke a dem Abig</span>
+        <input type="number" id="n-bier" min="0" max="999" placeholder="0" class="bier-input" />
+        <span class="bier-label">Stange Bier. Versproche!</span>
+      </div>
+      <div class="error-msg" id="name-error" style="display:none">Isch das din volle Ernscht? Du chasch din Name nöd schriibe oder trinksch 0 Bier? Vollpfoschte! Machs nomal....</div>
+      <button class="btn-primary" onclick="submitName()">wiiter gahts da</button>
+    </div>
+
+    <!-- ══ SCREEN 3: RSVP ══ -->
+    <div id="screen-rsvp" class="screen">
+      <div class="eyebrow">Chunsch au?</div>
+      <h1>30 Jahre Philipp G.</h1>
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <div class="name-pill">👤 <span id="rsvp-nametext"></span></div>
+
+      <div class="info-block">
+        <div class="info-title">Informatione zum Aalass</div>
+        <div class="info-grid">
+          <div class="info-row"><span class="info-key">Was</span><span class="info-val">Bier und Spass mit Pippo</span></div>
+          <div class="info-row"><span class="info-key">Wieso</span><span class="info-val">Philipp wird 30sgi</span></div>
+          <div class="info-row"><span class="info-key">Warum</span><span class="info-val">Will er am 21. Sept 1996 gschlüpft isch.</span></div>
+          <div class="info-row"><span class="info-key">Wänn</span><span class="info-val">26. September 2026</span></div>
+          <div class="info-row"><span class="info-key">Ziit</span><span class="info-val">Ab 14:00 bis lääär oder 23:00</span></div>
+          <div class="info-row"><span class="info-key">Mitnäh</span><span class="info-val">Gueti Luune und ghörig durscht.</span></div>
+          <div class="info-row"><span class="info-key">Wo</span><span class="info-val">Lindenhofkeller<br><span class="info-addr">Pfalzgasse 4, 8001 Zürich</span></span></div>
+        </div>
+        <a class="maps-link" href="https://maps.google.com/?q=Lindenhofkeller,+Pfalzgasse+4,+8001+Zürich" target="_blank">
+          <span>📍</span> Luegs uf em Googledings ah. Da drucke!
+        </a>
+      </div>
+
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+
+      <label for="rsvp-select">Mini Antwort</label>
+      <select id="rsvp-select" onchange="previewRsvp()">
+        <option value="">– Bitte wählen –</option>
+        <option value="a">🍺  Ja, ich han durscht.</option>
+        <option value="b">🍻  Ja, ich han durscht und mini Begleitig au!</option>
+        <option value="c1">😐  Nei, ich han Bier nöd so gern.</option>
+        <option value="c2">😒  Nei, ich bin langwiilig und weiss noni genau was Spass isch.</option>
+        <option value="c3">🙅  Nei, ich han würkli nöd gern Bier. Also eifach gar nöd!</option>
+        <option value="c4">🚂  Nei, d Reis an Mittelpunkt vom Universum (also s schöne Züri) isch mr z wiit. Ich ha keis GA.</option>
+      </select>
+      <div class="error-msg" id="rsvp-error" style="display:none">Bitte eine Antwort wählen.</div>
+      <button class="btn-primary" onclick="confirmRsvp()">wiiter gahts da</button>
+    </div>
+
+    <!-- ══ SCREEN 4: Formular ══ -->
+    <div id="screen-form" class="screen">
+      <div class="eyebrow" id="form-eyebrow">Aamäldig</div>
+      <h1 id="form-h1">Dini Informatione</h1>
+      <p class="subtitle" id="form-subtitle">Isch wükli wichtig, sus bisch nöd uf de VIP supersecret Gäschtelischte!</p>
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <div class="name-pill">👤 <span id="form-nametext"></span></div>
+
+      <label for="f-email">Imäil</label>
+      <input type="email" id="f-email" placeholder="anna@beispiel.ch" autocomplete="email" />
+
+      <label for="f-tel">Häsch mr dini Nummere?</label>
+      <input type="tel" id="f-tel" placeholder="+41 79 000 00 00" autocomplete="tel" />
+
+      <div id="companion-block" class="companion-block" style="display:none;">
+        <div class="block-title">Dini Begleitperson</div>
+        <label for="f-b-vorname">Vorname</label>
+        <input type="text" id="f-b-vorname" placeholder="z.B. Ben" />
+        <label for="f-b-nachname">Nachname</label>
+        <input type="text" id="f-b-nachname" placeholder="z.B. Muster" />
+      </div>
+
+      <label for="f-kommentar" style="margin-top:1.2rem;">Häsch öppis z Melde? <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.85em;opacity:0.6">(optional)</span></label>
+      <textarea id="f-kommentar" placeholder="Allfällige Hinweise, Wünsche …"></textarea>
+
+      <div class="error-msg" id="form-error" style="display:none">Bitte alle Pflichtfelder ausfüllen.</div>
+      <button class="btn-primary" id="submit-btn" onclick="submitForm()">Anmeldung absenden</button>
+    </div>
+
+    <!-- ══ SCREEN 5: Absage ══ -->
+    <div id="screen-absage" class="screen">
+      <div class="eyebrow">🍼 Isch das Din Ernst?? 🍼</div>
+      <h1 id="absage-h1">…</h1>
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <label for="absage-grund">Chasch versueche dis miise Karma mitere Begründig z rette..</label>
+      <textarea id="absage-grund" placeholder="Ich bin leider verhindert weil …" style="min-height:100px"></textarea>
+      <div class="error-msg" id="absage-error" style="display:none">Bitte eine Begründung eingeben.</div>
+      <button class="btn-primary" id="absage-btn" onclick="submitAbsage()">Absenden</button>
+    </div>
+
+    <!-- ══ SCREEN 6: Erfolg ══ -->
+    <div id="screen-success" class="screen">
+      <div class="success-wrap">
+        <div class="big-emoji" id="success-emoji">🍺</div>
+        <div class="eyebrow">S Sekretariat hät Dini gschätzti Aamäldig übercho.<br>Das isch de Guet!!</div>
+        <h1>Paris, Athen, auf Wiedersehn!</h1>
+        <div class="ornament"><span class="ornament-inner">✦</span></div>
+        <p class="subtitle" id="success-msg">Bis am 26.09. im Lindehofchäller!</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="version-tag">CLv0.022</div>
+
+<script>
+  const PASSWORD        = '69Bier';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTv6EPU4YIAl--U-hShJMLWtgFlD_nTe7xzcAtIrX5uy3DsyzR8IfeZkz5N7GYp6lEpg/exec';
+
+  let currentRsvp = null;
+  let userName    = { vorname: '', nachname: '', bier: 0 };
+
+  document.getElementById('pw-input').addEventListener('keydown',   e => { if (e.key==='Enter') checkPassword(); });
+  document.getElementById('n-vorname').addEventListener('keydown',  e => { if (e.key==='Enter') document.getElementById('n-nachname').focus(); });
+  document.getElementById('n-nachname').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('n-bier').focus(); });
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    el.classList.add('active');
+    el.style.animation = 'none';
+    requestAnimationFrame(() => { el.style.animation = ''; });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function fullName() { return userName.vorname + ' ' + userName.nachname; }
+
+  function checkPassword() {
+    const v = document.getElementById('pw-input').value;
+    const err = document.getElementById('pw-error');
+    if (v === PASSWORD) { err.style.display = 'none'; showScreen('screen-name'); }
+    else { err.style.display = 'block'; document.getElementById('pw-input').classList.add('input-error'); }
+  }
+
+  function submitName() {
+    const vn = document.getElementById('n-vorname').value.trim();
+    const nn = document.getElementById('n-nachname').value.trim();
+    const bierVal = document.getElementById('n-bier').value.trim();
+    const err = document.getElementById('name-error');
+    if (!vn || !nn || bierVal === '') { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+    userName = { vorname: vn, nachname: nn, bier: parseInt(bierVal) || 0 };
+    document.getElementById('rsvp-nametext').textContent = fullName();
+    showScreen('screen-rsvp');
+  }
+
+  function previewRsvp() {}
+
+  function confirmRsvp() {
+    const choice = document.getElementById('rsvp-select').value;
+    const err = document.getElementById('rsvp-error');
+    if (!choice) { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+    selectRsvp(choice);
+  }
+
+  function selectRsvp(choice) {
+    currentRsvp = choice;
+    if (choice !== 'a' && choice !== 'b') {
+      document.getElementById('absage-h1').innerHTML = userName.vorname + ' ' + userName.nachname + ', dini Abmäldig hämmer zur Kentniss gnoh.<br><br>Mr werdeds nöd vergässe.';
+      showScreen('screen-absage');
+      return;
+    }
+    document.getElementById('form-nametext').textContent = fullName();
+    document.getElementById('companion-block').style.display = choice === 'b' ? 'block' : 'none';
+    document.getElementById('form-eyebrow').textContent = choice === 'b' ? 'Aamäldig mit enere Begleitperson' : 'Aamäldig';
+    document.getElementById('form-h1').textContent = choice === 'b' ? 'Eui Informationen' : 'Dini Informatione';
+    document.getElementById('form-subtitle').textContent = choice === 'b'
+      ? 'Isch wüklich wichtig, sus sinder nöd uf de VIP Gäschtelischte!'
+      : 'Isch wükli wichtig, sus bisch nöd uf de VIP supersecret Gäschtelischte!';
+    showScreen('screen-form');
+  }
+
+  function val(id) { return document.getElementById(id).value.trim(); }
+
+  async function submitForm() {
+    const err = document.getElementById('form-error');
+    err.style.display = 'none';
+    const required = ['f-email', 'f-tel'];
+    if (currentRsvp === 'b') required.push('f-b-vorname', 'f-b-nachname');
+    let valid = true;
+    required.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) { el.classList.add('input-error'); valid = false; }
+      else el.classList.remove('input-error');
+    });
+    if (!valid) { err.style.display = 'block'; return; }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Wird gesendet…';
+
+    const payload = {
+      typ: currentRsvp === 'a' ? 'Solo' : currentRsvp === 'b' ? 'Mit Begleitung' : 'Absage',
+      vorname: userName.vorname, nachname: userName.nachname,
+      email: val('f-email'), tel: val('f-tel'),
+      b_vorname: currentRsvp === 'b' ? val('f-b-vorname') : '',
+      b_nachname: currentRsvp === 'b' ? val('f-b-nachname') : '',
+      bier: userName.bier,
+      kommentar: val('f-kommentar'),
+      timestamp: new Date().toLocaleString('de-CH'),
+    };
+    try {
+      await fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+      document.getElementById('success-emoji').textContent = currentRsvp === 'b' ? '🍻' : '🍺';
+      document.getElementById('success-msg').textContent = currentRsvp === 'b'
+        ? 'Bis am 26.09. im Lindehofchäller! Vergiss Dini Begleitig nöd Dihei!'
+        : 'Bis am 26.09. im Lindehofchäller!';
+      showScreen('screen-success');
+    } catch(e) {
+      btn.disabled = false; btn.innerHTML = 'Anmeldung absenden';
+      err.textContent = 'Fehler beim Senden. Bitte nochmals versuchen.';
+      err.style.display = 'block';
+    }
+  }
+
+  async function submitAbsage() {
+    const grund = document.getElementById('absage-grund').value.trim();
+    const err   = document.getElementById('absage-error');
+    if (!grund) { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+    const btn = document.getElementById('absage-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Wird gesendet…';
+    const payload = {
+      typ:'Absage', vorname:userName.vorname, nachname:userName.nachname,
+      email:'', tel:'', b_vorname:'', b_nachname:'',
+      bier: userName.bier,
+      kommentar:grund, timestamp:new Date().toLocaleString('de-CH'),
+    };
+    try {
+      await fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+      window.location.href = 'https://www.pampers.com';
+    } catch(e) {
+      btn.disabled = false; btn.innerHTML = 'Absenden';
+      err.textContent = 'Fehler beim Senden. Bitte nochmals versuchen.';
+      err.style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>
