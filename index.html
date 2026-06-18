@@ -15,247 +15,269 @@
     :root {
       --pine:       #0c191f;
       --holly:      #1d3d38;
-      --mint-bg:    #c7ead2;
+      --mint:       #c7ead2;
+      --mint-dim:   rgba(199,234,210,0.55);
+      --mint-faint: rgba(199,234,210,0.18);
       --lime:       #b4dc3b;
-      --surface:    #ffffff;
-      --ink:        #0c191f;
-      --ink-soft:   #3a5a50;
-      --border:     rgba(12,25,31,0.15);
-      --border-soft:rgba(12,25,31,0.08);
-      --radius:     2px;
+      --ink:        var(--mint);
+      --ink-soft:   var(--mint-dim);
+      --border:     rgba(199,234,210,0.14);
+      --radius:     1px;
       --trans:      0.3s ease;
     }
 
     html, body {
-      height: 100%;
-      background: var(--mint-bg);
-      color: var(--ink);
+      min-height: 100%;
+      background: var(--pine);
+      color: var(--mint);
       font-family: 'Jost', sans-serif;
       font-weight: 300;
     }
 
-    body::before {
-      content: '';
-      position: fixed; top: 0; left: 0; right: 0; height: 5px;
-      background: var(--pine);
-      z-index: 100;
-    }
-
     .stage {
       min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      padding: 2.5rem 1rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 5rem 1.5rem 4rem;
     }
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 3rem 2.5rem;
-      width: 100%; max-width: 520px;
-      box-shadow: 0 4px 32px rgba(12,25,31,0.12);
-      animation: fadeUp 0.5s ease both;
-      position: relative;
+    .wrap {
+      width: 100%;
+      max-width: 480px;
     }
 
-    .card::before, .card::after {
-      content: '';
-      position: absolute;
-      width: 20px; height: 20px;
-      border-color: var(--lime);
-      border-style: solid;
-    }
-    .card::before { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
-    .card::after  { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
-
-    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-
+    /* ── Logo ── */
     .logo-wrap {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 3.5rem;
     }
     .logo-wrap img {
-      width: 140px;
+      width: 150px;
+      filter: brightness(0) saturate(100%) invert(91%) sepia(10%) saturate(350%) hue-rotate(95deg) brightness(105%);
+      opacity: 0.92;
     }
 
+    /* ── Ornament ── */
     .ornament {
-      display: flex; align-items: center; gap: 0.75rem;
-      margin: 1.6rem 0; color: var(--holly);
+      display: flex; align-items: center; gap: 1rem;
+      margin: 2rem 0;
+      color: var(--mint-dim);
     }
-    .ornament::before, .ornament::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .ornament-inner { font-size: 0.65rem; letter-spacing: 0.3em; white-space: nowrap; }
+    .ornament::before, .ornament::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border);
+    }
+    .ornament-inner {
+      font-size: 0.6rem; letter-spacing: 0.4em; color: var(--lime);
+    }
 
+    /* ── Eyebrow ── */
     .eyebrow {
-      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--holly); margin-bottom: 0.5rem;
+      font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--lime); margin-bottom: 0.6rem;
     }
 
+    /* ── Headings ── */
     h1 {
       font-family: 'IM Fell English', serif;
-      font-size: 2rem; font-weight: 400; line-height: 1.2;
-      color: var(--pine); margin-bottom: 0.4rem;
+      font-size: 2.4rem; font-weight: 400; line-height: 1.15;
+      color: var(--mint);
+      margin-bottom: 0;
     }
-    h1::after {
-      content: '';
-      display: block;
-      width: 32px; height: 2px;
-      background: var(--lime);
-      margin-top: 0.5rem;
-    }
-
-    .subtitle {
-      font-size: 0.87rem; color: var(--ink-soft); line-height: 1.6;
+    h2 {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.4rem; font-weight: 400;
+      color: var(--mint); margin-bottom: 1.4rem;
     }
 
-    .invitation-text {
-      font-size: 0.92rem; line-height: 1.75; color: var(--ink);
+    /* ── Body text ── */
+    .text-block {
+      font-size: 0.92rem; line-height: 1.85;
+      color: var(--mint-dim);
     }
-    .invitation-text p { margin-bottom: 1rem; }
-    .invitation-text p:last-child { margin-bottom: 0; }
-    .invitation-text strong { font-weight: 500; color: var(--pine); }
+    .text-block p { margin-bottom: 1.1rem; }
+    .text-block p:last-child { margin-bottom: 0; }
+    .text-block strong { color: var(--mint); font-weight: 400; }
 
-    .program-block {
-      background: var(--pine);
-      border-radius: var(--radius);
-      padding: 1.3rem 1.4rem;
-      margin: 1.4rem 0;
-    }
-    .program-title {
-      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--lime); margin-bottom: 1rem;
+    /* ── Program ── */
+    .program {
+      margin: 2rem 0;
+      border-top: 1px solid var(--border);
     }
     .program-row {
-      display: flex; gap: 1rem; align-items: baseline;
-      margin-bottom: 0.6rem;
+      display: flex; gap: 1.5rem; align-items: baseline;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--border);
     }
-    .program-row:last-child { margin-bottom: 0; }
     .program-time {
       font-family: 'IM Fell English', serif;
-      font-size: 1rem; color: var(--lime);
-      min-width: 60px; flex-shrink: 0;
+      font-size: 0.95rem; color: var(--lime);
+      min-width: 52px; flex-shrink: 0;
+      font-style: italic;
     }
     .program-desc {
-      font-size: 0.88rem; color: var(--mint-bg); line-height: 1.45;
+      font-size: 0.88rem; color: var(--mint-dim); line-height: 1.5;
     }
 
-    .location-row {
-      display: flex; gap: 0.8rem; align-items: center;
-      margin-top: 0.5rem;
+    /* ── Location ── */
+    .location {
+      margin-top: 1.6rem;
+      font-size: 0.82rem; color: var(--mint-dim);
+      letter-spacing: 0.04em;
     }
-    .location-pin { color: var(--lime); font-size: 0.9rem; }
-    .location-text { font-size: 0.88rem; color: rgba(199,234,210,0.7); }
-
-    .maps-link {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      margin-top: 1rem; font-size: 0.75rem; font-weight: 500;
-      letter-spacing: 0.08em; text-transform: uppercase;
+    .location a {
       color: var(--lime); text-decoration: none;
-      border: 1px solid var(--lime); border-radius: 20px;
-      padding: 0.35rem 0.9rem;
-      transition: background var(--trans), color var(--trans);
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; font-weight: 500;
+      border-bottom: 1px solid rgba(180,220,59,0.3);
+      padding-bottom: 1px;
+      transition: border-color var(--trans);
     }
-    .maps-link:hover { background: var(--lime); color: var(--pine); }
+    .location a:hover { border-color: var(--lime); }
 
+    /* ── Signoff ── */
     .signoff {
       font-family: 'IM Fell English', serif;
-      font-size: 1rem; font-style: italic;
-      color: var(--ink-soft); margin-top: 0.4rem;
+      font-size: 1.05rem; font-style: italic;
+      color: var(--mint-dim); line-height: 1.7;
     }
 
+    /* ── Form elements ── */
     label {
-      display: block; font-size: 0.68rem; font-weight: 500;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--holly); margin-bottom: 0.35rem; margin-top: 1.1rem;
+      display: block;
+      font-size: 0.62rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--lime); margin-bottom: 0.4rem; margin-top: 1.3rem;
     }
     label:first-of-type { margin-top: 0; }
 
     input[type="text"], input[type="email"], input[type="tel"],
     input[type="number"], input[type="password"], textarea, select {
-      width: 100%; padding: 0.7rem 1rem;
-      background: var(--mint-bg); border: 1px solid var(--border);
-      border-radius: var(--radius);
+      width: 100%; padding: 0.75rem 0;
+      background: transparent;
+      border: none; border-bottom: 1px solid var(--border);
+      border-radius: 0;
       font-family: 'Jost', sans-serif; font-size: 0.92rem; font-weight: 300;
-      color: var(--ink); outline: none;
-      transition: border-color var(--trans), box-shadow var(--trans);
+      color: var(--mint); outline: none;
+      transition: border-color var(--trans);
+      appearance: none;
     }
-    input::placeholder, textarea::placeholder { color: var(--ink-soft); opacity: 0.5; }
+    input::placeholder, textarea::placeholder {
+      color: var(--mint-faint);
+    }
     input:focus, textarea:focus, select:focus {
-      border-color: var(--holly);
-      box-shadow: 0 0 0 3px rgba(29,61,56,0.12);
+      border-color: var(--lime);
     }
-    textarea { resize: vertical; min-height: 90px; }
-    .input-error { border-color: #a33 !important; }
-    .error-msg { font-size: 0.88rem; color: #a33; margin-top: 0.6rem; line-height: 1.5; }
+    textarea {
+      resize: none; min-height: 80px;
+      border: 1px solid var(--border);
+      padding: 0.75rem; margin-top: 0.2rem;
+    }
+    textarea:focus { border-color: var(--lime); }
 
-    input[type="number"] {
-      -moz-appearance: textfield;
-      width: 100px;
-    }
+    input[type="number"] { -moz-appearance: textfield; width: 80px; }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
-    .name-pill {
-      display: inline-flex; align-items: center; gap: 0.6rem;
-      background: var(--pine); border-radius: 30px;
-      padding: 0.45rem 1.1rem; margin-bottom: 1.5rem;
-      font-family: 'IM Fell English', serif; font-size: 1rem; font-style: italic;
-      color: var(--mint-bg);
-    }
-
     select {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231d3d38' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23b4dc3b' stroke-width='1.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 1rem center;
-      padding-right: 2.5rem;
+      background-position: right 0 center;
+      padding-right: 1.5rem;
       cursor: pointer;
+      color: var(--mint);
     }
-    select option { background: var(--surface); color: var(--ink); }
+    select option { background: var(--pine); color: var(--mint); }
 
-    .companion-block, .children-block {
-      background: var(--mint-bg); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.2rem 1.1rem; margin-top: 1.2rem;
+    .input-error { border-color: rgba(200,80,80,0.7) !important; }
+    .error-msg { font-size: 0.8rem; color: rgba(220,130,130,0.9); margin-top: 0.6rem; }
+
+    /* ── Divider for form sections ── */
+    .form-section {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
     }
-    .block-title {
-      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--holly); margin-bottom: 0.8rem;
+    .form-section-title {
+      font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--mint-dim); margin-bottom: 1rem;
     }
 
-    .btn-primary {
-      display: block; width: 100%; margin-top: 1.8rem; padding: 0.9rem;
-      background: var(--pine); color: var(--mint-bg); border: none;
+    /* ── Name pill ── */
+    .name-line {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.1rem; font-style: italic;
+      color: var(--mint-dim); margin-bottom: 2rem;
+    }
+
+    /* ── Button ── */
+    .btn {
+      display: block; width: 100%; margin-top: 2.5rem;
+      padding: 0.9rem 1rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--mint);
       border-radius: var(--radius);
-      font-family: 'Jost', sans-serif; font-size: 0.75rem; font-weight: 500;
-      letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
-      transition: background var(--trans), transform 0.15s ease;
+      font-family: 'Jost', sans-serif; font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer;
+      transition: border-color var(--trans), color var(--trans), background var(--trans);
     }
-    .btn-primary:hover { background: var(--holly); transform: translateY(-1px); }
-    .btn-primary:active { transform: translateY(0); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn:hover {
+      border-color: var(--lime);
+      color: var(--lime);
+    }
+    .btn:active { opacity: 0.8; }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary {
+      background: var(--mint-faint);
+      border-color: rgba(199,234,210,0.25);
+    }
+    .btn-primary:hover {
+      background: rgba(180,220,59,0.1);
+      border-color: var(--lime);
+      color: var(--lime);
+    }
 
+    /* ── Screens ── */
     .screen { display: none; }
-    .screen.active { display: block; }
+    .screen.active { display: block; animation: fadeIn 0.45s ease both; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
-    .success-wrap { text-align: center; padding: 1rem 0; }
-    .big-emoji { font-size: 2.5rem; margin-bottom: 1.2rem; }
+    /* ── Success ── */
+    .success-logo { text-align: center; margin-bottom: 2.5rem; }
+    .success-logo img {
+      width: 120px;
+      filter: brightness(0) saturate(100%) invert(91%) sepia(10%) saturate(350%) hue-rotate(95deg) brightness(105%);
+      opacity: 0.85;
+    }
 
+    /* ── Spinner ── */
     .spinner {
-      display: inline-block; width: 14px; height: 14px;
-      border: 1px solid rgba(199,234,210,0.4); border-top-color: var(--mint-bg);
+      display: inline-block; width: 12px; height: 12px;
+      border: 1px solid rgba(199,234,210,0.25); border-top-color: var(--mint);
       border-radius: 50%; animation: spin 0.7s linear infinite;
       vertical-align: middle; margin-right: 6px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .pw-footer { margin-top: 1.5rem; text-align: center; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--border); }
-    .version-tag { position: fixed; bottom: 0.7rem; right: 0.9rem; font-size: 0.6rem; color: rgba(12,25,31,0.25); pointer-events: none; letter-spacing: 0.1em; }
+    .version-tag {
+      position: fixed; bottom: 0.8rem; right: 1rem;
+      font-size: 0.55rem; color: rgba(199,234,210,0.15);
+      pointer-events: none; letter-spacing: 0.08em;
+    }
 
-    @media (max-width: 520px) { .card { padding: 2.2rem 1.5rem; } h1 { font-size: 1.65rem; } }
+    @media (max-width: 480px) {
+      .stage { padding: 3.5rem 1.25rem 3rem; }
+      h1 { font-size: 2rem; }
+    }
   </style>
 </head>
 <body>
 <div class="stage">
-  <div class="card">
+  <div class="wrap">
 
     <!-- ══ SCREEN 1: Passwort ══ -->
     <div id="screen-pw" class="screen active">
@@ -264,13 +286,13 @@
       </div>
       <div class="eyebrow">Est. 1980</div>
       <h1>Wirtschaft zum<br>Grünen Baum</h1>
-      <p class="subtitle" style="margin-top:0.8rem;">Offen dieses Jahr vom 26.11. bis zum 26.11.2026</p>
       <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <p class="text-block" style="margin-bottom:2rem;">Offen dieses Jahr vom 26.11. bis zum 26.11.2026.</p>
       <label for="pw-input">Zugang</label>
-      <input type="password" id="pw-input" placeholder="••••••••" autocomplete="current-password" />
-      <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort. Bitte erneut versuchen.</div>
-      <button class="btn-primary" onclick="checkPassword()">Eintreten</button>
-      <div class="pw-footer">CLv0.023 · © Pippos Lustige Hundeshow</div>
+      <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
+      <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
+      <button class="btn btn-primary" onclick="checkPassword()">Eintreten</button>
+      <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;">CLv0.023 · © Pippos Lustige Hundeshow</p>
     </div>
 
     <!-- ══ SCREEN 2: Einladung ══ -->
@@ -279,18 +301,15 @@
         <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
       </div>
       <div class="eyebrow">Es ist wieder soweit</div>
-      <h1>Herzlich<br>willkommen</h1>
-
+      <h1>Herzlich<br>willkommen.</h1>
       <div class="ornament"><span class="ornament-inner">✦</span></div>
-
-      <div class="invitation-text">
+      <div class="text-block">
         <p>Seit über vier Jahrzehnten feiern wir mit dem <strong>Fest zum Grünen Baum</strong> den Beginn der Weihnachtszeit. Gerne möchten wir diesen besonderen Moment gemeinsam mit Euch feiern — auf das vergangene Jahr, die bevorstehende Weihnachtszeit und die Zukunft anstossen.</p>
         <p>Wir treffen uns mit Menschen, die uns im vergangenen Jahr begleitet haben, und solchen, die wir schon viel zu lange nicht mehr sehen durften.</p>
         <p>Wir laden Euch herzlich ein, mit uns am <strong>Donnerstag, 26. November 2026</strong> zu feiern:</p>
       </div>
 
-      <div class="program-block">
-        <div class="program-title">Programm</div>
+      <div class="program">
         <div class="program-row">
           <span class="program-time">XX:00</span>
           <span class="program-desc">Ruhiges Warm-up inkl. Verpflegung im Bierkeller «zum Grünen Baum»</span>
@@ -303,16 +322,16 @@
           <span class="program-time">XX:00</span>
           <span class="program-desc">Dann geht's richtig los im Bierkeller «zum Grünen Baum»</span>
         </div>
-        <div class="location-row" style="margin-top:1.1rem; border-top:1px solid rgba(199,234,210,0.15); padding-top:1rem;">
-          <span class="location-pin">📍</span>
-          <span class="location-text">Rämistrasse 50, 8001 Zürich</span>
-        </div>
-        <a class="maps-link" href="https://maps.google.com/?q=Rämistrasse+50,+8001+Zürich" target="_blank">
-          Auf Google Maps öffnen
-        </a>
       </div>
 
-      <div class="invitation-text">
+      <div class="location">
+        Rämistrasse 50, 8001 Zürich &nbsp;·&nbsp;
+        <a href="https://maps.google.com/?q=Rämistrasse+50,+8001+Zürich" target="_blank">Auf Karte öffnen</a>
+      </div>
+
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+
+      <div class="text-block">
         <p>Auch kleine Gäste sind bis XX:00 Uhr herzlich willkommen.</p>
         <p>Herzlichen Dank für Eure Rückmeldung bis <strong>XXX</strong>.</p>
         <p>Wir freuen uns auf einen grossartigen Abend mit Euch.</p>
@@ -322,48 +341,47 @@
 
       <p class="signoff">Eure Gastgeber<br>Peter &amp; Lars</p>
 
-      <button class="btn-primary" style="margin-top:2rem;" onclick="showScreen('screen-name')">Zur Anmeldung</button>
+      <button class="btn btn-primary" style="margin-top:3rem;" onclick="showScreen('screen-name')">Zur Anmeldung</button>
     </div>
 
     <!-- ══ SCREEN 3: Name ══ -->
     <div id="screen-name" class="screen">
       <div class="eyebrow">Anmeldung</div>
-      <h1>Ihre Angaben</h1>
+      <h1>Ihr Name</h1>
       <div class="ornament"><span class="ornament-inner">✦</span></div>
       <label for="n-vorname">Vorname</label>
       <input type="text" id="n-vorname" placeholder="Anna" autocomplete="given-name" />
       <label for="n-nachname">Nachname</label>
       <input type="text" id="n-nachname" placeholder="Muster" autocomplete="family-name" />
       <div class="error-msg" id="name-error" style="display:none">Bitte Vor- und Nachname angeben.</div>
-      <button class="btn-primary" onclick="submitName()">Weiter</button>
+      <button class="btn btn-primary" onclick="submitName()">Weiter</button>
     </div>
 
     <!-- ══ SCREEN 4: RSVP ══ -->
     <div id="screen-rsvp" class="screen">
-      <div class="eyebrow">Teilnahme</div>
-      <h1>Grüner Baum 2026</h1>
+      <div class="eyebrow">Rückmeldung</div>
+      <h1>Grüner Baum<br>2026</h1>
       <div class="ornament"><span class="ornament-inner">✦</span></div>
-      <div class="name-pill">✦ <span id="rsvp-nametext"></span></div>
-
+      <p class="name-line" id="rsvp-nametext"></p>
       <label for="rsvp-select">Nehmen Sie teil?</label>
       <select id="rsvp-select">
         <option value="">— Bitte wählen —</option>
         <option value="a">Ja, ich bin dabei.</option>
         <option value="b">Ja, ich komme mit Begleitung.</option>
-        <option value="c1">Nein, leider kann ich nicht kommen.</option>
+        <option value="c1">Nein, leider muss ich absagen.</option>
         <option value="c2">Nein, ich bin verhindert.</option>
-        <option value="c3">Nein, ich muss absagen.</option>
+        <option value="c3">Nein, ich kann dieses Jahr nicht.</option>
       </select>
       <div class="error-msg" id="rsvp-error" style="display:none">Bitte eine Antwort wählen.</div>
-      <button class="btn-primary" onclick="confirmRsvp()">Weiter</button>
+      <button class="btn btn-primary" onclick="confirmRsvp()">Weiter</button>
     </div>
 
     <!-- ══ SCREEN 5: Formular ══ -->
     <div id="screen-form" class="screen">
       <div class="eyebrow" id="form-eyebrow">Anmeldung</div>
-      <h1 id="form-h1">Ihre Kontaktdaten</h1>
+      <h1 id="form-h1">Ihre Angaben</h1>
       <div class="ornament"><span class="ornament-inner">✦</span></div>
-      <div class="name-pill">✦ <span id="form-nametext"></span></div>
+      <p class="name-line" id="form-nametext"></p>
 
       <label for="f-email">E-Mail-Adresse</label>
       <input type="email" id="f-email" placeholder="anna@beispiel.ch" autocomplete="email" />
@@ -371,50 +389,53 @@
       <label for="f-tel">Telefon</label>
       <input type="tel" id="f-tel" placeholder="+41 79 000 00 00" autocomplete="tel" />
 
-      <div id="companion-block" class="companion-block" style="display:none;">
-        <div class="block-title">Begleitperson</div>
+      <div id="companion-block" class="form-section" style="display:none;">
+        <div class="form-section-title">Begleitperson</div>
         <label for="f-b-vorname">Vorname</label>
         <input type="text" id="f-b-vorname" placeholder="Vorname" />
         <label for="f-b-nachname">Nachname</label>
         <input type="text" id="f-b-nachname" placeholder="Nachname" />
       </div>
 
-      <div class="children-block" style="margin-top:1.2rem;">
-        <div class="block-title">Kinder unter 25 Jahren</div>
-        <label for="f-kinder">Anzahl Kinder, die mitkommen</label>
+      <div class="form-section">
+        <div class="form-section-title">Kinder</div>
+        <label for="f-kinder">Anzahl Kinder unter 25 Jahren</label>
         <input type="number" id="f-kinder" min="0" max="20" placeholder="0" />
       </div>
 
-      <label for="f-kommentar" style="margin-top:1.2rem;">Kommentar <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:0.85em;opacity:0.6">(optional)</span></label>
-      <textarea id="f-kommentar" placeholder="Was auch immer Sie uns noch mitteilen möchten …"></textarea>
+      <div class="form-section">
+        <label for="f-kommentar" style="margin-top:0;">Kommentar <span style="text-transform:none;letter-spacing:0;font-size:0.9em;opacity:0.5;font-weight:300">(optional)</span></label>
+        <textarea id="f-kommentar" placeholder="Was auch immer Sie uns noch mitteilen möchten …"></textarea>
+      </div>
 
       <div class="error-msg" id="form-error" style="display:none">Bitte alle Pflichtfelder ausfüllen.</div>
-      <button class="btn-primary" id="submit-btn" onclick="submitForm()">Anmeldung absenden</button>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">Anmeldung absenden</button>
     </div>
 
     <!-- ══ SCREEN 6: Absage ══ -->
     <div id="screen-absage" class="screen">
       <div class="eyebrow">Schade</div>
-      <h1 id="absage-h1">Absage</h1>
+      <h1>Absage</h1>
       <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <p class="name-line" id="absage-nametext"></p>
+      <p class="text-block" style="margin-bottom:1.5rem;">Wir nehmen Ihre Absage zur Kenntnis und hoffen, Sie ein anderes Mal begrüssen zu dürfen.</p>
       <label for="absage-grund">Möchten Sie uns den Grund mitteilen?</label>
-      <textarea id="absage-grund" placeholder="Ich bin leider verhindert, weil …" style="min-height:100px"></textarea>
+      <textarea id="absage-grund" placeholder="Ich bin leider verhindert, weil …"></textarea>
       <div class="error-msg" id="absage-error" style="display:none">Bitte eine kurze Begründung angeben.</div>
-      <button class="btn-primary" id="absage-btn" onclick="submitAbsage()">Absage absenden</button>
+      <button class="btn btn-primary" id="absage-btn" onclick="submitAbsage()">Absage absenden</button>
     </div>
 
     <!-- ══ SCREEN 7: Erfolg ══ -->
     <div id="screen-success" class="screen">
-      <div class="success-wrap">
-        <div class="logo-wrap" style="margin-bottom:1.5rem;">
-          <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
-        </div>
-        <div class="eyebrow">Vielen Dank</div>
-        <h1>Wir freuen uns<br>auf Sie</h1>
-        <div class="ornament"><span class="ornament-inner">✦</span></div>
-        <p class="subtitle" id="success-msg">Bis am 26. November im Bierkeller zum Grünen Baum!</p>
-        <p class="signoff" style="margin-top:1.5rem;">Peter &amp; Lars</p>
+      <div class="success-logo">
+        <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
       </div>
+      <div class="eyebrow">Vielen Dank</div>
+      <h1>Wir freuen uns<br>auf Sie.</h1>
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <p class="text-block" id="success-msg">Bis am 26. November im Bierkeller zum Grünen Baum.</p>
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <p class="signoff">Peter &amp; Lars</p>
     </div>
 
   </div>
@@ -435,8 +456,7 @@
 
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    const el = document.getElementById(id);
-    el.classList.add('active');
+    document.getElementById(id).classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -468,7 +488,7 @@
     currentRsvp = choice;
 
     if (choice !== 'a' && choice !== 'b') {
-      document.getElementById('absage-h1').textContent = 'Absage';
+      document.getElementById('absage-nametext').textContent = fullName();
       showScreen('screen-absage');
       return;
     }
@@ -476,7 +496,6 @@
     document.getElementById('form-nametext').textContent = fullName();
     document.getElementById('companion-block').style.display = choice === 'b' ? 'block' : 'none';
     document.getElementById('form-eyebrow').textContent = choice === 'b' ? 'Anmeldung mit Begleitung' : 'Anmeldung';
-    document.getElementById('form-h1').textContent = choice === 'b' ? 'Ihre Kontaktdaten' : 'Ihre Kontaktdaten';
     showScreen('screen-form');
   }
 
@@ -501,10 +520,8 @@
 
     const payload = {
       typ: currentRsvp === 'a' ? 'Solo' : 'Mit Begleitung',
-      vorname: userName.vorname,
-      nachname: userName.nachname,
-      email: val('f-email'),
-      tel: val('f-tel'),
+      vorname: userName.vorname, nachname: userName.nachname,
+      email: val('f-email'), tel: val('f-tel'),
       b_vorname: currentRsvp === 'b' ? val('f-b-vorname') : '',
       b_nachname: currentRsvp === 'b' ? val('f-b-nachname') : '',
       bier: val('f-kinder') || '0',
@@ -519,12 +536,11 @@
         body: JSON.stringify(payload)
       });
       document.getElementById('success-msg').textContent = currentRsvp === 'b'
-        ? 'Bis am 26. November im Bierkeller zum Grünen Baum! Vergessen Sie Ihre Begleitung nicht.'
-        : 'Bis am 26. November im Bierkeller zum Grünen Baum!';
+        ? 'Bis am 26. November im Bierkeller zum Grünen Baum. Wir freuen uns auf Sie und Ihre Begleitung.'
+        : 'Bis am 26. November im Bierkeller zum Grünen Baum.';
       showScreen('screen-success');
     } catch(e) {
-      btn.disabled = false;
-      btn.innerHTML = 'Anmeldung absenden';
+      btn.disabled = false; btn.innerHTML = 'Anmeldung absenden';
       err.textContent = 'Fehler beim Senden. Bitte erneut versuchen.';
       err.style.display = 'block';
     }
@@ -539,12 +555,9 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Wird gesendet …';
     const payload = {
-      typ: 'Absage',
-      vorname: userName.vorname,
-      nachname: userName.nachname,
+      typ: 'Absage', vorname: userName.vorname, nachname: userName.nachname,
       email: '', tel: '', b_vorname: '', b_nachname: '',
-      bier: '0',
-      kommentar: grund,
+      bier: '0', kommentar: grund,
       timestamp: new Date().toLocaleString('de-CH'),
     };
     try {
@@ -555,8 +568,7 @@
       });
       window.location.href = 'https://www.pampers.com';
     } catch(e) {
-      btn.disabled = false;
-      btn.innerHTML = 'Absage absenden';
+      btn.disabled = false; btn.innerHTML = 'Absage absenden';
       err.textContent = 'Fehler beim Senden. Bitte erneut versuchen.';
       err.style.display = 'block';
     }
