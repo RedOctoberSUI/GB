@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Pirata+One&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -72,9 +72,10 @@
     }
 
     .login-card h1 {
-      font-family: 'Pirata One', serif;
-      font-size: 2rem; font-weight: 400; line-height: 1.15;
+      font-family: 'Jost', sans-serif;
+      font-size: 1.9rem; font-weight: 400; line-height: 1.2;
       color: var(--mint); text-align: center; margin-bottom: 2rem;
+      letter-spacing: -0.01em;
     }
 
     .ornament {
@@ -170,8 +171,8 @@
       object-fit: contain;
     }
     .topbar-title {
-      font-family: 'Pirata One', serif;
-      font-size: 1.15rem; font-weight: 400; letter-spacing: 0.02em;
+      font-family: 'Jost', sans-serif;
+      font-size: 1rem; font-weight: 500; letter-spacing: 0.05em;
       color: var(--mint);
     }
     .topbar-badge {
@@ -221,8 +222,8 @@
       text-transform: uppercase; color: var(--mint-dim); margin-bottom: 0.3rem;
     }
     .stat-val {
-      font-family: 'Pirata One', serif;
-      font-size: 1.9rem; font-weight: 400; line-height: 1;
+      font-family: 'IM Fell English', serif;
+      font-size: 2rem; font-weight: 400; line-height: 1;
       color: var(--mint);
     }
     .stat-card.lime .stat-val { color: var(--lime); }
@@ -397,9 +398,10 @@
     .modal-overlay.open .modal { transform: translateY(0); }
 
     .modal-title {
-      font-family: 'Pirata One', serif;
-      font-size: 1.6rem; font-weight: 400;
+      font-family: 'Jost', sans-serif;
+      font-size: 1.4rem; font-weight: 400;
       color: var(--mint); margin-bottom: 0.4rem; text-align: center;
+      letter-spacing: -0.01em;
     }
     .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
     .modal-grid .full { grid-column: 1 / -1; }
@@ -488,7 +490,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.029</span>
+      <span class="topbar-version">CLv0.030</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1BLJSVqF2s-WJ8pZvKQyPxYSimrxOjQrVOFZJDHKE8p0/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -602,7 +604,7 @@
   </div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em">CLv0.029 · © Pippos Lustige Hundeshow</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.030 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -881,3 +883,4 @@
 </script>
 </body>
 </html>
+
