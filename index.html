@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Pirata+One&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -78,21 +78,21 @@
       margin: 2rem 0;
     }
     .stamp-original {
-      font-family: 'Pirata One', serif;
+      font-family: 'Jost', sans-serif;
       font-size: 1rem;
       color: var(--mint);
       letter-spacing: 0.04em;
       margin-bottom: 0.2rem;
     }
     .stamp-name {
-      font-family: 'Pirata One', serif;
+      font-family: 'Jost', sans-serif;
       font-size: 1.6rem;
       color: var(--mint);
       letter-spacing: 0.02em;
       margin-bottom: 1.6rem;
     }
     .stamp-big {
-      font-family: 'Pirata One', serif;
+      font-family: 'Jost', sans-serif;
       font-size: 3.4rem;
       color: var(--mint);
       letter-spacing: 0.02em;
@@ -104,13 +104,13 @@
         3px 3px 0 rgba(199,234,210,0.15);
     }
     .stamp-sub {
-      font-family: 'Pirata One', serif;
+      font-family: 'Jost', sans-serif;
       font-size: 1.05rem;
       color: var(--mint-dim);
       line-height: 1.5;
     }
     .stamp-tagline {
-      font-family: 'Pirata One', serif;
+      font-family: 'Jost', sans-serif;
       font-size: 0.78rem;
       color: var(--mint-dim);
       letter-spacing: 0.02em;
@@ -124,7 +124,7 @@
     .est-mark {
       display: flex; align-items: center; justify-content: center;
       gap: 0.6rem;
-      font-family: 'Pirata One', serif;
+      font-family: 'Jost', sans-serif;
       font-size: 0.7rem;
       color: var(--mint-dim);
       letter-spacing: 0.3em;
@@ -156,10 +156,11 @@
 
     /* ── Headings ── */
     h1 {
-      font-family: 'Pirata One', serif;
-      font-size: 2.4rem; font-weight: 400; line-height: 1.15;
+      font-family: 'Jost', sans-serif;
+      font-size: 2.2rem; font-weight: 400; line-height: 1.2;
       color: var(--mint);
       text-align: center;
+      letter-spacing: -0.01em;
     }
 
     /* ── Body ── */
@@ -177,9 +178,11 @@
     }
     .program-row:first-child { border-top: 1px dashed var(--border); }
     .program-time {
-      font-family: 'Pirata One', serif;
-      font-size: 1rem; color: var(--lime);
-      min-width: 56px; flex-shrink: 0; font-style: italic;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.95rem; color: var(--lime);
+      min-width: 56px; flex-shrink: 0;
+      font-weight: 500;
+      letter-spacing: 0.02em;
     }
     .program-desc { font-size: 0.9rem; color: var(--mint-dim); line-height: 1.5; }
 
@@ -197,7 +200,7 @@
 
     /* ── Signoff ── */
     .signoff {
-      font-family: 'Pirata One', serif;
+      font-family: 'IM Fell English', serif;
       font-size: 1.1rem; font-style: italic;
       color: var(--mint-dim); line-height: 1.7;
       text-align: center;
@@ -353,11 +356,11 @@
         </div>
         <div class="ornament"><span class="ornament-inner">✦</span></div>
         <p class="text-block" style="text-align:center;margin-bottom:1.5rem;">Willkommen zur Wirtschaft zum Grünen Baum.<br><br>Wir öffnen dieses Jahr vom 26.11. 19:00 bis zum 27.11. 04:00.<br><br><strong>Achtung: wir haben Betriebsferien vom 27.11. bis zum 26.11.!</strong></p>
-        <label for="pw-input" style="text-transform:none;letter-spacing:0.02em;font-size:0.78rem;color:var(--mint-dim);font-weight:300;line-height:1.5;">Wenn Du weisst, um was es geht, gib hier das hochgeheime Passwort ein.</label>
+        <div style="margin-top:1.3rem;"></div>
         <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
         <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
         <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;">CLv0.029 · © Pippos Lustige Hundeshow</p>
+        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.030 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -518,7 +521,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.029</div>
+<div class="version-tag">CLv0.030</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
@@ -662,6 +665,7 @@
 </script>
 </body>
 </html>
+
 
 
 
