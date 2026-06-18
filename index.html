@@ -410,7 +410,7 @@
         <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
         <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
         <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.034 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.035 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -558,7 +558,7 @@
           <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
         </div>
         <div class="eyebrow" style="margin-top:1.5rem;">Vielen Dank</div>
-        <h1>Wir freuen uns<br>auf Euch!</h1>
+        <h1 id="success-headline">Wir freuen uns<br>auf Dich!</h1>
         <div class="ornament"><span class="ornament-inner">✦</span></div>
         <div class="quote-block">
           <p class="quote-text" id="success-msg">„Ein Gentleman trinkt nie allein. Weihnachten sorgt dafür."</p>
@@ -574,7 +574,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.034</div>
+<div class="version-tag">CLv0.035</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
@@ -651,6 +651,9 @@
       document.getElementById('success-msg').textContent = mit
         ? '„An Weihnachten zählen nicht die Kalorien, die Geschenke oder die Promille – sondern die Geschichten danach."'
         : '„Ein Gentleman trinkt nie allein. Weihnachten sorgt dafür."';
+      document.getElementById('success-headline').innerHTML = mit
+        ? 'Wir freuen uns<br>auf Euch!'
+        : 'Wir freuen uns<br>auf Dich!';
       showScreen('screen-success');
     } catch(e) {
       btn.disabled = false; btn.innerHTML = 'Anmeldung absenden';
@@ -720,6 +723,7 @@
 </script>
 </body>
 </html>
+
 
 
 
