@@ -3,185 +3,367 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin · Anmeldungen</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <title>Admin · Wirtschaft zum Grünen Baum</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --pine:         #0c191f;
-      --holly:        #1d3d38;
-      --mint-bg:      #c7ead2;
-      --lime:         #b4dc3b;
-      --surface:      #ffffff;
-      --ink:          #0c191f;
-      --ink-soft:     #3a5a50;
-      --border:       rgba(12,25,31,0.15);
-      --border-soft:  rgba(12,25,31,0.08);
-      --radius:       2px;
-      --trans:        0.25s ease;
-      --header-h:     56px;
+      --pine:       #0c191f;
+      --holly:      #1d3d38;
+      --holly-light:#234740;
+      --mint:       #c7ead2;
+      --mint-dim:   rgba(199,234,210,0.6);
+      --mint-faint: rgba(199,234,210,0.12);
+      --lime:       #b4dc3b;
+      --red:        #c0392b;
+      --red-soft:   rgba(220,100,90,0.85);
+      --border:     rgba(199,234,210,0.22);
+      --trans:      0.3s ease;
     }
 
-    html, body { height: 100%; background: var(--mint-bg); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; }
+    html, body {
+      min-height: 100%;
+      background: var(--holly);
+      color: var(--mint);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+    }
 
     /* ── Login ── */
-    .login-stage { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
-    .login-card {
-      background: var(--pine); border-radius: var(--radius);
-      padding: 3rem 2.5rem; width: 100%; max-width: 380px;
-      box-shadow: 0 20px 80px rgba(12,25,31,0.4); animation: fadeUp 0.45s ease both;
+    .login-stage {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2.5rem 1.5rem;
+    }
+    .login-wrap { width: 100%; max-width: 460px; }
+
+    .card {
+      background: var(--holly);
+      border-radius: 22px;
+      padding: 3rem 2.25rem;
       position: relative;
+      box-shadow: 0 6px 40px rgba(0,0,0,0.25);
     }
-    .login-card::before, .login-card::after {
+    .card::before {
       content: '';
-      position: absolute;
-      width: 20px; height: 20px;
-      border-color: var(--lime);
-      border-style: solid;
+      position: absolute; inset: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      pointer-events: none;
     }
-    .login-card::before { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
-    .login-card::after  { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+    .card > * { position: relative; z-index: 1; }
 
-    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-
-    .login-card .eyebrow { color: var(--lime); }
-    .login-card h1 { color: var(--mint-bg); }
-    .login-card label { color: rgba(199,234,210,0.6); }
-    .login-card input[type="password"] { background: rgba(199,234,210,0.1); border-color: rgba(199,234,210,0.25); color: var(--mint-bg); }
-    .login-card input[type="password"]::placeholder { color: rgba(199,234,210,0.35); }
-    .login-card input[type="password"]:focus { border-color: var(--lime); box-shadow: 0 0 0 3px rgba(180,220,59,0.15); }
-
-    .eyebrow { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--holly); margin-bottom: 0.5rem; }
-    h1 { font-family: 'IM Fell English', serif; font-size: 2rem; font-weight: 400; margin-bottom: 1.8rem; color: var(--ink); }
-
-    label { display: block; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.35rem; }
-
-    input[type="password"], input[type="text"], input[type="email"], input[type="tel"], textarea, select {
-      width: 100%; padding: 0.65rem 0.85rem;
-      border: 1px solid var(--border); border-radius: var(--radius);
-      background: var(--mint-bg); font-family: 'Jost', sans-serif;
-      font-size: 0.92rem; font-weight: 300; color: var(--ink); outline: none;
-      transition: border-color var(--trans), box-shadow var(--trans);
+    .logo-wrap { text-align: center; margin-bottom: 2rem; }
+    .logo-wrap img {
+      width: 130px;
+      filter: brightness(0) saturate(100%) invert(91%) sepia(10%) saturate(350%) hue-rotate(95deg) brightness(105%);
     }
-    input::placeholder, textarea::placeholder { color: var(--ink-soft); opacity: 0.5; }
-    input:focus, textarea:focus, select:focus { border-color: var(--holly); box-shadow: 0 0 0 3px rgba(29,61,56,0.12); }
 
-    .btn-primary {
-      display: block; width: 100%; margin-top: 1.4rem; padding: 0.8rem;
-      background: var(--lime); color: var(--pine);
-      border: none; border-radius: var(--radius);
-      font-family: 'Jost', sans-serif; font-size: 0.75rem; font-weight: 500;
-      letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
-      transition: background var(--trans), transform 0.15s ease;
+    .eyebrow {
+      font-size: 0.62rem; font-weight: 500;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--lime); margin-bottom: 0.6rem;
+      text-align: center;
     }
-    .btn-primary:hover { background: #c8f040; transform: translateY(-1px); }
-    .error-msg { font-size: 0.78rem; color: #ff6b6b; margin-top: 0.5rem; display: none; }
+
+    .login-card h1 {
+      font-family: 'Pirata One', serif;
+      font-size: 2rem; font-weight: 400; line-height: 1.15;
+      color: var(--mint); text-align: center; margin-bottom: 2rem;
+    }
+
+    .ornament {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .ornament::before, .ornament::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--border);
+    }
+    .ornament-inner { font-size: 0.6rem; letter-spacing: 0.4em; color: var(--lime); }
+
+    label {
+      display: block;
+      font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--lime); margin-bottom: 0.4rem; margin-top: 1.3rem;
+    }
+
+    input[type="text"], input[type="email"], input[type="tel"],
+    input[type="number"], input[type="password"], textarea, select {
+      width: 100%; padding: 0.7rem 0;
+      background: transparent; border: none;
+      border-bottom: 1px solid var(--border); border-radius: 0;
+      font-family: 'Jost', sans-serif; font-size: 0.95rem; font-weight: 300;
+      color: var(--mint); outline: none;
+      transition: border-color var(--trans);
+      appearance: none;
+    }
+    input::placeholder, textarea::placeholder { color: rgba(199,234,210,0.25); }
+    input:focus, textarea:focus, select:focus { border-color: var(--lime); }
+    textarea {
+      resize: none; min-height: 70px;
+      border: 1px solid var(--border);
+      padding: 0.7rem; margin-top: 0.2rem;
+      border-radius: 3px;
+    }
+    textarea:focus { border-color: var(--lime); }
+    input[type="number"] { -moz-appearance: textfield; }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23b4dc3b' stroke-width='1.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0 center;
+      padding-right: 1.5rem; cursor: pointer;
+    }
+    select option { background: var(--holly); color: var(--mint); }
+
+    .btn-submit {
+      display: block; width: 100%; margin-top: 1.6rem;
+      padding: 0.95rem;
+      background: rgba(180,220,59,0.12);
+      border: 1px solid rgba(180,220,59,0.45);
+      color: var(--lime); border-radius: 4px;
+      font-family: 'Jost', sans-serif; font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer;
+      transition: all var(--trans);
+    }
+    .btn-submit:hover { background: rgba(180,220,59,0.22); border-color: var(--lime); }
+    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+    .error-msg { font-size: 0.82rem; color: rgba(230,150,140,0.95); margin-top: 0.8rem; display: none; }
 
     /* ── App shell ── */
-    #app { display: none; flex-direction: column; min-height: 100vh; }
+    #app { display: none; flex-direction: column; min-height: 100vh; padding: 1.25rem; }
 
     .topbar {
-      height: var(--header-h); background: var(--pine); color: var(--mint-bg);
+      background: var(--holly);
+      border-radius: 16px;
+      padding: 0.9rem 1.4rem;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 1.5rem; position: sticky; top: 0; z-index: 100;
-      border-bottom: 2px solid var(--lime);
+      position: sticky; top: 1rem; z-index: 100;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+      position: relative;
     }
-    .topbar-left { display: flex; align-items: center; gap: 0.8rem; }
-    .topbar-title { font-family: 'IM Fell English', serif; font-size: 1.25rem; font-weight: 400; letter-spacing: 0.04em; color: var(--mint-bg); }
-    .topbar-badge { background: var(--lime); color: var(--pine); font-size: 0.7rem; font-weight: 500; padding: 0.15rem 0.5rem; border-radius: 20px; }
-    .topbar-version { font-size: 0.65rem; color: rgba(199,234,210,0.4); font-weight: 300; letter-spacing: 0.05em; }
-    .topbar-actions { display: flex; gap: 0.6rem; }
+    .topbar::before {
+      content: '';
+      position: absolute; inset: 6px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      pointer-events: none;
+    }
+    .topbar > * { position: relative; z-index: 1; }
+
+    .topbar-left {
+      display: flex; align-items: center; gap: 0.9rem;
+    }
+    .topbar-logo {
+      width: 28px; height: 28px;
+      filter: brightness(0) saturate(100%) invert(91%) sepia(10%) saturate(350%) hue-rotate(95deg) brightness(105%);
+      object-fit: contain;
+    }
+    .topbar-title {
+      font-family: 'Pirata One', serif;
+      font-size: 1.15rem; font-weight: 400; letter-spacing: 0.02em;
+      color: var(--mint);
+    }
+    .topbar-badge {
+      background: var(--lime); color: var(--pine);
+      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em;
+      padding: 0.18rem 0.55rem; border-radius: 20px;
+    }
+    .topbar-version {
+      font-size: 0.62rem; color: rgba(199,234,210,0.3);
+      letter-spacing: 0.06em;
+    }
+    .topbar-actions { display: flex; gap: 0.5rem; }
     .icon-btn {
-      background: rgba(199,234,210,0.08); border: 1px solid rgba(199,234,210,0.2);
-      color: var(--mint-bg); border-radius: var(--radius); padding: 0.45rem 0.9rem;
-      font-family: 'Jost', sans-serif; font-size: 0.75rem; font-weight: 500;
-      letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
-      text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;
-      transition: background var(--trans), border-color var(--trans);
+      background: transparent; border: 1px solid var(--border);
+      color: var(--mint); border-radius: 4px;
+      padding: 0.42rem 0.85rem;
+      font-family: 'Jost', sans-serif; font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      transition: all var(--trans);
     }
-    .icon-btn:hover { background: rgba(180,220,59,0.15); border-color: var(--lime); color: var(--lime); }
+    .icon-btn:hover { border-color: var(--lime); color: var(--lime); background: rgba(180,220,59,0.08); }
 
-    .main { flex: 1; padding: 1.5rem; overflow-x: auto; }
+    .main { flex: 1; }
 
-    /* ── Stats bar ── */
-    .stats-bar { display: flex; gap: 1rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
-    .stat-card { background: var(--pine); border-radius: var(--radius); padding: 0.9rem 1.2rem; min-width: 130px; }
-    .stat-label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(199,234,210,0.5); margin-bottom: 0.3rem; }
-    .stat-val { font-family: 'IM Fell English', serif; font-size: 2rem; font-weight: 400; line-height: 1; color: var(--mint-bg); }
-    .stat-card.lime { background: var(--lime); }
-    .stat-card.lime .stat-label { color: rgba(12,25,31,0.6); }
-    .stat-card.lime .stat-val { color: var(--pine); }
-    .stat-card.red { background: #1a0a0a; }
-    .stat-card.red .stat-label { color: rgba(255,150,150,0.6); }
-    .stat-card.red .stat-val { color: #ff8080; }
-
-    /* ── Filter bar ── */
-    .filter-bar { display: flex; gap: 0.75rem; margin-bottom: 1.2rem; flex-wrap: wrap; align-items: center; }
-    .filter-bar select { width: auto; min-width: 160px; padding: 0.5rem 0.85rem; font-size: 0.82rem; }
-    .filter-label { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
-    .filter-reset {
-      background: none; border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 0.45rem 0.85rem; font-family: 'Jost', sans-serif; font-size: 0.75rem;
-      font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--ink-soft); cursor: pointer; transition: border-color var(--trans), color var(--trans);
+    /* ── Stats ── */
+    .stats-bar {
+      display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;
     }
-    .filter-reset:hover { border-color: var(--holly); color: var(--holly); }
+    .stat-card {
+      flex: 1; min-width: 130px;
+      background: var(--holly); border-radius: 12px;
+      padding: 0.85rem 1.1rem;
+      position: relative;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute; inset: 5px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+    .stat-card > * { position: relative; z-index: 1; }
+    .stat-label {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--mint-dim); margin-bottom: 0.3rem;
+    }
+    .stat-val {
+      font-family: 'Pirata One', serif;
+      font-size: 1.9rem; font-weight: 400; line-height: 1;
+      color: var(--mint);
+    }
+    .stat-card.lime .stat-val { color: var(--lime); }
+    .stat-card.red .stat-val { color: var(--red-soft); }
 
-    /* ── Abmeldungen block ── */
-    .abmeldungen-bar { margin-bottom: 1.2rem; display: flex; justify-content: flex-end; }
+    /* ── Action bar ── */
+    .action-bar {
+      display: flex; gap: 0.6rem; margin-bottom: 1rem; justify-content: flex-end; flex-wrap: wrap;
+    }
+    .btn-action {
+      background: transparent; border: 1px solid;
+      border-radius: 4px;
+      padding: 0.48rem 0.95rem;
+      font-family: 'Jost', sans-serif; font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+      transition: all var(--trans);
+      white-space: nowrap;
+    }
+    .btn-add-anmeldung {
+      border-color: rgba(180,220,59,0.45);
+      color: var(--lime);
+    }
+    .btn-add-anmeldung:hover { background: rgba(180,220,59,0.12); border-color: var(--lime); }
     .btn-add-abmeldung {
-      background: none; border: 1px solid var(--holly); border-radius: var(--radius);
-      padding: 0.45rem 0.9rem; font-family: 'Jost', sans-serif; font-size: 0.75rem;
-      font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
-      color: var(--holly); cursor: pointer; white-space: nowrap;
-      transition: background var(--trans), color var(--trans);
+      border-color: rgba(220,100,90,0.4);
+      color: var(--red-soft);
     }
-    .btn-add-abmeldung:hover { background: var(--holly); color: var(--mint-bg); }
+    .btn-add-abmeldung:hover { background: rgba(192,57,43,0.12); border-color: var(--red-soft); }
+
+    /* ── Filter ── */
+    .filter-bar {
+      display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;
+      margin-bottom: 1rem;
+      background: var(--holly); border-radius: 12px;
+      padding: 0.7rem 1rem;
+      position: relative;
+    }
+    .filter-bar::before {
+      content: '';
+      position: absolute; inset: 5px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+    .filter-bar > * { position: relative; z-index: 1; }
+    .filter-label {
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--mint-dim);
+    }
+    .filter-bar select {
+      width: auto; min-width: 160px; padding: 0.4rem 0.85rem 0.4rem 0;
+      font-size: 0.82rem;
+    }
+    .filter-reset {
+      background: transparent; border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.38rem 0.8rem;
+      font-family: 'Jost', sans-serif; font-size: 0.68rem;
+      font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--mint-dim); cursor: pointer;
+      transition: all var(--trans);
+    }
+    .filter-reset:hover { border-color: var(--lime); color: var(--lime); }
 
     /* ── Table ── */
-    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    thead tr { background: var(--pine); color: var(--mint-bg); }
-    th {
-      padding: 0.75rem 0.9rem; text-align: left;
-      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-      white-space: nowrap; cursor: pointer; user-select: none;
+    .table-wrap {
+      background: var(--holly); border-radius: 12px;
+      overflow: hidden;
+      position: relative;
     }
-    th:hover { background: var(--holly); }
+    .table-wrap::before {
+      content: '';
+      position: absolute; inset: 6px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .table-scroll { position: relative; z-index: 1; overflow-x: auto; padding: 6px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    thead tr { background: rgba(12,25,31,0.4); color: var(--mint); }
+    th {
+      padding: 0.7rem 0.85rem; text-align: left;
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+      white-space: nowrap; cursor: pointer; user-select: none;
+      color: var(--mint-dim);
+    }
+    th:hover { color: var(--lime); }
     th .sort-icon { margin-left: 0.3rem; opacity: 0.4; font-style: normal; }
-    th.sort-asc .sort-icon::after  { content: ' ↑'; opacity: 1; }
-    th.sort-desc .sort-icon::after { content: ' ↓'; opacity: 1; }
+    th.sort-asc .sort-icon::after  { content: ' ↑'; opacity: 1; color: var(--lime); }
+    th.sort-desc .sort-icon::after { content: ' ↓'; opacity: 1; color: var(--lime); }
     th:not(.sort-asc):not(.sort-desc) .sort-icon::after { content: ' ↕'; }
 
-    tbody tr { border-bottom: 1px solid var(--border-soft); transition: background var(--trans); }
+    tbody tr {
+      border-bottom: 1px dashed var(--border);
+      transition: background var(--trans);
+    }
     tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: var(--mint-bg); }
-    td { padding: 0.7rem 0.9rem; vertical-align: middle; }
+    tbody tr:hover { background: rgba(180,220,59,0.06); }
+    td { padding: 0.65rem 0.85rem; vertical-align: middle; color: var(--mint); }
 
-    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.72rem; font-weight: 500; }
-    .badge-solo { background: var(--pine); color: var(--mint-bg); }
-    .badge-begleitung { background: var(--lime); color: var(--pine); }
-    .badge-absage { background: #fde8e8; color: #c0392b; }
+    .badge {
+      display: inline-block; padding: 0.18rem 0.55rem; border-radius: 20px;
+      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.05em;
+    }
+    .badge-solo {
+      background: rgba(180,220,59,0.15);
+      color: var(--lime);
+      border: 1px solid rgba(180,220,59,0.35);
+    }
+    .badge-begleitung {
+      background: var(--lime); color: var(--pine);
+    }
+    .badge-absage {
+      background: rgba(192,57,43,0.15);
+      color: var(--red-soft);
+      border: 1px solid rgba(220,100,90,0.4);
+    }
+    .badge-manuell {
+      background: rgba(199,234,210,0.08);
+      color: var(--mint-dim);
+      border: 1px solid var(--border);
+    }
+    .badge-form {
+      background: rgba(199,234,210,0.05);
+      color: var(--mint-dim);
+    }
 
     .edit-btn {
-      background: none; border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 0.3rem 0.55rem; cursor: pointer; color: var(--ink-soft); font-size: 0.9rem;
-      transition: border-color var(--trans), color var(--trans);
+      background: transparent; border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.25rem 0.5rem; cursor: pointer; color: var(--mint-dim); font-size: 0.85rem;
+      transition: all var(--trans);
     }
-    .edit-btn:hover { border-color: var(--holly); color: var(--holly); }
+    .edit-btn:hover { border-color: var(--lime); color: var(--lime); }
 
-    .empty-state { text-align: center; padding: 3rem; color: var(--ink-soft); font-size: 0.9rem; }
+    .empty-state { text-align: center; padding: 3rem; color: var(--mint-dim); font-size: 0.9rem; }
 
-    /* ── Spinner ── */
-    .spinner-wrap { text-align: center; padding: 3rem; color: var(--ink-soft); }
+    .spinner-wrap { text-align: center; padding: 3rem; color: var(--mint-dim); }
     .spinner {
-      display: inline-block; width: 20px; height: 20px;
-      border: 2px solid var(--border); border-top-color: var(--holly);
+      display: inline-block; width: 18px; height: 18px;
+      border: 1.5px solid var(--border); border-top-color: var(--lime);
       border-radius: 50%; animation: spin 0.7s linear infinite;
       vertical-align: middle; margin-right: 0.5rem;
     }
@@ -189,54 +371,92 @@
 
     /* ── Modal ── */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(12,25,31,0.6);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
       display: flex; align-items: center; justify-content: center;
-      z-index: 200; padding: 1rem; opacity: 0; pointer-events: none;
+      z-index: 200; padding: 1rem;
+      opacity: 0; pointer-events: none;
       transition: opacity var(--trans);
     }
     .modal-overlay.open { opacity: 1; pointer-events: all; }
     .modal {
-      background: var(--surface); border-radius: 2px; border: 1px solid var(--border);
-      padding: 2rem; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+      background: var(--holly); border-radius: 18px;
+      padding: 2.25rem 2rem; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto;
       transform: translateY(16px); transition: transform var(--trans);
-      box-shadow: 0 20px 80px rgba(12,25,31,0.4);
+      box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+      position: relative;
     }
+    .modal::before {
+      content: '';
+      position: absolute; inset: 10px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      pointer-events: none;
+    }
+    .modal > * { position: relative; z-index: 1; }
     .modal-overlay.open .modal { transform: translateY(0); }
-    .modal-title { font-family: 'IM Fell English', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1.2rem; color: var(--ink); }
+
+    .modal-title {
+      font-family: 'Pirata One', serif;
+      font-size: 1.6rem; font-weight: 400;
+      color: var(--mint); margin-bottom: 0.4rem; text-align: center;
+    }
     .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
     .modal-grid .full { grid-column: 1 / -1; }
-    .modal label { margin-top: 0.9rem; }
-    textarea { resize: vertical; min-height: 70px; }
+    .modal label { margin-top: 1rem; }
     .modal-actions { display: flex; gap: 0.6rem; margin-top: 1.5rem; justify-content: flex-end; }
     .btn-secondary {
-      padding: 0.6rem 1.1rem; background: none; border: 1px solid var(--border);
-      border-radius: var(--radius); font-family: 'Jost', sans-serif; font-size: 0.78rem;
-      font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-      cursor: pointer; color: var(--ink-soft);
-      transition: border-color var(--trans), color var(--trans);
+      padding: 0.6rem 1.1rem;
+      background: transparent; border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: 'Jost', sans-serif; font-size: 0.7rem;
+      font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+      cursor: pointer; color: var(--mint-dim);
+      transition: all var(--trans);
     }
-    .btn-secondary:hover { border-color: var(--holly); color: var(--holly); }
+    .btn-secondary:hover { border-color: var(--mint); color: var(--mint); }
     .btn-save {
-      padding: 0.6rem 1.4rem; background: var(--pine); color: var(--mint-bg);
-      border: none; border-radius: var(--radius); font-family: 'Jost', sans-serif; font-size: 0.78rem;
-      font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
-      transition: background var(--trans);
+      padding: 0.6rem 1.4rem;
+      background: rgba(180,220,59,0.15);
+      border: 1px solid rgba(180,220,59,0.45);
+      color: var(--lime);
+      border-radius: 4px;
+      font-family: 'Jost', sans-serif; font-size: 0.7rem;
+      font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer;
+      transition: all var(--trans);
     }
-    .btn-save:hover { background: var(--holly); }
+    .btn-save:hover { background: rgba(180,220,59,0.25); border-color: var(--lime); }
 
-    /* ── Print ── */
+    .companion-block-modal {
+      grid-column: 1 / -1;
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 1rem;
+    }
+    .companion-block-modal.visible { display: grid; }
+    .companion-divider-modal {
+      grid-column: 1 / -1;
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--mint-dim);
+      padding-top: 1.2rem; margin-top: 0.6rem;
+      border-top: 1px dashed var(--border);
+    }
+
     @media print {
-      .topbar, .filter-bar, .abmeldungen-bar .btn-add-abmeldung, .edit-btn, .modal-overlay { display: none !important; }
+      .topbar, .filter-bar, .action-bar, .edit-btn, .modal-overlay { display: none !important; }
       .main { padding: 0; }
-      body { background: #fff; }
+      body { background: #fff; color: #000; }
       table { font-size: 0.8rem; }
       thead tr { background: #0c191f !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .table-wrap, .stat-card { background: #fff; }
     }
 
     @media (max-width: 600px) {
-      .topbar-title { font-size: 1rem; }
-      th, td { padding: 0.55rem 0.6rem; font-size: 0.8rem; }
+      .topbar { flex-direction: column; gap: 0.6rem; align-items: stretch; }
+      .topbar-actions { justify-content: center; }
+      th, td { padding: 0.5rem 0.55rem; font-size: 0.78rem; }
       .modal-grid { grid-template-columns: 1fr; }
+      .companion-block-modal { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -244,46 +464,49 @@
 
 <!-- ══ Login ══ -->
 <div id="login-stage" class="login-stage">
-  <div class="login-card">
-    <div style="text-align:center;margin-bottom:1.5rem;">
-      <img src="logo.png" alt="Wirtschaft Zum Grünen Baum" style="width:120px;filter:brightness(0) saturate(100%) invert(85%) sepia(15%) saturate(300%) hue-rotate(95deg) brightness(110%);" />
+  <div class="login-wrap">
+    <div class="card login-card">
+      <div class="logo-wrap">
+        <img src="logo.png" alt="Wirtschaft zum Grünen Baum" />
+      </div>
+      <div class="eyebrow">Administration</div>
+      <h1>Gästeliste</h1>
+      <div class="ornament"><span class="ornament-inner">✦</span></div>
+      <label for="admin-pw">Passwort</label>
+      <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
+      <div class="error-msg" id="login-err">Falsches Passwort.</div>
+      <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
     </div>
-    <div class="eyebrow">Administration</div>
-    <h1>Anmeldungen</h1>
-    <label for="admin-pw">Passwort</label>
-    <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
-    <div class="error-msg" id="login-err">Falsches Passwort.</div>
-    <button class="btn-primary" onclick="adminLogin()">Einloggen</button>
   </div>
 </div>
 
 <!-- ══ App ══ -->
 <div id="app">
+
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-title">Anmeldungen</span>
+      <img src="logo.png" alt="WGB" class="topbar-logo" />
+      <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.023</span>
+      <span class="topbar-version">CLv0.029</span>
     </div>
     <div class="topbar-actions">
-      <a id="sheet-link" href="https://docs.google.com/spreadsheets/d/1BLJSVqF2s-WJ8pZvKQyPxYSimrxOjQrVOFZJDHKE8p0/edit" target="_blank" class="icon-btn">📄 Sheet</a>
+      <a href="https://docs.google.com/spreadsheets/d/1BLJSVqF2s-WJ8pZvKQyPxYSimrxOjQrVOFZJDHKE8p0/edit" target="_blank" class="icon-btn">📄 Sheet</a>
       <button class="icon-btn" onclick="window.print()">🖨 Drucken</button>
       <button class="icon-btn" onclick="loadData()">↻ Aktualisieren</button>
     </div>
   </div>
 
   <div class="main">
-    <!-- Stats -->
     <div class="stats-bar" id="stats-bar"></div>
 
-    <!-- Abmeldungen -->
-    <div class="abmeldungen-bar">
-      <button class="btn-add-abmeldung" onclick="openAbmeldungModal()">+ Abmeldung erfassen</button>
+    <div class="action-bar">
+      <button class="btn-action btn-add-anmeldung" onclick="openAnmeldungModal()">+ Anmeldung erfassen</button>
+      <button class="btn-action btn-add-abmeldung" onclick="openAbmeldungModal()">+ Abmeldung erfassen</button>
     </div>
 
-    <!-- Filter -->
     <div class="filter-bar">
-      <span class="filter-label">Filter:</span>
+      <span class="filter-label">Filter</span>
       <select id="filter-typ" onchange="applyFilter()">
         <option value="">Alle Typen</option>
         <option value="Solo">Solo</option>
@@ -293,10 +516,9 @@
       <button class="filter-reset" onclick="resetFilter()">✕ Zurücksetzen</button>
     </div>
 
-    <!-- Table -->
     <div class="table-wrap">
-      <div id="table-container">
-        <div class="spinner-wrap"><span class="spinner"></span>Lade Daten…</div>
+      <div class="table-scroll" id="table-container">
+        <div class="spinner-wrap"><span class="spinner"></span>Lade Daten …</div>
       </div>
     </div>
   </div>
@@ -305,7 +527,9 @@
 <!-- ══ Edit Modal ══ -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
   <div class="modal">
-    <div class="modal-title">Anmeldung bearbeiten</div>
+    <div class="eyebrow">Bearbeiten</div>
+    <div class="modal-title">Anmeldung anpassen</div>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
     <div class="modal-grid">
       <div><label for="m-vorname">Vorname</label><input type="text" id="m-vorname" /></div>
       <div><label for="m-nachname">Nachname</label><input type="text" id="m-nachname" /></div>
@@ -313,25 +537,64 @@
       <div><label for="m-tel">Telefon</label><input type="tel" id="m-tel" /></div>
       <div><label for="m-b-vorname">Begl. Vorname</label><input type="text" id="m-b-vorname" /></div>
       <div><label for="m-b-nachname">Begl. Nachname</label><input type="text" id="m-b-nachname" /></div>
+      <div><label for="m-kinder">Kinder</label><input type="number" id="m-kinder" min="0" /></div>
       <div class="full"><label for="m-kommentar">Kommentar</label><textarea id="m-kommentar"></textarea></div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal()">Abbrechen</button>
-      <button class="btn-save" onclick="saveEdit()">💾 Speichern</button>
+      <button class="btn-save" onclick="saveEdit()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Anmeldung Modal ══ -->
+<div class="modal-overlay" id="anmeldung-modal" onclick="closeAnmeldungOnOverlay(event)">
+  <div class="modal">
+    <div class="eyebrow">Manuell</div>
+    <div class="modal-title">Anmeldung erfassen</div>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
+    <div class="modal-grid">
+      <div><label for="an-vorname">Vorname</label><input type="text" id="an-vorname" /></div>
+      <div><label for="an-nachname">Nachname</label><input type="text" id="an-nachname" /></div>
+      <div><label for="an-email">E-Mail</label><input type="email" id="an-email" /></div>
+      <div><label for="an-tel">Telefon</label><input type="tel" id="an-tel" /></div>
+
+      <div class="full">
+        <label for="an-typ">Teilnahme</label>
+        <select id="an-typ" onchange="toggleAnBegleitung()">
+          <option value="Solo">Solo</option>
+          <option value="Mit Begleitung">Mit Begleitung</option>
+        </select>
+      </div>
+
+      <div class="companion-block-modal" id="an-companion">
+        <div class="companion-divider-modal">Begleitperson</div>
+        <div><label for="an-b-vorname">Vorname</label><input type="text" id="an-b-vorname" /></div>
+        <div><label for="an-b-nachname">Nachname</label><input type="text" id="an-b-nachname" /></div>
+        <div><label for="an-kinder">Kinder</label><input type="number" id="an-kinder" min="0" placeholder="0" /></div>
+      </div>
+
+      <div class="full"><label for="an-kommentar">Kommentar</label><textarea id="an-kommentar"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeAnmeldungModal()">Abbrechen</button>
+      <button class="btn-save" onclick="saveAnmeldung()">Speichern</button>
     </div>
   </div>
 </div>
 
 <!-- ══ Abmeldung Modal ══ -->
 <div class="modal-overlay" id="abmeldung-modal" onclick="closeAbmeldungOnOverlay(event)">
-  <div class="modal" style="max-width:400px">
+  <div class="modal" style="max-width:420px">
+    <div class="eyebrow">Manuell</div>
     <div class="modal-title">Abmeldung erfassen</div>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
     <label for="ab-vorname">Vorname</label>
-    <input type="text" id="ab-vorname" style="margin-bottom:0.8rem" />
+    <input type="text" id="ab-vorname" />
     <label for="ab-nachname">Nachname</label>
-    <input type="text" id="ab-nachname" style="margin-bottom:0.8rem" />
+    <input type="text" id="ab-nachname" />
     <label for="ab-grund">Grund (optional)</label>
-    <textarea id="ab-grund" style="min-height:60px"></textarea>
+    <textarea id="ab-grund"></textarea>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeAbmeldungModal()">Abbrechen</button>
       <button class="btn-save" onclick="saveAbmeldung()">Speichern</button>
@@ -339,18 +602,17 @@
   </div>
 </div>
 
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em">CLv0.029 · © Pippos Lustige Hundeshow</div>
+
 <script>
-  // ── Config ────────────────────────────────────────────
   const ADMIN_PASSWORD  = 'ichweissalles';
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTv6EPU4YIAl--U-hShJMLWtgFlD_nTe7xzcAtIrX5uy3DsyzR8IfeZkz5N7GYp6lEpg/exec';
-  // ─────────────────────────────────────────────────────
 
   let allRows    = [];
   let editRowIdx = null;
   let sortCol    = null;
   let sortDir    = 'asc';
 
-  // ── Login ─────────────────────────────────────────────
   document.getElementById('admin-pw').addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin(); });
 
   function adminLogin() {
@@ -365,10 +627,9 @@
     }
   }
 
-  // ── Load data ─────────────────────────────────────────
   async function loadData() {
     document.getElementById('table-container').innerHTML =
-      '<div class="spinner-wrap"><span class="spinner"></span>Lade Daten…</div>';
+      '<div class="spinner-wrap"><span class="spinner"></span>Lade Daten …</div>';
     try {
       const res  = await fetch(APPS_SCRIPT_URL + '?action=getAll');
       const json = await res.json();
@@ -381,8 +642,7 @@
     }
   }
 
-  // ── Stats ─────────────────────────────────────────────
-  function renderStats(filteredRows) {
+  function renderStats() {
     const anmeldungen = allRows.filter(r => r.typ !== 'Absage');
     const total      = anmeldungen.length;
     const solo       = anmeldungen.filter(r => r.typ === 'Solo').length;
@@ -399,12 +659,10 @@
     `;
   }
 
-  // ── Filter ────────────────────────────────────────────
   function applyFilter() {
     const typ = document.getElementById('filter-typ').value;
     let filtered = [...allRows];
     if (typ) filtered = filtered.filter(r => r.typ === typ);
-    renderStats(typ ? filtered : null);
     renderTable(filtered);
   }
 
@@ -413,7 +671,6 @@
     applyFilter();
   }
 
-  // ── Table ─────────────────────────────────────────────
   const COLS = [
     { key: 'timestamp',  label: 'Datum / Zeit' },
     { key: 'typ',        label: 'Typ' },
@@ -424,6 +681,7 @@
     { key: 'tel',        label: 'Tel' },
     { key: 'b_vorname',  label: 'Begl. Vorname' },
     { key: 'b_nachname', label: 'Begl. Nachname' },
+    { key: 'bier',       label: 'Kinder' },
     { key: 'kommentar',  label: 'Kommentar' },
   ];
 
@@ -452,16 +710,20 @@
         : r.typ === 'Mit Begleitung'
         ? `<span class="badge badge-begleitung">+1</span>`
         : `<span class="badge badge-absage">Absage</span>`;
+      const sourceBadge = r.source === 'manuell'
+        ? `<span class="badge badge-manuell">manuell</span>`
+        : `<span class="badge badge-form">Form</span>`;
       return `<tr>
         <td>${esc(formatTimestamp(r.timestamp))}</td>
         <td>${typBadge}</td>
-        <td>${r.source === 'manuell' ? '<span class="badge" style="background:#fff3cd;color:#856404">manuell</span>' : '<span class="badge" style="background:#e8f0e8;color:#1d3d38">form</span>'}</td>
+        <td>${sourceBadge}</td>
         <td>${esc(r.vorname)}</td>
         <td>${esc(r.nachname)}</td>
         <td>${esc(r.email)}</td>
         <td>${esc(r.tel)}</td>
         <td>${esc(r.b_vorname)}</td>
         <td>${esc(r.b_nachname)}</td>
+        <td>${esc(r.bier)}</td>
         <td>${esc(r.kommentar)}</td>
         <td><button class="edit-btn" title="Bearbeiten" onclick="openEdit(${globalIdx})">✏️</button></td>
       </tr>`;
@@ -471,23 +733,22 @@
       `<table><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table>`;
   }
 
-  function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function esc(s) { return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  // ── Sort ──────────────────────────────────────────────
   function sortBy(key) {
-    if (sortCol === key) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; }
+    if (sortCol === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
     else { sortCol = key; sortDir = 'asc'; }
     const typ = document.getElementById('filter-typ').value;
     let rows = [...allRows];
     if (typ) rows = rows.filter(r => r.typ === typ);
     rows.sort((a, b) => {
-      const av = (a[key]||'').toLowerCase(), bv = (b[key]||'').toLowerCase();
+      const av = (a[key]||'').toString().toLowerCase(), bv = (b[key]||'').toString().toLowerCase();
       return av < bv ? (sortDir==='asc'?-1:1) : av > bv ? (sortDir==='asc'?1:-1) : 0;
     });
     renderTable(rows);
   }
 
-  // ── Edit Modal ────────────────────────────────────────
+  // ── Edit ──
   function openEdit(idx) {
     editRowIdx = idx;
     const r = allRows[idx];
@@ -497,10 +758,10 @@
     document.getElementById('m-tel').value        = r.tel        || '';
     document.getElementById('m-b-vorname').value  = r.b_vorname  || '';
     document.getElementById('m-b-nachname').value = r.b_nachname || '';
+    document.getElementById('m-kinder').value     = r.bier       || '';
     document.getElementById('m-kommentar').value  = r.kommentar  || '';
     document.getElementById('modal-overlay').classList.add('open');
   }
-
   function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); editRowIdx = null; }
   function closeModalOnOverlay(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 
@@ -508,13 +769,14 @@
     const r = allRows[editRowIdx];
     const updated = { ...r,
       source:     r.source || 'form',
-      vorname:    document.getElementById('m-vorname').value.trim(),
-      nachname:   document.getElementById('m-nachname').value.trim(),
-      email:      document.getElementById('m-email').value.trim(),
-      tel:        document.getElementById('m-tel').value.trim(),
-      b_vorname:  document.getElementById('m-b-vorname').value.trim(),
-      b_nachname: document.getElementById('m-b-nachname').value.trim(),
-      kommentar:  document.getElementById('m-kommentar').value.trim(),
+      vorname:    val('m-vorname'),
+      nachname:   val('m-nachname'),
+      email:      val('m-email'),
+      tel:        val('m-tel'),
+      b_vorname:  val('m-b-vorname'),
+      b_nachname: val('m-b-nachname'),
+      bier:       val('m-kinder') || '0',
+      kommentar:  val('m-kommentar'),
     };
     const btn = document.querySelector('#modal-overlay .btn-save');
     btn.textContent = '…'; btn.disabled = true;
@@ -527,23 +789,72 @@
       allRows[editRowIdx] = updated;
       renderStats(); applyFilter(); closeModal();
     } catch(e) { alert('Fehler: ' + e.message); }
-    finally { btn.textContent = '💾 Speichern'; btn.disabled = false; }
+    finally { btn.textContent = 'Speichern'; btn.disabled = false; }
   }
 
-  // ── Abmeldungen ───────────────────────────────────────
+  // ── Anmeldung Modal ──
+  function openAnmeldungModal() {
+    ['an-vorname','an-nachname','an-email','an-tel','an-b-vorname','an-b-nachname','an-kinder','an-kommentar'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('an-typ').value = 'Solo';
+    toggleAnBegleitung();
+    document.getElementById('anmeldung-modal').classList.add('open');
+  }
+  function closeAnmeldungModal() { document.getElementById('anmeldung-modal').classList.remove('open'); }
+  function closeAnmeldungOnOverlay(e) { if (e.target === document.getElementById('anmeldung-modal')) closeAnmeldungModal(); }
+
+  function toggleAnBegleitung() {
+    const mit = document.getElementById('an-typ').value === 'Mit Begleitung';
+    document.getElementById('an-companion').classList.toggle('visible', mit);
+    if (!mit) {
+      document.getElementById('an-b-vorname').value = '';
+      document.getElementById('an-b-nachname').value = '';
+      document.getElementById('an-kinder').value = '';
+    }
+  }
+
+  async function saveAnmeldung() {
+    const vn = val('an-vorname'), nn = val('an-nachname');
+    if (!vn || !nn) { alert('Bitte Vor- und Nachname eingeben.'); return; }
+    const typ = document.getElementById('an-typ').value;
+    const mit = typ === 'Mit Begleitung';
+
+    const btn = document.querySelector('#anmeldung-modal .btn-save');
+    btn.textContent = '…'; btn.disabled = true;
+
+    const payload = {
+      typ, source: 'manuell',
+      vorname: vn, nachname: nn,
+      email: val('an-email'), tel: val('an-tel'),
+      b_vorname:  mit ? val('an-b-vorname')  : '',
+      b_nachname: mit ? val('an-b-nachname') : '',
+      bier:       mit ? (val('an-kinder') || '0') : '0',
+      kommentar:  val('an-kommentar'),
+      timestamp: new Date().toLocaleString('de-CH'),
+    };
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      closeAnmeldungModal();
+      setTimeout(loadData, 600);
+    } catch(e) { alert('Fehler: ' + e.message); }
+    finally { btn.textContent = 'Speichern'; btn.disabled = false; }
+  }
+
+  // ── Abmeldung Modal ──
   function openAbmeldungModal() {
-    document.getElementById('ab-vorname').value = '';
-    document.getElementById('ab-nachname').value = '';
-    document.getElementById('ab-grund').value = '';
+    ['ab-vorname','ab-nachname','ab-grund'].forEach(id => { document.getElementById(id).value = ''; });
     document.getElementById('abmeldung-modal').classList.add('open');
   }
-
   function closeAbmeldungModal() { document.getElementById('abmeldung-modal').classList.remove('open'); }
   function closeAbmeldungOnOverlay(e) { if (e.target === document.getElementById('abmeldung-modal')) closeAbmeldungModal(); }
 
   async function saveAbmeldung() {
-    const vn = document.getElementById('ab-vorname').value.trim();
-    const nn = document.getElementById('ab-nachname').value.trim();
+    const vn = val('ab-vorname'), nn = val('ab-nachname');
     if (!vn || !nn) { alert('Bitte Vor- und Nachname eingeben.'); return; }
     const btn = document.querySelector('#abmeldung-modal .btn-save');
     btn.textContent = '…'; btn.disabled = true;
@@ -551,7 +862,7 @@
       typ: 'Absage', source: 'manuell',
       vorname: vn, nachname: nn,
       email: '', tel: '', b_vorname: '', b_nachname: '',
-      kommentar: document.getElementById('ab-grund').value.trim(),
+      bier: '0', kommentar: val('ab-grund'),
       timestamp: new Date().toLocaleString('de-CH'),
     };
     try {
@@ -561,11 +872,12 @@
         body: JSON.stringify(payload),
       });
       closeAbmeldungModal();
-      loadData();
+      setTimeout(loadData, 600);
     } catch(e) { alert('Fehler: ' + e.message); }
     finally { btn.textContent = 'Speichern'; btn.disabled = false; }
   }
+
+  function val(id) { return document.getElementById(id).value.trim(); }
 </script>
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.6rem;color:rgba(12,25,31,0.3);pointer-events:none;letter-spacing:0.1em">CLv0.023 · © Pippos Lustige Hundeshow</div>
 </body>
 </html>
