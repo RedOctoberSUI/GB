@@ -294,6 +294,16 @@
       color: var(--mint-dim); text-align: center;
       margin-bottom: 1.8rem;
     }
+    .pw-error-quote {
+      font-family: 'IM Fell English', serif;
+      font-size: 1rem; font-style: italic;
+      line-height: 1.5;
+      color: rgba(220,130,130,0.95);
+      text-align: center;
+      margin: 1rem 0 0;
+      padding-top: 1rem;
+      border-top: 1px dashed rgba(220,100,90,0.3);
+    }
 
 
 
@@ -454,7 +464,7 @@
         <p class="text-block" style="text-align:center;margin-bottom:1.5rem;">Willkommen zur Wirtschaft zum Grünen Baum.<br><br>Wir öffnen dieses Jahr vom 20.11. 19:00 bis zum 21.11. 04:00.</p>
         <div style="margin-top:1.3rem;"></div>
         <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.036 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.58rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.72rem;">CLv0.037 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -626,12 +636,12 @@
     <p class="pw-quote-author">— Laird Peter Jansen II</p>
     <div class="ornament"><span class="ornament-inner">✦</span></div>
     <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
-    <div class="error-msg" id="pw-error" style="display:none">Falsches Passwort.</div>
-    <button class="btn-submit" onclick="checkPassword()">Eintreten</button>
+    <p class="pw-error-quote" id="pw-error" style="display:none">—</p>
+    <button class="btn-submit" onclick="checkPassword()">Tritt ein!</button>
   </div>
 </div>
 
-<div class="version-tag">CLv0.036</div>
+<div class="version-tag">CLv0.037</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
@@ -661,17 +671,33 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  let pwAttempts = 0;
+  const PW_FAIL_MSGS = [
+    '„Dies Wort ist nicht fein, so trete eben auch nicht ein."',
+    '„Richtig Tippen ist die Kunst – sonst ist Dein Bier bald nur ein Dunst!"'
+  ];
+
   function checkPassword() {
     const v = document.getElementById('pw-input').value;
     const err = document.getElementById('pw-error');
+    const input = document.getElementById('pw-input');
     if (v === PASSWORD) {
       err.style.display = 'none';
+      pwAttempts = 0;
       closePwModal();
       showScreen('screen-invite');
-    } else {
-      err.style.display = 'block';
-      document.getElementById('pw-input').classList.add('input-error');
+      return;
     }
+    pwAttempts++;
+    input.classList.add('input-error');
+    if (pwAttempts >= 3) {
+      window.location.href = 'https://www.mcdonalds.ch/';
+      return;
+    }
+    err.textContent = PW_FAIL_MSGS[pwAttempts - 1];
+    err.style.display = 'block';
+    input.value = '';
+    input.focus();
   }
 
   function toggleBegleitung() {
@@ -800,6 +826,7 @@
 </script>
 </body>
 </html>
+
 
 
 
