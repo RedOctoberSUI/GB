@@ -1,104 +1,215 @@
-// ═══════════════════════════════════════════════════════
-//  Fest-Anmeldung · Apps Script  CLv0.006
-//  Sheet-ID: 1BLJSVqF2s-WJ8pZvKQyPxYSimrxOjQrVOFZJDHKE8p0
-// ═══════════════════════════════════════════════════════
+/*
+ * Wirtschaft zum Grünen Baum 2026 — Apps Script Backend
+ * CLv0.041
+ *
+ * Sheet: 1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc
+ *
+ * Spalten (1-indexiert):
+ *   A=1  Timestamp
+ *   B=2  Vorname
+ *   C=3  Nachname
+ *   D=4  Email
+ *   E=5  Tel
+ *   F=6  Begleitung Vorname
+ *   G=7  Begleitung Nachname
+ *   H=8  Anzahl Kinder
+ *   I=9  Einladend
+ *   J=10 Kommentar
+ *   K=11 2025
+ *   L=12 2026
+ */
 
-const SHEET_NAME = 'Anmeldungen';
-const HEADERS    = ['timestamp','typ','source','vorname','nachname','email','tel','b_vorname','b_nachname','bier','kommentar'];
+const SHEET_ID    = '1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc';
+const SHEET_NAME  = 'Gästeliste';   // ggf. anpassen wenn das Tab anders heisst
+const HEADER_ROW  = 1;
 
-function getSheet() {
-  const ss    = SpreadsheetApp.getActiveSpreadsheet();
-  let   sheet = ss.getSheetByName(SHEET_NAME);
-  if (!sheet) {
-    sheet = ss.insertSheet(SHEET_NAME);
-    const hdr = sheet.getRange(1, 1, 1, HEADERS.length);
-    hdr.setValues([['Timestamp','Typ','Quelle','Vorname','Nachname','E-Mail','Telefon','Begl. Vorname','Begl. Nachname','Bier','Kommentar']]);
-    hdr.setFontWeight('bold').setBackground('#1a1a18').setFontColor('#ffffff');
-  }
-  return sheet;
-}
+const COL = {
+  timestamp:   1,
+  vorname:     2,
+  nachname:    3,
+  email:       4,
+  tel:         5,
+  b_vorname:   6,
+  b_nachname:  7,
+  kinder:      8,
+  einladend:   9,
+  kommentar:  10,
+  year_2025:  11,
+  year_2026:  12,
+};
 
-// ── GET: load all rows ────────────────────────────────
+// ─── Entry points ─────────────────────────────────────────────────────────
+
 function doGet(e) {
-  const action = e && e.parameter && e.parameter.action;
-  if (action === 'getAll') {
-    const sheet  = getSheet();
-    const data   = sheet.getDataRange().getValues();
-    if (data.length <= 1) {
-      return jsonResponse({ rows: [] });
-    }
-    const rows = data.slice(1).map((row, i) => {
-      const obj = {};
-      HEADERS.forEach((h, j) => obj[h] = row[j] !== undefined ? String(row[j]) : '');
-      obj._rowIndex = i + 2;
-      return obj;
-    });
-    return jsonResponse({ rows });
-  }
-  return jsonResponse({ status: 'ok' });
+  const action = (e && e.parameter && e.parameter.action) || 'getAll';
+  if (action === 'getAll') return jsonResponse({ ok: true, rows: getAllRows() });
+  return jsonResponse({ ok: false, error: 'Unknown action: ' + action });
 }
 
-// ── POST: new entry or update ─────────────────────────
 function doPost(e) {
   try {
-    const data   = JSON.parse(e.postData.contents);
-    const sheet  = getSheet();
-    const action = data.action;
+    const body   = JSON.parse(e.postData.contents);
+    const action = body.action || 'insert';
 
-    if (action === 'update') {
-      const rowIdx = parseInt(data.rowIndex);
-      const d      = data.data;
-      sheet.getRange(rowIdx, 1, 1, HEADERS.length).setValues([[
-        d.timestamp  || '',
-        d.typ        || '',
-        d.source     || '',
-        d.vorname    || '',
-        d.nachname   || '',
-        d.email      || '',
-        d.tel        || '',
-        d.b_vorname  || '',
-        d.b_nachname || '',
-        d.bier        || 0,
-        d.kommentar  || '',
-      ]]);
-      return jsonResponse({ status: 'ok', action: 'updated', row: rowIdx });
+    if (action === 'update') return handleUpdate(body);
+    return handleUpsert(body);
+  } catch (err) {
+    return jsonResponse({ ok: false, error: String(err) });
+  }
+}
+
+// ─── Handlers ─────────────────────────────────────────────────────────────
+
+/*
+ * Anmeldung/Absage vom Form oder manuelle Erfassung im Admin.
+ * Sucht bestehende Zeile per Vor-/Nachname (case-insensitive). Wenn gefunden:
+ * updated Felder + 2026-Status. Sonst neue Zeile unten anhängen.
+ */
+function handleUpsert(data) {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  if (!sheet) return jsonResponse({ ok: false, error: 'Sheet "' + SHEET_NAME + '" nicht gefunden' });
+
+  const status2026 = data.typ === 'Absage' ? 'Abgemeldet' : 'Angemeldet';
+  const vn = (data.vorname  || '').toString().trim();
+  const nn = (data.nachname || '').toString().trim();
+  const timestamp = data.timestamp || new Date().toLocaleString('de-CH');
+
+  // Suche nach passender Zeile
+  const lastRow = sheet.getLastRow();
+  let targetRow = -1;
+  if (lastRow > HEADER_ROW) {
+    const values = sheet.getRange(HEADER_ROW + 1, COL.vorname, lastRow - HEADER_ROW, 2).getValues();
+    for (let i = 0; i < values.length; i++) {
+      const rowVn = (values[i][0] || '').toString().trim().toLowerCase();
+      const rowNn = (values[i][1] || '').toString().trim().toLowerCase();
+      if (rowVn === vn.toLowerCase() && rowNn === nn.toLowerCase()) {
+        targetRow = HEADER_ROW + 1 + i;
+        break;
+      }
+    }
+  }
+
+  if (targetRow > 0) {
+    // Update bestehende Zeile — nur nicht-leere Felder überschreiben
+    setIfFilled(sheet, targetRow, COL.timestamp,  timestamp);
+    setIfFilled(sheet, targetRow, COL.email,      data.email);
+    setIfFilled(sheet, targetRow, COL.tel,        data.tel);
+    setIfFilled(sheet, targetRow, COL.b_vorname,  data.b_vorname);
+    setIfFilled(sheet, targetRow, COL.b_nachname, data.b_nachname);
+    setIfFilled(sheet, targetRow, COL.kinder,     data.bier);  // 'bier' Feld trägt jetzt Kinderzahl
+    setIfFilled(sheet, targetRow, COL.kommentar,  data.kommentar);
+    sheet.getRange(targetRow, COL.year_2026).setValue(status2026);
+    return jsonResponse({ ok: true, action: 'updated', row: targetRow });
+  }
+
+  // Neue Zeile unten anfügen
+  const newRow = [
+    timestamp,
+    vn,
+    nn,
+    data.email     || '',
+    data.tel       || '',
+    data.b_vorname || '',
+    data.b_nachname|| '',
+    data.bier      || '',
+    data.einladend || '',
+    data.kommentar || '',
+    '',                // 2025 leer
+    status2026,        // 2026
+  ];
+  sheet.appendRow(newRow);
+  return jsonResponse({ ok: true, action: 'inserted', row: sheet.getLastRow() });
+}
+
+/*
+ * Manuelles Update via Admin-Edit-Modal. data enthält die kompletten Felder
+ * und rowIndex zeigt die Zeile (1-basiert wie im Sheet).
+ */
+function handleUpdate(body) {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  if (!sheet) return jsonResponse({ ok: false, error: 'Sheet "' + SHEET_NAME + '" nicht gefunden' });
+
+  const rowIndex = parseInt(body.rowIndex, 10);
+  if (!rowIndex || rowIndex <= HEADER_ROW) {
+    return jsonResponse({ ok: false, error: 'Ungültiger rowIndex' });
+  }
+  const d = body.data || {};
+  sheet.getRange(rowIndex, COL.vorname).setValue(d.vorname     || '');
+  sheet.getRange(rowIndex, COL.nachname).setValue(d.nachname    || '');
+  sheet.getRange(rowIndex, COL.email).setValue(d.email       || '');
+  sheet.getRange(rowIndex, COL.tel).setValue(d.tel         || '');
+  sheet.getRange(rowIndex, COL.b_vorname).setValue(d.b_vorname   || '');
+  sheet.getRange(rowIndex, COL.b_nachname).setValue(d.b_nachname  || '');
+  sheet.getRange(rowIndex, COL.kinder).setValue(d.bier        || '');
+  sheet.getRange(rowIndex, COL.einladend).setValue(d.einladend   || '');
+  sheet.getRange(rowIndex, COL.kommentar).setValue(d.kommentar   || '');
+  if (d.year_2026 !== undefined) sheet.getRange(rowIndex, COL.year_2026).setValue(d.year_2026 || '');
+  return jsonResponse({ ok: true, action: 'updated', row: rowIndex });
+}
+
+// ─── Read ─────────────────────────────────────────────────────────────────
+
+function getAllRows() {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  if (!sheet) return [];
+  const lastRow = sheet.getLastRow();
+  if (lastRow <= HEADER_ROW) return [];
+  const lastCol = sheet.getLastColumn();
+  const data = sheet.getRange(HEADER_ROW + 1, 1, lastRow - HEADER_ROW, lastCol).getValues();
+
+  const rows = [];
+  for (let i = 0; i < data.length; i++) {
+    const r = data[i];
+    const vorname  = (r[COL.vorname  - 1] || '').toString().trim();
+    const nachname = (r[COL.nachname - 1] || '').toString().trim();
+    // Komplett leere Zeilen überspringen
+    if (!vorname && !nachname) continue;
+
+    const year2026 = (r[COL.year_2026 - 1] || '').toString().trim();
+    const status2025 = (r[COL.year_2025 - 1] || '').toString().trim();
+
+    // 'typ' aus 2026 ableiten — für Admin-Tool
+    let typ;
+    if (year2026 === 'Abgemeldet') typ = 'Absage';
+    else if (year2026 === 'Angemeldet') {
+      const hasBegl = (r[COL.b_vorname - 1] || '').toString().trim() !== '';
+      typ = hasBegl ? 'Mit Begleitung' : 'Solo';
+    } else {
+      typ = 'Offen';  // noch keine Antwort 2026
     }
 
-    // Default: new registration
-    sheet.appendRow([
-      data.timestamp  || new Date().toLocaleString('de-CH'),
-      data.typ        || '',
-      data.source     || 'form',
-      data.vorname    || '',
-      data.nachname   || '',
-      data.email      || '',
-      data.tel        || '',
-      data.b_vorname  || '',
-      data.b_nachname || '',
-      data.bier       || 0,
-      data.kommentar  || '',
-    ]);
-    return jsonResponse({ status: 'ok', action: 'created' });
-
-  } catch (err) {
-    return jsonResponse({ status: 'error', message: err.toString() });
+    rows.push({
+      _rowIndex:  HEADER_ROW + 1 + i,
+      timestamp:  (r[COL.timestamp  - 1] || '').toString(),
+      vorname:    vorname,
+      nachname:   nachname,
+      email:      (r[COL.email      - 1] || '').toString(),
+      tel:        (r[COL.tel        - 1] || '').toString(),
+      b_vorname:  (r[COL.b_vorname  - 1] || '').toString(),
+      b_nachname: (r[COL.b_nachname - 1] || '').toString(),
+      bier:       (r[COL.kinder     - 1] || '').toString(),  // Compat: weiterhin 'bier'
+      einladend:  (r[COL.einladend  - 1] || '').toString(),
+      kommentar:  (r[COL.kommentar  - 1] || '').toString(),
+      status_2025:status2025,
+      status_2026:year2026,
+      typ:        typ,
+      source:     status2025 ? 'liste' : 'form', // Vorab-Eintrag oder Live-Anmeldung
+    });
   }
+  return rows;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────
+
+function setIfFilled(sheet, row, col, value) {
+  if (value === undefined || value === null) return;
+  const s = value.toString().trim();
+  if (!s) return;
+  sheet.getRange(row, col).setValue(value);
 }
 
 function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
-}
-
-// ── Test ──────────────────────────────────────────────
-function testInsert() {
-  const fake = { postData: { contents: JSON.stringify({
-    typ: 'Mit Begleitung', source: 'form',
-    vorname: 'Anna', nachname: 'Muster',
-    email: 'anna@beispiel.ch', tel: '+41 79 000 00 00',
-    b_vorname: 'Ben', b_nachname: 'Muster', bier: 3, kommentar: 'Test',
-    timestamp: new Date().toLocaleString('de-CH'),
-  })}};
-  Logger.log(doPost(fake).getContent());
 }
