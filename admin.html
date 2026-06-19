@@ -520,7 +520,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.042</span>
+      <span class="topbar-version">CLv0.045</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1BLJSVqF2s-WJ8pZvKQyPxYSimrxOjQrVOFZJDHKE8p0/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -659,11 +659,12 @@
   </div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.042 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.045 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwxiEIW7zYPQJx3WNZhEm8xmmhi239uCJ8COleqDfat7j8t7eHM520kbFbg4b6kII/exec';
+  const API_TOKEN       = 'oEmhvp6yDaS7XVAp3q2MyhsELMClhtq-';
 
   let allRows    = [];
   let editRowIdx = null;
@@ -689,7 +690,7 @@
     document.getElementById('table-container').innerHTML =
       '<div class="spinner-wrap"><span class="spinner"></span>Lade Daten …</div>';
     try {
-      const res  = await fetch(APPS_SCRIPT_URL + '?action=getAll');
+      const res  = await fetch(APPS_SCRIPT_URL + '?action=getAll&token=' + encodeURIComponent(API_TOKEN));
       const json = await res.json();
       allRows = (json && json.rows) || [];
       renderStats();
@@ -883,7 +884,7 @@
       await fetch(APPS_SCRIPT_URL, {
         method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'update', rowIndex: r._rowIndex, data: updated }),
+        body: JSON.stringify({ token: API_TOKEN, action: 'update', rowIndex: r._rowIndex, data: updated }),
       });
       allRows[editRowIdx] = updated;
       renderStats(); applyFilter(); closeModal();
@@ -924,6 +925,7 @@
     btn.textContent = '…'; btn.disabled = true;
 
     const payload = {
+      token: API_TOKEN,
       typ, source: 'manuell',
       vorname: vn, nachname: nn,
       email: val('an-email'), tel: val('an-tel'),
@@ -960,6 +962,7 @@
     const btn = document.querySelector('#abmeldung-modal .btn-save');
     btn.textContent = '…'; btn.disabled = true;
     const payload = {
+      token: API_TOKEN,
       typ: 'Absage', source: 'manuell',
       vorname: vn, nachname: nn,
       email: '', tel: '', b_vorname: '', b_nachname: '',
@@ -982,6 +985,7 @@
 </script>
 </body>
 </html>
+
 
 
 
