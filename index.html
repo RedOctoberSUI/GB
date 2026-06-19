@@ -427,6 +427,18 @@
 
     .input-error { border-color: rgba(220,100,90,0.8) !important; }
     .error-msg { font-size: 0.902rem; color: rgba(230,150,140,0.95); margin-top: 0.8rem; }
+    /* ── Char-Counter ── */
+    .char-counter {
+      font-size: 0.66rem;
+      color: var(--mint-faint);
+      text-align: right;
+      margin-top: 0.3rem;
+      letter-spacing: 0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+    .char-counter.warn { color: var(--lime); }
+    .char-counter.over { color: rgba(220,130,130,0.95); }
+
 
     /* ── Begleitung & Kinder dependent ── */
     .companion-fields, .kinder-block {
@@ -514,7 +526,7 @@
         </div>
         <div style="margin-top:1.3rem;"></div>
         <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.045 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.046 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -622,7 +634,8 @@
 
           <div class="form-full">
             <label for="f-kommentar">Kommentar <span class="small-note">(optional)</span></label>
-            <textarea id="f-kommentar" placeholder="Was auch immer Sie uns noch mitteilen möchten …"></textarea>
+            <textarea id="f-kommentar" maxlength="300" placeholder="Was auch immer Sie uns noch mitteilen möchten …" oninput="updateCounter('f-kommentar')"></textarea>
+          <div class="char-counter" id="f-kommentar-counter">0 / 300</div>
           </div>
         </div>
 
@@ -648,7 +661,8 @@
           </div>
           <div class="form-full">
             <label for="a-grund">Möchten Sie uns den Grund mitteilen?</label>
-            <textarea id="a-grund" placeholder="Ich bin leider verhindert, weil …"></textarea>
+            <textarea id="a-grund" maxlength="300" placeholder="Ich bin leider verhindert, weil …" oninput="updateCounter('a-grund')"></textarea>
+          <div class="char-counter" id="a-grund-counter">0 / 300</div>
           </div>
         </div>
 
@@ -691,7 +705,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.045</div>
+<div class="version-tag">CLv0.046</div>
 
 <script>
   const PASSWORD        = 'OhTannenbaum';
@@ -764,6 +778,18 @@
   }
 
   function val(id) { return document.getElementById(id).value.trim(); }
+
+
+  function updateCounter(id) {
+    const el = document.getElementById(id);
+    const c  = document.getElementById(id + '-counter');
+    if (!el || !c) return;
+    const max = parseInt(el.getAttribute('maxlength')) || 300;
+    const len = el.value.length;
+    c.textContent = len + ' / ' + max;
+    c.classList.toggle('warn', len > max * 0.85 && len <= max);
+    c.classList.toggle('over', len >= max);
+  }
 
   async function submitForm() {
     const err = document.getElementById('form-error');
@@ -860,9 +886,9 @@
       'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z',
       'DTSTART:20261120T190000',
       'DTEND:20261121T040000',
-      'SUMMARY:Wirtschaft zum Grünen Baum 2026',
+      'SUMMARY:Grüner Baum 2026',
       'LOCATION:Rämistrasse 50\\, 8001 Zürich',
-      'DESCRIPTION:Fest zum Grünen Baum\\n\\n19:00 — Ruhiges Warm-up inkl. Verpflegung\\n21:00 — Baumfeier mit allen Gästen und Glühwein\\n22:00 — Feier im Bierkeller «zum Grünen Baum»\\n\\nEure Gastgeber\\nPeter & Lars',
+      'DESCRIPTION:Wirtschaft zum Grünen Baum\\n\\n19:00 — Ruhiges Warm-up inkl. Verpflegung\\n20:00 — Baumfeier mit allen Gästen und Glühwein\\n22:00 — Feier im Bierkeller «zum Grünen Baum»\\n\\nKinder bis 22:00 herzlich willkommen\\n\\nEure Gastgeber\\nPeter & Lars',
       'END:VEVENT',
       'END:VCALENDAR'
     ].join('\r\n');
@@ -879,6 +905,7 @@
 </script>
 </body>
 </html>
+
 
 
 
