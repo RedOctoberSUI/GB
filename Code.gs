@@ -20,7 +20,7 @@
  */
 
 const SHEET_ID    = '1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc';
-const SHEET_NAME  = 'Gästeliste';   // ggf. anpassen wenn das Tab anders heisst
+const SHEET_NAME  = 'Anmeldungen GB';   // ggf. anpassen wenn das Tab anders heisst
 const HEADER_ROW  = 1;
 
 const COL = {
