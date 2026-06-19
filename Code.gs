@@ -22,6 +22,7 @@
 const SHEET_ID    = '1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc';
 const SHEET_NAME  = 'Anmeldungen GB';   // ggf. anpassen wenn das Tab anders heisst
 const HEADER_ROW  = 1;
+const SECRET_TOKEN= 'oEmhvp6yDaS7XVAp3q2MyhsELMClhtq-';
 
 const COL = {
   timestamp:   1,
@@ -41,7 +42,11 @@ const COL = {
 // ─── Entry points ─────────────────────────────────────────────────────────
 
 function doGet(e) {
-  const action = (e && e.parameter && e.parameter.action) || 'getAll';
+  const params = (e && e.parameter) || {};
+  if (params.token !== SECRET_TOKEN) {
+    return jsonResponse({ ok: false, error: 'Unauthorized' });
+  }
+  const action = params.action || 'getAll';
   if (action === 'getAll') return jsonResponse({ ok: true, rows: getAllRows() });
   return jsonResponse({ ok: false, error: 'Unknown action: ' + action });
 }
@@ -49,6 +54,9 @@ function doGet(e) {
 function doPost(e) {
   try {
     const body   = JSON.parse(e.postData.contents);
+    if (body.token !== SECRET_TOKEN) {
+      return jsonResponse({ ok: false, error: 'Unauthorized' });
+    }
     const action = body.action || 'insert';
 
     if (action === 'update') return handleUpdate(body);
@@ -213,3 +221,4 @@ function jsonResponse(obj) {
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
+
