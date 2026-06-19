@@ -286,6 +286,31 @@
       transition: all var(--trans);
     }
     .filter-reset:hover { border-color: var(--lime); color: var(--lime); }
+    /* ── Toggle ── */
+    .scope-toggle {
+      display: inline-flex;
+      background: rgba(12,25,31,0.4);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px;
+      gap: 0;
+    }
+    .scope-toggle button {
+      background: transparent; border: none;
+      color: var(--mint-dim); cursor: pointer;
+      padding: 0.4rem 0.95rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border-radius: 20px;
+      transition: all var(--trans);
+    }
+    .scope-toggle button.active {
+      background: rgba(180,220,59,0.18);
+      color: var(--lime);
+    }
+    .scope-toggle button:not(.active):hover { color: var(--mint); }
+
 
     /* ── Table ── */
     .table-wrap {
@@ -350,6 +375,11 @@
     .badge-form {
       background: rgba(199,234,210,0.05);
       color: var(--mint-dim);
+    }
+    .badge-offen {
+      background: rgba(199,234,210,0.08);
+      color: var(--mint-dim);
+      border: 1px dashed var(--border);
     }
 
     .edit-btn {
@@ -490,7 +520,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.030</span>
+      <span class="topbar-version">CLv0.041</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1BLJSVqF2s-WJ8pZvKQyPxYSimrxOjQrVOFZJDHKE8p0/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -508,12 +538,18 @@
     </div>
 
     <div class="filter-bar">
-      <span class="filter-label">Filter</span>
+      <span class="filter-label">Anzeigen</span>
+      <div class="scope-toggle">
+        <button id="scope-2026" class="active" onclick="setScope('2026')">Nur 2026</button>
+        <button id="scope-all" onclick="setScope('all')">Alle Einträge</button>
+      </div>
+      <span class="filter-label" style="margin-left:0.5rem">Filter</span>
       <select id="filter-typ" onchange="applyFilter()">
         <option value="">Alle Typen</option>
         <option value="Solo">Solo</option>
         <option value="Mit Begleitung">Mit Begleitung</option>
         <option value="Absage">Absage</option>
+        <option value="Offen">Offen (ohne Antwort)</option>
       </select>
       <button class="filter-reset" onclick="resetFilter()">✕ Zurücksetzen</button>
     </div>
@@ -540,6 +576,15 @@
       <div><label for="m-b-vorname">Begl. Vorname</label><input type="text" id="m-b-vorname" /></div>
       <div><label for="m-b-nachname">Begl. Nachname</label><input type="text" id="m-b-nachname" /></div>
       <div><label for="m-kinder">Kinder</label><input type="number" id="m-kinder" min="0" /></div>
+      <div><label for="m-einladend">Einladend</label><input type="text" id="m-einladend" /></div>
+      <div class="full">
+        <label for="m-year2026">Status 2026</label>
+        <select id="m-year2026">
+          <option value="">— Keine Antwort —</option>
+          <option value="Angemeldet">Angemeldet</option>
+          <option value="Abgemeldet">Abgemeldet</option>
+        </select>
+      </div>
       <div class="full"><label for="m-kommentar">Kommentar</label><textarea id="m-kommentar"></textarea></div>
     </div>
     <div class="modal-actions">
@@ -561,6 +606,16 @@
       <div><label for="an-email">E-Mail</label><input type="email" id="an-email" /></div>
       <div><label for="an-tel">Telefon</label><input type="tel" id="an-tel" /></div>
 
+      <div class="full">
+        <label for="an-einladend">Einladend</label>
+        <select id="an-einladend">
+          <option value="">— Auswählen —</option>
+          <option value="Peter">Peter</option>
+          <option value="Lars">Lars</option>
+          <option value="Beatrice">Beatrice</option>
+          <option value="Peter & Lars">Peter & Lars</option>
+        </select>
+      </div>
       <div class="full">
         <label for="an-typ">Teilnahme</label>
         <select id="an-typ" onchange="toggleAnBegleitung()">
@@ -604,7 +659,7 @@
   </div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.030 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.041 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -614,6 +669,7 @@
   let editRowIdx = null;
   let sortCol    = null;
   let sortDir    = 'asc';
+  let scope      = '2026';  // '2026' (default) oder 'all'
 
   document.getElementById('admin-pw').addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin(); });
 
@@ -635,7 +691,7 @@
     try {
       const res  = await fetch(APPS_SCRIPT_URL + '?action=getAll');
       const json = await res.json();
-      allRows = json.rows || [];
+      allRows = (json && json.rows) || [];
       renderStats();
       applyFilter();
     } catch(e) {
@@ -645,25 +701,48 @@
   }
 
   function renderStats() {
-    const anmeldungen = allRows.filter(r => r.typ !== 'Absage');
+    const rows = getScopedRows();
+    const anmeldungen = rows.filter(r => r.typ === 'Solo' || r.typ === 'Mit Begleitung');
     const total      = anmeldungen.length;
-    const solo       = anmeldungen.filter(r => r.typ === 'Solo').length;
-    const begleitung = anmeldungen.filter(r => r.typ === 'Mit Begleitung').length;
+    const solo       = rows.filter(r => r.typ === 'Solo').length;
+    const begleitung = rows.filter(r => r.typ === 'Mit Begleitung').length;
     const personen   = total + begleitung;
-    const absagen    = allRows.filter(r => r.typ === 'Absage').length;
+    const absagen    = rows.filter(r => r.typ === 'Absage').length;
+    const offen      = rows.filter(r => r.typ === 'Offen').length;
+
     document.getElementById('count-badge').textContent = total;
+    const offenCard = scope === 'all' && offen > 0
+      ? `<div class="stat-card"><div class="stat-label">Offen</div><div class="stat-val">${offen}</div></div>`
+      : '';
     document.getElementById('stats-bar').innerHTML = `
       <div class="stat-card"><div class="stat-label">Anmeldungen</div><div class="stat-val">${total}</div></div>
       <div class="stat-card"><div class="stat-label">Solo</div><div class="stat-val">${solo}</div></div>
       <div class="stat-card lime"><div class="stat-label">Mit Begleitung</div><div class="stat-val">${begleitung}</div></div>
       <div class="stat-card"><div class="stat-label">Personen total</div><div class="stat-val">${personen}</div></div>
       <div class="stat-card red"><div class="stat-label">Absagen</div><div class="stat-val">${absagen}</div></div>
+      ${offenCard}
     `;
+  }
+
+  function setScope(s) {
+    scope = s;
+    document.getElementById('scope-2026').classList.toggle('active', s === '2026');
+    document.getElementById('scope-all').classList.toggle('active', s === 'all');
+    renderStats();
+    applyFilter();
+  }
+
+  function getScopedRows() {
+    if (scope === '2026') {
+      // Nur Einträge mit 2026-Antwort (Angemeldet oder Abgemeldet)
+      return allRows.filter(r => r.status_2026 === 'Angemeldet' || r.status_2026 === 'Abgemeldet');
+    }
+    return allRows;
   }
 
   function applyFilter() {
     const typ = document.getElementById('filter-typ').value;
-    let filtered = [...allRows];
+    let filtered = getScopedRows();
     if (typ) filtered = filtered.filter(r => r.typ === typ);
     renderTable(filtered);
   }
@@ -674,17 +753,18 @@
   }
 
   const COLS = [
-    { key: 'timestamp',  label: 'Datum / Zeit' },
-    { key: 'typ',        label: 'Typ' },
-    { key: 'source',     label: 'Quelle' },
     { key: 'vorname',    label: 'Vorname' },
     { key: 'nachname',   label: 'Nachname' },
+    { key: 'typ',        label: '2026' },
+    { key: 'status_2025',label: '2025' },
+    { key: 'einladend',  label: 'Einladend' },
     { key: 'email',      label: 'E-Mail' },
     { key: 'tel',        label: 'Tel' },
     { key: 'b_vorname',  label: 'Begl. Vorname' },
     { key: 'b_nachname', label: 'Begl. Nachname' },
     { key: 'bier',       label: 'Kinder' },
     { key: 'kommentar',  label: 'Kommentar' },
+    { key: 'timestamp',  label: 'Erfasst' },
   ];
 
   function formatTimestamp(raw) {
@@ -711,22 +791,29 @@
         ? `<span class="badge badge-solo">Solo</span>`
         : r.typ === 'Mit Begleitung'
         ? `<span class="badge badge-begleitung">+1</span>`
-        : `<span class="badge badge-absage">Absage</span>`;
-      const sourceBadge = r.source === 'manuell'
-        ? `<span class="badge badge-manuell">manuell</span>`
-        : `<span class="badge badge-form">Form</span>`;
+        : r.typ === 'Absage'
+        ? `<span class="badge badge-absage">Absage</span>`
+        : `<span class="badge badge-offen">Offen</span>`;
+      const badge2025 = r.status_2025 === 'Angemeldet'
+        ? `<span class="badge badge-solo">An</span>`
+        : r.status_2025 === 'Abgemeldet'
+        ? `<span class="badge badge-absage">Ab</span>`
+        : r.status_2025 === 'Keine Rückmeldung'
+        ? `<span class="badge badge-offen">–</span>`
+        : '';
       return `<tr>
-        <td>${esc(formatTimestamp(r.timestamp))}</td>
-        <td>${typBadge}</td>
-        <td>${sourceBadge}</td>
         <td>${esc(r.vorname)}</td>
         <td>${esc(r.nachname)}</td>
+        <td>${typBadge}</td>
+        <td>${badge2025}</td>
+        <td>${esc(r.einladend)}</td>
         <td>${esc(r.email)}</td>
         <td>${esc(r.tel)}</td>
         <td>${esc(r.b_vorname)}</td>
         <td>${esc(r.b_nachname)}</td>
         <td>${esc(r.bier)}</td>
         <td>${esc(r.kommentar)}</td>
+        <td>${esc(formatTimestamp(r.timestamp))}</td>
         <td><button class="edit-btn" title="Bearbeiten" onclick="openEdit(${globalIdx})">✏️</button></td>
       </tr>`;
     }).join('');
@@ -741,7 +828,7 @@
     if (sortCol === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
     else { sortCol = key; sortDir = 'asc'; }
     const typ = document.getElementById('filter-typ').value;
-    let rows = [...allRows];
+    let rows = getScopedRows();
     if (typ) rows = rows.filter(r => r.typ === typ);
     rows.sort((a, b) => {
       const av = (a[key]||'').toString().toLowerCase(), bv = (b[key]||'').toString().toLowerCase();
@@ -761,6 +848,8 @@
     document.getElementById('m-b-vorname').value  = r.b_vorname  || '';
     document.getElementById('m-b-nachname').value = r.b_nachname || '';
     document.getElementById('m-kinder').value     = r.bier       || '';
+    document.getElementById('m-einladend').value  = r.einladend  || '';
+    document.getElementById('m-year2026').value   = r.status_2026 || '';
     document.getElementById('m-kommentar').value  = r.kommentar  || '';
     document.getElementById('modal-overlay').classList.add('open');
   }
@@ -777,9 +866,17 @@
       tel:        val('m-tel'),
       b_vorname:  val('m-b-vorname'),
       b_nachname: val('m-b-nachname'),
-      bier:       val('m-kinder') || '0',
+      bier:       val('m-kinder') || '',
+      einladend:  val('m-einladend'),
+      year_2026:  document.getElementById('m-year2026').value,
+      status_2026:document.getElementById('m-year2026').value,
       kommentar:  val('m-kommentar'),
     };
+    // typ neu ableiten für UI
+    updated.typ = updated.status_2026 === 'Abgemeldet' ? 'Absage'
+                : updated.status_2026 === 'Angemeldet'
+                  ? (updated.b_vorname ? 'Mit Begleitung' : 'Solo')
+                  : 'Offen';
     const btn = document.querySelector('#modal-overlay .btn-save');
     btn.textContent = '…'; btn.disabled = true;
     try {
@@ -800,6 +897,7 @@
       document.getElementById(id).value = '';
     });
     document.getElementById('an-typ').value = 'Solo';
+    document.getElementById('an-einladend').value = '';
     toggleAnBegleitung();
     document.getElementById('anmeldung-modal').classList.add('open');
   }
@@ -832,6 +930,7 @@
       b_vorname:  mit ? val('an-b-vorname')  : '',
       b_nachname: mit ? val('an-b-nachname') : '',
       bier:       mit ? (val('an-kinder') || '0') : '0',
+      einladend:  document.getElementById('an-einladend').value,
       kommentar:  val('an-kommentar'),
       timestamp: new Date().toLocaleString('de-CH'),
     };
@@ -883,4 +982,5 @@
 </script>
 </body>
 </html>
+
 
