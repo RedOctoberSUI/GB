@@ -393,6 +393,71 @@
       color: var(--mint-dim);
       border: 1px dashed var(--border);
     }
+    /* ── Neue Status-Badges ── */
+    .badge-png {
+      background: rgba(200,50,50,0.85);
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+    .badge-einzuladen {
+      background: rgba(60,130,220,0.85);
+      color: #fff;
+    }
+    .badge-einladung-gesendet {
+      background: rgba(120,180,230,0.85);
+      color: var(--pine);
+    }
+    .badge-clickable {
+      cursor: pointer;
+      transition: transform var(--trans), filter var(--trans);
+    }
+    .badge-clickable:hover { transform: translateY(-1px); filter: brightness(1.15); }
+
+    /* Zeile durchgestrichen bei PNG */
+    tr.row-png td { text-decoration: line-through; opacity: 0.55; }
+    tr.row-png td:last-child { text-decoration: none; opacity: 1; }  /* Edit-Button lesbar lassen */
+    tr.row-png .badge { text-decoration: none; }
+
+    /* ── Popover ── */
+    .status-popover {
+      position: absolute;
+      background: var(--holly);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px;
+      min-width: 190px;
+      z-index: 500;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      display: none;
+    }
+    .status-popover.open { display: block; }
+    .status-popover-item {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.5rem 0.7rem;
+      cursor: pointer; border-radius: 6px;
+      color: var(--mint);
+      font-size: 0.85rem;
+      transition: background var(--trans);
+    }
+    .status-popover-item:hover { background: rgba(180,220,59,0.1); }
+    .status-popover-item .badge {
+      pointer-events: none;
+      min-width: 105px;
+      text-align: center;
+    }
+
+    /* ── Resizable Columns ── */
+    th { position: relative; }
+    .col-resizer {
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 6px;
+      cursor: col-resize;
+      user-select: none;
+    }
+    .col-resizer:hover { background: rgba(180,220,59,0.3); }
+    table.resizing { user-select: none; }
+
 
     .edit-btn {
       background: transparent; border: 1px solid var(--border); border-radius: 4px;
@@ -532,7 +597,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.046</span>
+      <span class="topbar-version">CLv0.054</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1BLJSVqF2s-WJ8pZvKQyPxYSimrxOjQrVOFZJDHKE8p0/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -545,8 +610,7 @@
     <div class="stats-bar" id="stats-bar"></div>
 
     <div class="action-bar">
-      <button class="btn-action btn-add-anmeldung" onclick="openAnmeldungModal()">+ Anmeldung erfassen</button>
-      <button class="btn-action btn-add-abmeldung" onclick="openAbmeldungModal()">+ Abmeldung erfassen</button>
+      <button class="btn-action btn-add-anmeldung" onclick="openDatensatzModal()">+ Datensatz erfassen</button>
     </div>
 
     <div class="filter-bar">
@@ -610,7 +674,7 @@
 <div class="modal-overlay" id="anmeldung-modal" onclick="closeAnmeldungOnOverlay(event)">
   <div class="modal">
     <div class="eyebrow">Manuell</div>
-    <div class="modal-title">Anmeldung erfassen</div>
+    <div class="modal-title">Datensatz erfassen</div>
     <div class="ornament"><span class="ornament-inner">✦</span></div>
     <div class="modal-grid">
       <div><label for="an-vorname">Vorname</label><input type="text" id="an-vorname" /></div>
@@ -629,10 +693,15 @@
         </select>
       </div>
       <div class="full">
-        <label for="an-typ">Teilnahme</label>
-        <select id="an-typ" onchange="toggleAnBegleitung()">
-          <option value="Solo">Solo</option>
-          <option value="Mit Begleitung">Mit Begleitung</option>
+        <label for="an-status">Status 2026</label>
+        <select id="an-status">
+          <option value="">— Offen —</option>
+          <option value="Einzuladen">Einzuladen</option>
+          <option value="Einladung gesendet">Einladung gesendet</option>
+          <option value="Angemeldet">Angemeldet (Solo)</option>
+          <option value="Angemeldet-mit">Angemeldet (mit Begleitung)</option>
+          <option value="Abgemeldet">Abgemeldet</option>
+          <option value="PNG">PNG (Persona non Grata)</option>
         </select>
       </div>
 
@@ -647,7 +716,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeAnmeldungModal()">Abbrechen</button>
-      <button class="btn-save" onclick="saveAnmeldung()">Speichern</button>
+      <button class="btn-save" onclick="saveDatensatz()">Speichern</button>
     </div>
   </div>
 </div>
@@ -672,7 +741,19 @@
   </div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.046 · @ Schmutzli and Santas Little Helpers</div>
+
+<!-- ══ Status-Popover ══ -->
+<div class="status-popover" id="status-popover">
+  <div class="status-popover-item" onclick="setStatus('Einzuladen')"><span class="badge badge-einzuladen">Einzuladen</span></div>
+  <div class="status-popover-item" onclick="setStatus('Einladung gesendet')"><span class="badge badge-einladung-gesendet">Einladung gesendet</span></div>
+  <div class="status-popover-item" onclick="setStatus('Angemeldet')"><span class="badge badge-solo">Solo</span></div>
+  <div class="status-popover-item" onclick="setStatus('Angemeldet-mit')"><span class="badge badge-begleitung">Begleitung</span></div>
+  <div class="status-popover-item" onclick="setStatus('Abgemeldet')"><span class="badge badge-absage">Abmeldung</span></div>
+  <div class="status-popover-item" onclick="setStatus('PNG')"><span class="badge badge-png">PNG</span></div>
+  <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
+</div>
+
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.054 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -709,6 +790,198 @@
     c.textContent = len + ' / ' + max;
     c.classList.toggle('warn', len > max * 0.85 && len <= max);
     c.classList.toggle('over', len >= max);
+  }
+
+
+  // ─── Badge helper ───
+  function badgeForTyp(typ) {
+    switch (typ) {
+      case 'Solo':               return '<span class="badge badge-solo badge-clickable">Solo</span>';
+      case 'Mit Begleitung':     return '<span class="badge badge-begleitung badge-clickable">Begleitung</span>';
+      case 'Absage':             return '<span class="badge badge-absage badge-clickable">Abmeldung</span>';
+      case 'PNG':                return '<span class="badge badge-png badge-clickable">PNG</span>';
+      case 'Einzuladen':         return '<span class="badge badge-einzuladen badge-clickable">Einzuladen</span>';
+      case 'Einladung gesendet': return '<span class="badge badge-einladung-gesendet badge-clickable">Einladung gesendet</span>';
+      default:                   return '<span class="badge badge-offen badge-clickable">Offen</span>';
+    }
+  }
+
+  // ─── Status-Popover ───
+  let popoverRowIdx = null;
+
+  function openStatusPopover(event, idx) {
+    event.stopPropagation();
+    popoverRowIdx = idx;
+    const pop = document.getElementById('status-popover');
+    const rect = event.currentTarget.getBoundingClientRect();
+    pop.style.left = (rect.left + window.scrollX) + 'px';
+    pop.style.top  = (rect.bottom + window.scrollY + 4) + 'px';
+    pop.classList.add('open');
+  }
+  function closeStatusPopover() {
+    document.getElementById('status-popover').classList.remove('open');
+    popoverRowIdx = null;
+  }
+  document.addEventListener('click', e => {
+    const pop = document.getElementById('status-popover');
+    if (pop && !pop.contains(e.target) && !e.target.closest('.status-cell')) closeStatusPopover();
+  });
+
+  async function setStatus(newStatus) {
+    if (popoverRowIdx === null) return;
+    const r = allRows[popoverRowIdx];
+    // Spezialfall Angemeldet-mit: Angemeldet + Begleitung erforderlich (falls leer → nur setzen)
+    let statusValue = newStatus;
+    if (newStatus === 'Angemeldet-mit') statusValue = 'Angemeldet';
+    // Wenn "Angemeldet" ohne Begleitung → Solo (Begleitung leer lassen). Wenn "Angemeldet-mit" → typ = Mit Begleitung (User setzt Begleitung im Edit-Modal falls nötig)
+    const updated = { ...r,
+      year_2026:   statusValue,
+      status_2026: statusValue,
+    };
+    // typ neu ableiten
+    if (statusValue === '') updated.typ = 'Offen';
+    else if (statusValue === 'Abgemeldet') updated.typ = 'Absage';
+    else if (statusValue === 'PNG') updated.typ = 'PNG';
+    else if (statusValue === 'Einzuladen') updated.typ = 'Einzuladen';
+    else if (statusValue === 'Einladung gesendet') updated.typ = 'Einladung gesendet';
+    else if (statusValue === 'Angemeldet') {
+      updated.typ = newStatus === 'Angemeldet-mit' ? 'Mit Begleitung' : (updated.b_vorname ? 'Mit Begleitung' : 'Solo');
+    }
+
+    closeStatusPopover();
+
+    // Optimistic UI: lokal updaten, dann speichern
+    allRows[popoverRowIdx] = updated;
+    renderStats(); applyFilter();
+
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: API_TOKEN,
+          action: 'update',
+          rowIndex: r._rowIndex,
+          data: {
+            vorname: r.vorname, nachname: r.nachname,
+            email: r.email, tel: r.tel,
+            b_vorname: r.b_vorname, b_nachname: r.b_nachname,
+            bier: r.bier, einladend: r.einladend, kommentar: r.kommentar,
+            year_2026: statusValue,
+          },
+        }),
+      });
+    } catch(e) { alert('Fehler beim Status-Update: ' + e.message); }
+  }
+
+  // ─── Datensatz-Modal (ersetzt Anmeldung/Abmeldung) ───
+  function openDatensatzModal() {
+    ['an-vorname','an-nachname','an-email','an-tel','an-b-vorname','an-b-nachname','an-kinder','an-kommentar'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('an-einladend').value = '';
+    document.getElementById('an-status').value = '';
+    // Immer alle Felder anzeigen
+    document.getElementById('an-companion').classList.add('visible');
+    updateCounter('an-kommentar');
+    document.getElementById('anmeldung-modal').classList.add('open');
+  }
+
+  async function saveDatensatz() {
+    const vn = val('an-vorname'), nn = val('an-nachname');
+    if (!vn || !nn) { alert('Bitte Vor- und Nachname eingeben.'); return; }
+    const status = document.getElementById('an-status').value;
+
+    // Typ ableiten
+    let typ;
+    if (status === 'Abgemeldet') typ = 'Absage';
+    else if (status === 'PNG') typ = 'PNG';
+    else if (status === 'Einzuladen') typ = 'Einzuladen';
+    else if (status === 'Einladung gesendet') typ = 'Einladung gesendet';
+    else if (status === 'Angemeldet-mit') typ = 'Mit Begleitung';
+    else if (status === 'Angemeldet') typ = val('an-b-vorname') ? 'Mit Begleitung' : 'Solo';
+    else typ = 'Offen';
+
+    let statusValue = status === 'Angemeldet-mit' ? 'Angemeldet' : status;
+
+    const btn = document.querySelector('#anmeldung-modal .btn-save');
+    btn.textContent = '…'; btn.disabled = true;
+
+    const payload = {
+      token: API_TOKEN,
+      typ, source: 'manuell',
+      vorname: vn, nachname: nn,
+      email: val('an-email'), tel: val('an-tel'),
+      b_vorname:  val('an-b-vorname'),
+      b_nachname: val('an-b-nachname'),
+      bier:       val('an-kinder') || '',
+      einladend:  document.getElementById('an-einladend').value,
+      kommentar:  val('an-kommentar'),
+      year_2026:  statusValue,
+      timestamp: new Date().toLocaleString('de-CH'),
+    };
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      closeAnmeldungModal();
+      setTimeout(loadData, 600);
+    } catch(e) { alert('Fehler: ' + e.message); }
+    finally { btn.textContent = 'Speichern'; btn.disabled = false; }
+  }
+
+  // ─── Column Resize ───
+  const COL_WIDTH_KEY = 'gb-admin-col-widths-v1';
+
+  function loadColWidths() {
+    try { return JSON.parse(localStorage.getItem(COL_WIDTH_KEY) || '{}'); }
+    catch(e) { return {}; }
+  }
+  function saveColWidths(w) {
+    try { localStorage.setItem(COL_WIDTH_KEY, JSON.stringify(w)); } catch(e) {}
+  }
+  function applyColWidths() {
+    const w = loadColWidths();
+    document.querySelectorAll('table th').forEach((th, i) => {
+      if (w[i]) th.style.width = w[i] + 'px';
+    });
+  }
+  function initColumnResize() {
+    const table = document.querySelector('table');
+    if (!table) return;
+    table.querySelectorAll('th').forEach((th, i) => {
+      // vorhandenen Resizer entfernen (bei re-render)
+      const old = th.querySelector('.col-resizer');
+      if (old) old.remove();
+      const r = document.createElement('div');
+      r.className = 'col-resizer';
+      th.appendChild(r);
+
+      let startX, startW;
+      r.addEventListener('mousedown', e => {
+        e.preventDefault();
+        startX = e.pageX;
+        startW = th.offsetWidth;
+        table.classList.add('resizing');
+        function onMove(ev) {
+          const w = Math.max(40, startW + (ev.pageX - startX));
+          th.style.width = w + 'px';
+        }
+        function onUp() {
+          table.classList.remove('resizing');
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          const widths = loadColWidths();
+          widths[i] = th.offsetWidth;
+          saveColWidths(widths);
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    });
+    applyColWidths();
   }
 
   async function loadData() {
@@ -813,13 +1086,7 @@
 
     const tbody = rows.map((r) => {
       const globalIdx = allRows.indexOf(r);
-      const typBadge = r.typ === 'Solo'
-        ? `<span class="badge badge-solo">Solo</span>`
-        : r.typ === 'Mit Begleitung'
-        ? `<span class="badge badge-begleitung">+1</span>`
-        : r.typ === 'Absage'
-        ? `<span class="badge badge-absage">Absage</span>`
-        : `<span class="badge badge-offen">Offen</span>`;
+      const typBadge = badgeForTyp(r.typ);
       const badge2025 = r.status_2025 === 'Angemeldet'
         ? `<span class="badge badge-solo">An</span>`
         : r.status_2025 === 'Abgemeldet'
@@ -827,10 +1094,11 @@
         : r.status_2025 === 'Keine Rückmeldung'
         ? `<span class="badge badge-offen">–</span>`
         : '';
-      return `<tr>
+      const rowClass = r.typ === 'PNG' ? 'row-png' : '';
+      return `<tr class="${rowClass}">
         <td>${esc(r.vorname)}</td>
         <td>${esc(r.nachname)}</td>
-        <td>${typBadge}</td>
+        <td><span class="status-cell" data-idx="${globalIdx}" onclick="openStatusPopover(event, ${globalIdx})">${typBadge}</span></td>
         <td>${badge2025}</td>
         <td>${esc(r.einladend)}</td>
         <td>${esc(r.email)}</td>
@@ -846,6 +1114,7 @@
 
     document.getElementById('table-container').innerHTML =
       `<table><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table>`;
+    initColumnResize();
   }
 
   function esc(s) { return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -1013,6 +1282,7 @@
 </script>
 </body>
 </html>
+
 
 
 
