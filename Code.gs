@@ -77,7 +77,14 @@ function handleUpsert(data) {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
   if (!sheet) return jsonResponse({ ok: false, error: 'Sheet "' + SHEET_NAME + '" nicht gefunden' });
 
-  const status2026 = data.typ === 'Absage' ? 'Abgemeldet' : 'Angemeldet';
+  let status2026;
+  if (data.year_2026 !== undefined && data.year_2026 !== null && data.year_2026 !== '') {
+    status2026 = data.year_2026;
+  } else if (data.typ === 'Absage')            status2026 = 'Abgemeldet';
+  else if (data.typ === 'PNG')                 status2026 = 'PNG';
+  else if (data.typ === 'Einzuladen')          status2026 = 'Einzuladen';
+  else if (data.typ === 'Einladung gesendet')  status2026 = 'Einladung gesendet';
+  else                                          status2026 = 'Angemeldet';
   const vn = (data.vorname  || '').toString().trim();
   const nn = (data.nachname || '').toString().trim();
   const timestamp = data.timestamp || new Date().toLocaleString('de-CH');
@@ -178,7 +185,10 @@ function getAllRows() {
 
     // 'typ' aus 2026 ableiten — für Admin-Tool
     let typ;
-    if (year2026 === 'Abgemeldet') typ = 'Absage';
+    if (year2026 === 'Abgemeldet')            typ = 'Absage';
+    else if (year2026 === 'PNG')              typ = 'PNG';
+    else if (year2026 === 'Einzuladen')       typ = 'Einzuladen';
+    else if (year2026 === 'Einladung gesendet') typ = 'Einladung gesendet';
     else if (year2026 === 'Angemeldet') {
       const hasBegl = (r[COL.b_vorname - 1] || '').toString().trim() !== '';
       typ = hasBegl ? 'Mit Begleitung' : 'Solo';
@@ -221,4 +231,5 @@ function jsonResponse(obj) {
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
+
 
