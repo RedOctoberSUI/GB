@@ -457,6 +457,56 @@
     }
     .col-resizer:hover { background: rgba(180,220,59,0.3); }
     table.resizing { user-select: none; }
+    /* ── WhatsApp Button ── */
+    .wa-btn {
+      background: transparent; border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.3rem 0.55rem;
+      cursor: pointer; color: #25D366;
+      font-size: 0.95rem; line-height: 1;
+      transition: all var(--trans);
+      text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .wa-btn:hover { border-color: #25D366; background: rgba(37,211,102,0.1); }
+    .wa-btn.disabled {
+      cursor: not-allowed;
+      color: rgba(199,234,210,0.25);
+      border-color: rgba(199,234,210,0.15);
+      pointer-events: none;
+    }
+    .wa-no-num {
+      display: inline-block;
+      font-size: 0.65rem; color: rgba(199,234,210,0.35);
+      font-style: italic; letter-spacing: 0.03em;
+      padding: 0.3rem 0.4rem;
+    }
+
+    /* Settings Modal ── */
+    .settings-textarea {
+      width: 100%; min-height: 180px;
+      background: rgba(12,25,31,0.35);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.8rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.9rem; color: var(--mint);
+      line-height: 1.5;
+      resize: vertical;
+    }
+    .settings-textarea:focus { border-color: var(--lime); outline: none; }
+    .settings-hint {
+      font-size: 0.72rem; color: var(--mint-dim);
+      margin-top: 0.6rem; line-height: 1.5;
+    }
+    .settings-hint code {
+      background: rgba(180,220,59,0.12);
+      color: var(--lime);
+      padding: 0.08rem 0.35rem;
+      border-radius: 3px;
+      font-family: monospace; font-size: 0.85em;
+    }
+
 
 
     .edit-btn {
@@ -597,12 +647,13 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.056</span>
+      <span class="topbar-version">CLv0.057</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
       <button class="icon-btn" onclick="window.print()">🖨 Drucken</button>
       <button class="icon-btn" onclick="loadData()">↻ Aktualisieren</button>
+      <button class="icon-btn" onclick="openSettingsModal()">⚙ Einstellungen</button>
     </div>
   </div>
 
@@ -745,6 +796,24 @@
 </div>
 
 
+
+<!-- ══ Settings-Modal ══ -->
+<div class="modal-overlay" id="settings-modal" onclick="closeSettingsOnOverlay(event)">
+  <div class="modal">
+    <div class="eyebrow">Einstellungen</div>
+    <div class="modal-title">WhatsApp-Text</div>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
+    <label for="wa-template">Vorlage</label>
+    <textarea id="wa-template" class="settings-textarea"></textarea>
+    <p class="settings-hint">Platzhalter: <code>{vorname}</code> · <code>{nachname}</code> · <code>{einladend}</code> — werden pro Gast automatisch ersetzt.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="resetWaTemplate()">Standard wiederherstellen</button>
+      <button class="btn-secondary" onclick="closeSettingsModal()">Abbrechen</button>
+      <button class="btn-save" onclick="saveSettings()">Speichern</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ Status-Popover ══ -->
 <div class="status-popover" id="status-popover">
   <div class="status-popover-item" onclick="setStatus('Einzuladen')"><span class="badge badge-einzuladen">Einzuladen</span></div>
@@ -756,7 +825,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.056 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.057 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -987,6 +1056,108 @@
     applyColWidths();
   }
 
+
+  // ─── WhatsApp ───
+  const WA_TEMPLATE_KEY = 'gb-admin-wa-template-v1';
+  const WA_DEFAULT_TEMPLATE = `Hallo {vorname},
+
+wir laden dich herzlich zur Wirtschaft zum Grünen Baum ein — am Freitag, 20. November 2026.
+
+Alle Infos und Anmeldung: https://zumgruenenbaum.ch
+Passwort: Bier!
+
+Wir freuen uns auf dich!
+Peter & Lars`;
+
+  function getWaTemplate() {
+    return localStorage.getItem(WA_TEMPLATE_KEY) || WA_DEFAULT_TEMPLATE;
+  }
+
+  function normalizePhone(raw) {
+    if (!raw) return '';
+    let s = raw.toString().trim();
+    // Alle Nicht-Ziffern ausser + entfernen
+    s = s.replace(/[^0-9+]/g, '');
+    // + entfernen
+    s = s.replace(/^\+/, '');
+    // 00 (internationale Vorwahl) → weg
+    s = s.replace(/^00/, '');
+    // Führende 0 → 41 (Schweiz default) — nur wenn Nummer nicht schon international aussieht
+    if (s.length > 0 && s.startsWith('0') && !s.startsWith('00')) {
+      s = '41' + s.substring(1);
+    }
+    return s;
+  }
+
+  function buildWaMessage(r) {
+    const t = getWaTemplate();
+    return t
+      .replace(/\{vorname\}/g,  r.vorname   || '')
+      .replace(/\{nachname\}/g, r.nachname  || '')
+      .replace(/\{einladend\}/g,r.einladend || '');
+  }
+
+  function waButton(r, idx) {
+    const tel = normalizePhone(r.tel);
+    if (!tel) {
+      return '<span class="wa-no-num">keine Nummer</span>';
+    }
+    const msg = encodeURIComponent(buildWaMessage(r));
+    const url = `https://wa.me/${tel}?text=${msg}`;
+    return `<a href="${url}" target="_blank" class="wa-btn" title="Per WhatsApp senden" onclick="onWaClick(event, ${idx})">💬</a>`;
+  }
+
+  async function onWaClick(event, idx) {
+    // wa.me öffnet sich (Ziel _blank). Danach Status auf 'Einladung gesendet' setzen.
+    const r = allRows[idx];
+    if (!r) return;
+    // Status setzen (immer, wie gewünscht)
+    const newStatus = 'Einladung gesendet';
+    const updated = { ...r,
+      year_2026:   newStatus,
+      status_2026: newStatus,
+      typ:         'Einladung gesendet',
+    };
+    allRows[idx] = updated;
+    renderStats(); applyFilter();
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: API_TOKEN,
+          action: 'update',
+          rowIndex: r._rowIndex,
+          data: {
+            vorname: r.vorname, nachname: r.nachname,
+            email: r.email, tel: r.tel,
+            b_vorname: r.b_vorname, b_nachname: r.b_nachname,
+            bier: r.bier, einladend: r.einladend, kommentar: r.kommentar,
+            year_2026: newStatus,
+          },
+        }),
+      });
+    } catch(e) { /* silent — WhatsApp öffnet trotzdem */ }
+  }
+
+  // ─── Settings-Modal ───
+  function openSettingsModal() {
+    document.getElementById('wa-template').value = getWaTemplate();
+    document.getElementById('settings-modal').classList.add('open');
+  }
+  function closeSettingsModal() { document.getElementById('settings-modal').classList.remove('open'); }
+  function closeSettingsOnOverlay(e) { if (e.target === document.getElementById('settings-modal')) closeSettingsModal(); }
+  function saveSettings() {
+    const t = document.getElementById('wa-template').value.trim();
+    if (t) localStorage.setItem(WA_TEMPLATE_KEY, t);
+    else localStorage.removeItem(WA_TEMPLATE_KEY);
+    closeSettingsModal();
+    applyFilter();  // Re-Render damit neue Nachricht sofort in wa.me-URLs steckt
+  }
+  function resetWaTemplate() {
+    document.getElementById('wa-template').value = WA_DEFAULT_TEMPLATE;
+  }
+
   async function loadData() {
     document.getElementById('table-container').innerHTML =
       '<div class="spinner-wrap"><span class="spinner"></span>Lade Daten …</div>';
@@ -1086,7 +1257,7 @@
         '<div class="empty-state">Keine Einträge gefunden.</div>';
       return;
     }
-    const thead = COLS.map(c => {
+    const thead = '<th style="width:44px"></th>' + COLS.map(c => {
       let cls = sortCol === c.key ? (sortDir === 'asc' ? 'sort-asc' : 'sort-desc') : '';
       return `<th class="${cls}" onclick="sortBy('${c.key}')">${c.label}<i class="sort-icon"></i></th>`;
     }).join('') + '<th style="width:44px"></th>';
@@ -1103,6 +1274,7 @@
         : '';
       const rowClass = r.typ === 'PNG' ? 'row-png' : '';
       return `<tr class="${rowClass}">
+        <td>${waButton(r, globalIdx)}</td>
         <td>${esc(r.vorname)}</td>
         <td>${esc(r.nachname)}</td>
         <td><span class="status-cell" data-idx="${globalIdx}" onclick="openStatusPopover(event, ${globalIdx})">${typBadge}</span></td>
