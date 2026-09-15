@@ -647,7 +647,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.058</span>
+      <span class="topbar-version">CLv0.059</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -827,7 +827,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.058 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.059 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1097,13 +1097,22 @@ Peter & Lars`;
       .replace(/\{einladend\}/g,r.einladend || '');
   }
 
+  function isMobile() {
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  }
+
+  function waUrl(tel, msg) {
+    const encoded = encodeURIComponent(msg);
+    if (isMobile()) return `https://wa.me/${tel}?text=${encoded}`;
+    return `https://web.whatsapp.com/send/?phone=${tel}&text=${encoded}`;
+  }
+
   function waButton(r, idx) {
     const tel = normalizePhone(r.tel);
     if (!tel) {
       return '<span class="wa-no-num">keine Nummer</span>';
     }
-    const msg = encodeURIComponent(buildWaMessage(r));
-    const url = `https://wa.me/${tel}?text=${msg}`;
+    const url = waUrl(tel, buildWaMessage(r));
     return `<a href="${url}" target="_blank" class="wa-btn" title="Per WhatsApp senden" onclick="onWaClick(event, ${idx})">💬</a>`;
   }
 
