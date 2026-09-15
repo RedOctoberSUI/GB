@@ -597,7 +597,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.055</span>
+      <span class="topbar-version">CLv0.056</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -625,6 +625,9 @@
         <option value="Solo">Solo</option>
         <option value="Mit Begleitung">Mit Begleitung</option>
         <option value="Absage">Absage</option>
+        <option value="Einzuladen">Einzuladen</option>
+        <option value="Einladung gesendet">Einladung gesendet</option>
+        <option value="PNG">PNG</option>
         <option value="Offen">Offen (ohne Antwort)</option>
       </select>
       <button class="filter-reset" onclick="resetFilter()">✕ Zurücksetzen</button>
@@ -753,7 +756,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.055 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.056 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1008,19 +1011,23 @@
     const personen   = total + begleitung;
     const absagen    = rows.filter(r => r.typ === 'Absage').length;
     const offen      = rows.filter(r => r.typ === 'Offen').length;
+    const einzuladen = rows.filter(r => r.typ === 'Einzuladen').length;
+    const gesendet   = rows.filter(r => r.typ === 'Einladung gesendet').length;
+    const png        = rows.filter(r => r.typ === 'PNG').length;
 
     document.getElementById('count-badge').textContent = total;
-    const offenCard = scope === 'all' && offen > 0
-      ? `<div class="stat-card"><div class="stat-label">Offen</div><div class="stat-val">${offen}</div></div>`
-      : '';
-    document.getElementById('stats-bar').innerHTML = `
-      <div class="stat-card"><div class="stat-label">Anmeldungen</div><div class="stat-val">${total}</div></div>
-      <div class="stat-card"><div class="stat-label">Solo</div><div class="stat-val">${solo}</div></div>
-      <div class="stat-card lime"><div class="stat-label">Mit Begleitung</div><div class="stat-val">${begleitung}</div></div>
-      <div class="stat-card"><div class="stat-label">Personen total</div><div class="stat-val">${personen}</div></div>
-      <div class="stat-card red"><div class="stat-label">Absagen</div><div class="stat-val">${absagen}</div></div>
-      ${offenCard}
-    `;
+
+    let cards = '';
+    cards += `<div class="stat-card"><div class="stat-label">Anmeldungen</div><div class="stat-val">${total}</div></div>`;
+    cards += `<div class="stat-card"><div class="stat-label">Solo</div><div class="stat-val">${solo}</div></div>`;
+    cards += `<div class="stat-card lime"><div class="stat-label">Mit Begleitung</div><div class="stat-val">${begleitung}</div></div>`;
+    cards += `<div class="stat-card"><div class="stat-label">Personen total</div><div class="stat-val">${personen}</div></div>`;
+    cards += `<div class="stat-card red"><div class="stat-label">Absagen</div><div class="stat-val">${absagen}</div></div>`;
+    if (einzuladen > 0) cards += `<div class="stat-card"><div class="stat-label">Einzuladen</div><div class="stat-val" style="color:rgba(60,130,220,0.95)">${einzuladen}</div></div>`;
+    if (gesendet > 0)   cards += `<div class="stat-card"><div class="stat-label">Einladung gesendet</div><div class="stat-val" style="color:rgba(120,180,230,0.95)">${gesendet}</div></div>`;
+    if (png > 0)        cards += `<div class="stat-card"><div class="stat-label">PNG</div><div class="stat-val" style="color:rgba(220,80,80,0.95)">${png}</div></div>`;
+    if (scope === 'all' && offen > 0) cards += `<div class="stat-card"><div class="stat-label">Offen</div><div class="stat-val">${offen}</div></div>`;
+    document.getElementById('stats-bar').innerHTML = cards;
   }
 
   function setScope(s) {
@@ -1033,8 +1040,8 @@
 
   function getScopedRows() {
     if (scope === '2026') {
-      // Nur Einträge mit 2026-Antwort (Angemeldet oder Abgemeldet)
-      return allRows.filter(r => r.status_2026 === 'Angemeldet' || r.status_2026 === 'Abgemeldet');
+      // Alle Einträge mit irgendeinem 2026-Wert (nicht 'Offen')
+      return allRows.filter(r => r.status_2026 && r.status_2026 !== '');
     }
     return allRows;
   }
