@@ -517,7 +517,7 @@
           <p class="welcome-body">Auf unserer Speisekarte finden Sie frische Brezen, warme Suppen und die weltberühmten Meatballs aus der renommierten Sterneküche des Hotels Wàngirain. Diese exquisite Köstlichkeit wird in mühsamster Handarbeit von Küsche Beatrice und Ihrem Team für Sie hergestellt.</p>
           <div class="welcome-hours">
             <p class="welcome-hours-label">Unsere Öffnungszeiten</p>
-            <p class="welcome-hours-time">Täglich 19:00 – Zapfenstreich</p>
+            <p class="welcome-hours-time">Täglich 18:00 – Zapfenstreich</p>
           </div>
           <div class="welcome-specials">
             <p class="welcome-specials-label">Aktuelle Specials</p>
@@ -526,7 +526,7 @@
         </div>
         <div style="margin-top:1.3rem;"></div>
         <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.046 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.047 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -546,7 +546,7 @@
 
         <div class="program">
           <div class="program-row">
-            <span class="program-time">19:00</span>
+            <span class="program-time">18:00</span>
             <span class="program-desc">Ruhiges Warm-up inkl. Verpflegung im Bierkeller «zum Grünen Baum»</span>
           </div>
           <div class="program-row">
@@ -668,6 +668,7 @@
 
         <div class="error-msg" id="absage-error" style="display:none">Bitte Vor- und Nachname angeben.</div>
         <button class="btn-submit btn-submit-red" id="absage-btn" onclick="submitAbsage()">Absage absenden</button>
+        <button class="btn btn-anmeldung" style="width:100%;margin-top:0.75rem;" onclick="showScreen('screen-invite')">Ich habe mich anders entschieden</button>
       </div>
 
       <!-- ══ SCREEN 5: Erfolg ══ -->
@@ -705,10 +706,10 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.046</div>
+<div class="version-tag">CLv0.047</div>
 
 <script>
-  const PASSWORD        = 'OhTannenbaum';
+  const PASSWORD        = 'Bier!';
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwxiEIW7zYPQJx3WNZhEm8xmmhi239uCJ8COleqDfat7j8t7eHM520kbFbg4b6kII/exec';
   const API_TOKEN       = 'oEmhvp6yDaS7XVAp3q2MyhsELMClhtq-';
 
@@ -884,11 +885,11 @@
       'BEGIN:VEVENT',
       'UID:wgb-2026-' + Date.now() + '@zumgruenenbaum.ch',
       'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z',
-      'DTSTART:20261120T190000',
+      'DTSTART:20261120T180000',
       'DTEND:20261121T040000',
       'SUMMARY:Grüner Baum 2026',
       'LOCATION:Rämistrasse 50\\, 8001 Zürich',
-      'DESCRIPTION:Wirtschaft zum Grünen Baum\\n\\n19:00 — Ruhiges Warm-up inkl. Verpflegung\\n20:00 — Baumfeier mit allen Gästen und Glühwein\\n22:00 — Feier im Bierkeller «zum Grünen Baum»\\n\\nKinder bis 22:00 herzlich willkommen\\n\\nEure Gastgeber\\nPeter & Lars',
+      'DESCRIPTION:Wirtschaft zum Grünen Baum\\n\\n18:00 — Ruhiges Warm-up inkl. Verpflegung\\n20:00 — Baumfeier mit allen Gästen und Glühwein\\n22:00 — Feier im Bierkeller «zum Grünen Baum»\\n\\nKinder bis 22:00 herzlich willkommen\\n\\nEure Gastgeber\\nPeter & Lars',
       'END:VEVENT',
       'END:VCALENDAR'
     ].join('\r\n');
@@ -905,6 +906,7 @@
 </script>
 </body>
 </html>
+
 
 
 
