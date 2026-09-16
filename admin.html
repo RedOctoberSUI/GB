@@ -457,6 +457,57 @@
     }
     .col-resizer:hover { background: rgba(180,220,59,0.3); }
     table.resizing { user-select: none; }
+    /* ── WhatsApp Radios / Preview ── */
+    .wa-radio-group {
+      display: flex; gap: 0.5rem; margin-top: 0.3rem;
+    }
+    .wa-radio {
+      flex: 1;
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.55rem 0.7rem;
+      background: rgba(12,25,31,0.35);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all var(--trans);
+    }
+    .wa-radio input { accent-color: var(--lime); cursor: pointer; }
+    .wa-radio:hover { border-color: rgba(180,220,59,0.4); }
+    .wa-radio:has(input:checked) {
+      border-color: var(--lime);
+      background: rgba(180,220,59,0.1);
+    }
+    .wa-preview {
+      margin-top: 1rem;
+      padding: 0.85rem;
+      background: rgba(12,25,31,0.35);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      color: var(--mint);
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    /* ── Multi-Select ── */
+    .select-cell {
+      width: 32px;
+      text-align: center;
+    }
+    .row-check { accent-color: var(--lime); cursor: pointer; }
+    tr.row-selected td:not(:first-child) { background: rgba(180,220,59,0.06); }
+
+    /* Multi-Send Button */
+    .btn-multisend {
+      border-color: rgba(37,211,102,0.5);
+      color: #25D366;
+      background: rgba(37,211,102,0.08);
+    }
+    .btn-multisend:hover { background: rgba(37,211,102,0.18); border-color: #25D366; }
+
     /* ── WhatsApp Button ── */
     .wa-btn {
       background: transparent; border: 1px solid var(--border);
@@ -647,7 +698,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.059</span>
+      <span class="topbar-version">CLv0.060</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -661,6 +712,7 @@
     <div class="stats-bar" id="stats-bar"></div>
 
     <div class="action-bar">
+      <button class="btn-action btn-multisend" id="btn-multisend" onclick="startBatchSend()" style="display:none;">💬 Nachrichten senden (<span id="multisend-count">0</span>)</button>
       <button class="btn-action btn-add-anmeldung" onclick="openDatensatzModal()">+ Datensatz erfassen</button>
     </div>
 
@@ -670,6 +722,15 @@
         <button id="scope-2026" class="active" onclick="setScope('2026')">Nur 2026</button>
         <button id="scope-all" onclick="setScope('all')">Alle Einträge</button>
       </div>
+      <span class="filter-label" style="margin-left:0.5rem">Einladend</span>
+      <select id="filter-einladend" onchange="applyFilter()">
+        <option value="">Alle</option>
+        <option value="Peter">Peter</option>
+        <option value="Lars">Lars</option>
+        <option value="Beatrice">Beatrice</option>
+        <option value="Peter & Lars">Peter &amp; Lars</option>
+        <option value="__empty__">(leer)</option>
+      </select>
       <span class="filter-label" style="margin-left:0.5rem">Filter</span>
       <select id="filter-typ" onchange="applyFilter()">
         <option value="">Alle Typen</option>
@@ -708,7 +769,15 @@
       <div><label for="m-b-vorname">Begl. Vorname</label><input type="text" id="m-b-vorname" /></div>
       <div><label for="m-b-nachname">Begl. Nachname</label><input type="text" id="m-b-nachname" /></div>
       <div><label for="m-kinder">Kinder</label><input type="number" id="m-kinder" min="0" /></div>
-      <div><label for="m-einladend">Einladend</label><input type="text" id="m-einladend" /></div>
+      <div><label for="m-einladend">Einladend</label>
+        <select id="m-einladend">
+          <option value="">— Keine —</option>
+          <option value="Peter">Peter</option>
+          <option value="Lars">Lars</option>
+          <option value="Beatrice">Beatrice</option>
+          <option value="Peter & Lars">Peter &amp; Lars</option>
+        </select>
+      </div>
       <div class="full">
         <label for="m-year2026">Status 2026</label>
         <select id="m-year2026">
@@ -799,17 +868,77 @@
 
 
 
+
+<!-- ══ WhatsApp Einzelversand-Modal ══ -->
+<div class="modal-overlay" id="wa-modal" onclick="closeWaModalOnOverlay(event)">
+  <div class="modal" style="max-width:440px">
+    <div class="eyebrow">WhatsApp</div>
+    <div class="modal-title" id="wa-modal-title">Nachricht an —</div>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
+
+    <label for="wa-modal-tel">Nummer</label>
+    <input type="text" id="wa-modal-tel" readonly style="opacity:0.75;" />
+
+    <label style="margin-top:1.1rem;">Vorlage</label>
+    <div class="wa-radio-group">
+      <label class="wa-radio"><input type="radio" name="wa-cat" value="neu" onchange="onWaCatChange()" /><span>Neugast</span></label>
+      <label class="wa-radio"><input type="radio" name="wa-cat" value="bestehend" onchange="onWaCatChange()" /><span>Bestehender Gast</span></label>
+    </div>
+    <div class="wa-preview" id="wa-preview"></div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeWaModal()">Abbrechen</button>
+      <button class="btn-save" onclick="waModalSend()">Chat öffnen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WhatsApp Batch-Modal ══ -->
+<div class="modal-overlay" id="wa-batch-modal" onclick="closeWaBatchOnOverlay(event)">
+  <div class="modal" style="max-width:520px">
+    <div class="eyebrow" id="wa-batch-progress">Kontakt 1 von —</div>
+    <div class="modal-title" id="wa-batch-title">—</div>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
+
+    <label for="wa-batch-tel">Nummer</label>
+    <input type="text" id="wa-batch-tel" readonly style="opacity:0.75;" />
+
+    <label style="margin-top:1.1rem;">Vorlage</label>
+    <div class="wa-radio-group">
+      <label class="wa-radio"><input type="radio" name="wa-batch-cat" value="neu" onchange="onWaBatchCatChange()" /><span>Neugast</span></label>
+      <label class="wa-radio"><input type="radio" name="wa-batch-cat" value="bestehend" onchange="onWaBatchCatChange()" /><span>Bestehender Gast</span></label>
+    </div>
+    <div class="wa-preview" id="wa-batch-preview"></div>
+
+    <div class="modal-actions" style="flex-wrap:wrap;gap:0.5rem;">
+      <button class="btn-secondary" onclick="waBatchAbort()">Abbrechen</button>
+      <button class="btn-secondary" onclick="waBatchSkip()">Überspringen</button>
+      <button class="btn-save" onclick="waBatchOpenAndNext()" id="wa-batch-open-btn">Chat öffnen &amp; weiter</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ Settings-Modal ══ -->
 <div class="modal-overlay" id="settings-modal" onclick="closeSettingsOnOverlay(event)">
-  <div class="modal">
+  <div class="modal" style="max-width:640px">
     <div class="eyebrow">Einstellungen</div>
-    <div class="modal-title">WhatsApp-Text</div>
+    <div class="modal-title">WhatsApp-Vorlagen</div>
     <div class="ornament"><span class="ornament-inner">✦</span></div>
-    <label for="wa-template">Vorlage</label>
-    <textarea id="wa-template" class="settings-textarea"></textarea>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.8rem;">
+      <label for="wa-neu" style="margin-top:0;">Neugäste</label>
+      <button class="filter-reset" onclick="resetWaNeu()" style="font-size:0.6rem;padding:0.25rem 0.6rem;">↺ Standard</button>
+    </div>
+    <textarea id="wa-neu" class="settings-textarea"></textarea>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:1.2rem;">
+      <label for="wa-bestehend" style="margin-top:0;">Bestehende Gäste (Vorjahres-Eintrag)</label>
+      <button class="filter-reset" onclick="resetWaBestehend()" style="font-size:0.6rem;padding:0.25rem 0.6rem;">↺ Standard</button>
+    </div>
+    <textarea id="wa-bestehend" class="settings-textarea"></textarea>
+
     <p class="settings-hint">Platzhalter: <code>{vorname}</code> · <code>{nachname}</code> · <code>{einladend}</code> — werden pro Gast automatisch ersetzt.</p>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="resetWaTemplate()">Standard wiederherstellen</button>
       <button class="btn-secondary" onclick="closeSettingsModal()">Abbrechen</button>
       <button class="btn-save" onclick="saveSettings()">Speichern</button>
     </div>
@@ -827,7 +956,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.059 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.060 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1004,6 +1133,179 @@
     finally { btn.textContent = 'Speichern'; btn.disabled = false; }
   }
 
+
+  // ─── Multi-Select ───
+  const selectedIds = new Set();
+
+  function toggleRowSelect(rowId, cb) {
+    if (cb.checked) selectedIds.add(rowId);
+    else            selectedIds.delete(rowId);
+    updateMultisendButton();
+    // Zeile visuell updaten (ohne full re-render)
+    const tr = cb.closest('tr');
+    if (tr) tr.classList.toggle('row-selected', cb.checked);
+  }
+
+  function toggleSelectAll(cb) {
+    document.querySelectorAll('tbody .row-check').forEach(row => {
+      const id = parseInt(row.getAttribute('data-rowid'), 10);
+      row.checked = cb.checked;
+      if (cb.checked) selectedIds.add(id); else selectedIds.delete(id);
+      const tr = row.closest('tr');
+      if (tr) tr.classList.toggle('row-selected', cb.checked);
+    });
+    updateMultisendButton();
+  }
+
+  function updateMultisendButton() {
+    const btn = document.getElementById('btn-multisend');
+    const cnt = document.getElementById('multisend-count');
+    if (!btn || !cnt) return;
+    const n = selectedIds.size;
+    cnt.textContent = n;
+    btn.style.display = n > 0 ? '' : 'none';
+  }
+
+  function clearSelection() {
+    selectedIds.clear();
+    updateMultisendButton();
+    document.querySelectorAll('.row-check').forEach(cb => cb.checked = false);
+    document.querySelectorAll('tr.row-selected').forEach(tr => tr.classList.remove('row-selected'));
+  }
+
+  // ─── Einzel-WhatsApp-Modal ───
+  let waModalRow = null;
+
+  function openWaModal(idx) {
+    const r = allRows[idx];
+    if (!r) return;
+    waModalRow = r;
+    document.getElementById('wa-modal-title').textContent = 'Nachricht an ' + (r.vorname || '') + ' ' + (r.nachname || '');
+    document.getElementById('wa-modal-tel').value = r.tel || '';
+    const cat = guessCategory(r);
+    document.querySelectorAll('input[name="wa-cat"]').forEach(rd => rd.checked = (rd.value === cat));
+    updateWaPreview();
+    document.getElementById('wa-modal').classList.add('open');
+  }
+  function closeWaModal() {
+    document.getElementById('wa-modal').classList.remove('open');
+    waModalRow = null;
+  }
+  function closeWaModalOnOverlay(e) { if (e.target === document.getElementById('wa-modal')) closeWaModal(); }
+  function onWaCatChange() { updateWaPreview(); }
+  function updateWaPreview() {
+    if (!waModalRow) return;
+    const cat = document.querySelector('input[name="wa-cat"]:checked')?.value || 'neu';
+    document.getElementById('wa-preview').textContent = buildWaMessage(waModalRow, cat);
+  }
+
+  async function waModalSend() {
+    if (!waModalRow) return;
+    const cat = document.querySelector('input[name="wa-cat"]:checked')?.value || 'neu';
+    const tel = normalizePhone(waModalRow.tel);
+    if (!tel) { alert('Keine Nummer vorhanden.'); return; }
+    const url = waUrl(tel, buildWaMessage(waModalRow, cat));
+    window.open(url, '_blank');
+    await updateStatusAfterSend(waModalRow);
+    closeWaModal();
+  }
+
+  async function updateStatusAfterSend(r) {
+    const newStatus = 'Einladung gesendet';
+    const idx = allRows.indexOf(r);
+    if (idx >= 0) {
+      const updated = { ...r, year_2026: newStatus, status_2026: newStatus, typ: 'Einladung gesendet' };
+      allRows[idx] = updated;
+      renderStats(); applyFilter();
+    }
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: API_TOKEN,
+          action: 'update',
+          rowIndex: r._rowIndex,
+          data: {
+            vorname: r.vorname, nachname: r.nachname,
+            email: r.email, tel: r.tel,
+            b_vorname: r.b_vorname, b_nachname: r.b_nachname,
+            bier: r.bier, einladend: r.einladend, kommentar: r.kommentar,
+            year_2026: newStatus,
+          },
+        }),
+      });
+    } catch(e) { /* silent */ }
+  }
+
+  // ─── Batch-Modal ───
+  let batchQueue = [];   // Array of rows
+  let batchIdx   = 0;
+
+  function startBatchSend() {
+    if (selectedIds.size === 0) return;
+    batchQueue = allRows.filter(r => selectedIds.has(r._rowIndex));
+    batchIdx = 0;
+    showBatchStep();
+    document.getElementById('wa-batch-modal').classList.add('open');
+  }
+
+  function showBatchStep() {
+    if (batchIdx >= batchQueue.length) {
+      alert('Alle ' + batchQueue.length + ' Kontakte durchgearbeitet.');
+      closeWaBatch();
+      return;
+    }
+    const r = batchQueue[batchIdx];
+    document.getElementById('wa-batch-progress').textContent = 'Kontakt ' + (batchIdx + 1) + ' von ' + batchQueue.length;
+    document.getElementById('wa-batch-title').textContent = (r.vorname || '') + ' ' + (r.nachname || '');
+    const tel = r.tel || '(keine Nummer)';
+    document.getElementById('wa-batch-tel').value = tel;
+    const cat = guessCategory(r);
+    document.querySelectorAll('input[name="wa-batch-cat"]').forEach(rd => rd.checked = (rd.value === cat));
+    updateWaBatchPreview();
+    // Wenn keine Tel-Nummer → Chat-Button disable
+    const openBtn = document.getElementById('wa-batch-open-btn');
+    if (!normalizePhone(r.tel)) {
+      openBtn.textContent = 'Keine Nummer — überspringen';
+      openBtn.onclick = () => waBatchSkip();
+    } else {
+      openBtn.textContent = 'Chat öffnen & weiter';
+      openBtn.onclick = () => waBatchOpenAndNext();
+    }
+  }
+
+  function onWaBatchCatChange() { updateWaBatchPreview(); }
+  function updateWaBatchPreview() {
+    if (batchIdx >= batchQueue.length) return;
+    const r = batchQueue[batchIdx];
+    const cat = document.querySelector('input[name="wa-batch-cat"]:checked')?.value || 'neu';
+    document.getElementById('wa-batch-preview').textContent = buildWaMessage(r, cat);
+  }
+
+  async function waBatchOpenAndNext() {
+    const r = batchQueue[batchIdx];
+    const tel = normalizePhone(r.tel);
+    if (!tel) { waBatchSkip(); return; }
+    const cat = document.querySelector('input[name="wa-batch-cat"]:checked')?.value || 'neu';
+    window.open(waUrl(tel, buildWaMessage(r, cat)), '_blank');
+    await updateStatusAfterSend(r);
+    batchIdx++;
+    showBatchStep();
+  }
+  function waBatchSkip() {
+    batchIdx++;
+    showBatchStep();
+  }
+  function waBatchAbort() { closeWaBatch(); }
+  function closeWaBatch() {
+    document.getElementById('wa-batch-modal').classList.remove('open');
+    batchQueue = [];
+    batchIdx = 0;
+    clearSelection();
+  }
+  function closeWaBatchOnOverlay(e) { if (e.target === document.getElementById('wa-batch-modal')) waBatchAbort(); }
+
   // ─── Column Resize ───
   const COL_WIDTH_KEY = 'gb-admin-col-widths-v1';
 
@@ -1059,18 +1361,43 @@
 
   // ─── WhatsApp ───
   const WA_TEMPLATE_KEY = 'gb-admin-wa-template-v1';
-  const WA_DEFAULT_TEMPLATE = `Hallo {vorname},
+  const WA_DEFAULT_NEU = `Hallo {vorname},
 
-wir laden dich herzlich zur Wirtschaft zum Grünen Baum ein — am Freitag, 20. November 2026.
+Willkommen zur Wirtschaft zum Grünen Baum!
+Am Freitag, 20. November 2026 öffnet die Wirtschaft mit den längsten Betriebsferien wieder die Kellertür.
+
+Wir würden uns freuen, Dich zu unserer kleinen, feinen und durstigen Weihnachtstradition Einzuladen.
 
 Alle Infos und Anmeldung: https://zumgruenenbaum.ch
 Passwort: Bier!
 
-Wir freuen uns auf dich!
+Bis bald!
 Peter & Lars`;
 
-  function getWaTemplate() {
-    return localStorage.getItem(WA_TEMPLATE_KEY) || WA_DEFAULT_TEMPLATE;
+  const WA_DEFAULT_BESTEHEND = `Hallo {vorname},
+
+Es ist wieder soweit — die Wirtschaft zum Grünen Baum öffnet ihre Kellertüre: Freitag, 20. November 2026.
+Schön, wenn du auch dieses Jahr dabei bist!
+
+Anmelden hier: https://zumgruenenbaum.ch
+Passwort: Bier!
+
+Bis bald!
+Peter & Lars`;
+
+  const WA_NEU_KEY       = 'gb-admin-wa-neu-v1';
+  const WA_BESTEHEND_KEY = 'gb-admin-wa-bestehend-v1';
+
+  function getWaTemplateNeu()       { return localStorage.getItem(WA_NEU_KEY)       || WA_DEFAULT_NEU; }
+  function getWaTemplateBestehend() { return localStorage.getItem(WA_BESTEHEND_KEY) || WA_DEFAULT_BESTEHEND; }
+
+  function getWaTemplateFor(r) {
+    // "bestehend" wenn irgendein 2025-Wert vorhanden ist, sonst "neu"
+    return r.status_2025 ? getWaTemplateBestehend() : getWaTemplateNeu();
+  }
+
+  function guessCategory(r) {
+    return r.status_2025 ? 'bestehend' : 'neu';
   }
 
   function normalizePhone(raw) {
@@ -1089,8 +1416,10 @@ Peter & Lars`;
     return s;
   }
 
-  function buildWaMessage(r) {
-    const t = getWaTemplate();
+  function buildWaMessage(r, category) {
+    const t = category === 'bestehend' ? getWaTemplateBestehend()
+            : category === 'neu'       ? getWaTemplateNeu()
+            : getWaTemplateFor(r);
     return t
       .replace(/\{vorname\}/g,  r.vorname   || '')
       .replace(/\{nachname\}/g, r.nachname  || '')
@@ -1112,8 +1441,7 @@ Peter & Lars`;
     if (!tel) {
       return '<span class="wa-no-num">keine Nummer</span>';
     }
-    const url = waUrl(tel, buildWaMessage(r));
-    return `<a href="${url}" target="_blank" class="wa-btn" title="Per WhatsApp senden" onclick="onWaClick(event, ${idx})">💬</a>`;
+    return `<button class="wa-btn" title="Per WhatsApp senden" onclick="openWaModal(${idx})">💬</button>`;
   }
 
   async function onWaClick(event, idx) {
@@ -1151,21 +1479,22 @@ Peter & Lars`;
 
   // ─── Settings-Modal ───
   function openSettingsModal() {
-    document.getElementById('wa-template').value = getWaTemplate();
+    document.getElementById('wa-neu').value = getWaTemplateNeu();
+    document.getElementById('wa-bestehend').value = getWaTemplateBestehend();
     document.getElementById('settings-modal').classList.add('open');
   }
   function closeSettingsModal() { document.getElementById('settings-modal').classList.remove('open'); }
   function closeSettingsOnOverlay(e) { if (e.target === document.getElementById('settings-modal')) closeSettingsModal(); }
   function saveSettings() {
-    const t = document.getElementById('wa-template').value.trim();
-    if (t) localStorage.setItem(WA_TEMPLATE_KEY, t);
-    else localStorage.removeItem(WA_TEMPLATE_KEY);
+    const neu       = document.getElementById('wa-neu').value.trim();
+    const bestehend = document.getElementById('wa-bestehend').value.trim();
+    if (neu)       localStorage.setItem(WA_NEU_KEY,       neu);       else localStorage.removeItem(WA_NEU_KEY);
+    if (bestehend) localStorage.setItem(WA_BESTEHEND_KEY, bestehend); else localStorage.removeItem(WA_BESTEHEND_KEY);
     closeSettingsModal();
-    applyFilter();  // Re-Render damit neue Nachricht sofort in wa.me-URLs steckt
+    applyFilter();
   }
-  function resetWaTemplate() {
-    document.getElementById('wa-template').value = WA_DEFAULT_TEMPLATE;
-  }
+  function resetWaNeu()       { document.getElementById('wa-neu').value       = WA_DEFAULT_NEU; }
+  function resetWaBestehend() { document.getElementById('wa-bestehend').value = WA_DEFAULT_BESTEHEND; }
 
   async function loadData() {
     document.getElementById('table-container').innerHTML =
@@ -1229,8 +1558,11 @@ Peter & Lars`;
   function applyFilter() {
     const typ = document.getElementById('filter-typ').value;
     const q   = (document.getElementById('filter-search').value || '').trim().toLowerCase();
+    const ein = document.getElementById('filter-einladend').value;
     let filtered = getScopedRows();
     if (typ) filtered = filtered.filter(r => r.typ === typ);
+    if (ein === '__empty__') filtered = filtered.filter(r => !(r.einladend || '').trim());
+    else if (ein) filtered = filtered.filter(r => (r.einladend || '') === ein);
     if (q) {
       filtered = filtered.filter(r =>
         (r.vorname  || '').toLowerCase().includes(q) ||
@@ -1243,6 +1575,7 @@ Peter & Lars`;
   function resetFilter() {
     document.getElementById('filter-typ').value = '';
     document.getElementById('filter-search').value = '';
+    document.getElementById('filter-einladend').value = '';
     applyFilter();
   }
 
@@ -1274,7 +1607,9 @@ Peter & Lars`;
         '<div class="empty-state">Keine Einträge gefunden.</div>';
       return;
     }
-    const thead = '<th style="width:44px"></th>' + COLS.map(c => {
+    const thead = '<th class="select-cell"><input type="checkbox" class="row-check" id="check-all" onclick="toggleSelectAll(this)" title="Alle auswählen" /></th>'
+                + '<th style="width:44px"></th>'
+                + COLS.map(c => {
       let cls = sortCol === c.key ? (sortDir === 'asc' ? 'sort-asc' : 'sort-desc') : '';
       return `<th class="${cls}" onclick="sortBy('${c.key}')">${c.label}<i class="sort-icon"></i></th>`;
     }).join('') + '<th style="width:44px"></th>';
@@ -1290,7 +1625,10 @@ Peter & Lars`;
         ? `<span class="badge badge-offen">–</span>`
         : '';
       const rowClass = r.typ === 'PNG' ? 'row-png' : '';
-      return `<tr class="${rowClass}">
+      const isSelected = selectedIds.has(r._rowIndex);
+      const rowClasses = [rowClass, isSelected ? 'row-selected' : ''].filter(Boolean).join(' ');
+      return `<tr class="${rowClasses}">
+        <td class="select-cell"><input type="checkbox" class="row-check" data-rowid="${r._rowIndex}" ${isSelected ? 'checked' : ''} onclick="toggleRowSelect(${r._rowIndex}, this)" /></td>
         <td>${waButton(r, globalIdx)}</td>
         <td>${esc(r.vorname)}</td>
         <td>${esc(r.nachname)}</td>
@@ -1320,8 +1658,11 @@ Peter & Lars`;
     else { sortCol = key; sortDir = 'asc'; }
     const typ = document.getElementById('filter-typ').value;
     const q   = (document.getElementById('filter-search').value || '').trim().toLowerCase();
+    const ein = document.getElementById('filter-einladend').value;
     let rows = getScopedRows();
     if (typ) rows = rows.filter(r => r.typ === typ);
+    if (ein === '__empty__') rows = rows.filter(r => !(r.einladend || '').trim());
+    else if (ein) rows = rows.filter(r => (r.einladend || '') === ein);
     if (q) rows = rows.filter(r =>
       (r.vorname  || '').toLowerCase().includes(q) ||
       (r.nachname || '').toLowerCase().includes(q)
@@ -1483,6 +1824,7 @@ Peter & Lars`;
 </script>
 </body>
 </html>
+
 
 
 
