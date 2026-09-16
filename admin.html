@@ -491,6 +491,20 @@
       max-height: 200px;
       overflow-y: auto;
     }
+    .wa-edit {
+      width: 100%;
+      min-height: 160px;
+      max-height: 260px;
+      font-family: 'Jost', sans-serif;
+      resize: vertical;
+      outline: none;
+    }
+    .wa-edit:focus {
+      border-style: solid;
+      border-color: var(--lime);
+      background: rgba(12,25,31,0.55);
+    }
+
 
     /* ── Multi-Select ── */
     .select-cell {
@@ -698,7 +712,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.060</span>
+      <span class="topbar-version">CLv0.061</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -884,7 +898,8 @@
       <label class="wa-radio"><input type="radio" name="wa-cat" value="neu" onchange="onWaCatChange()" /><span>Neugast</span></label>
       <label class="wa-radio"><input type="radio" name="wa-cat" value="bestehend" onchange="onWaCatChange()" /><span>Bestehender Gast</span></label>
     </div>
-    <div class="wa-preview" id="wa-preview"></div>
+    <textarea class="wa-preview wa-edit" id="wa-preview" oninput="onWaTextEdit()"></textarea>
+    <button class="btn-secondary" style="width:100%;margin-top:0.5rem;font-size:0.65rem;padding:0.5rem;" onclick="saveWaAsLocalDefault()">Als lokalen Standard speichern</button>
 
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeWaModal()">Abbrechen</button>
@@ -908,7 +923,8 @@
       <label class="wa-radio"><input type="radio" name="wa-batch-cat" value="neu" onchange="onWaBatchCatChange()" /><span>Neugast</span></label>
       <label class="wa-radio"><input type="radio" name="wa-batch-cat" value="bestehend" onchange="onWaBatchCatChange()" /><span>Bestehender Gast</span></label>
     </div>
-    <div class="wa-preview" id="wa-batch-preview"></div>
+    <textarea class="wa-preview wa-edit" id="wa-batch-preview" oninput="onWaBatchTextEdit()"></textarea>
+    <button class="btn-secondary" style="width:100%;margin-top:0.5rem;font-size:0.65rem;padding:0.5rem;" onclick="saveBatchWaAsLocalDefault()">Als lokalen Standard speichern</button>
 
     <div class="modal-actions" style="flex-wrap:wrap;gap:0.5rem;">
       <button class="btn-secondary" onclick="waBatchAbort()">Abbrechen</button>
@@ -956,7 +972,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.060 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.061 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1180,7 +1196,7 @@
     const r = allRows[idx];
     if (!r) return;
     waModalRow = r;
-    document.getElementById('wa-modal-title').textContent = 'Nachricht an ' + (r.vorname || '') + ' ' + (r.nachname || '');
+    document.getElementById('wa-modal-title').textContent = 'Nachricht an ' + (r.vorname || '') + ' ' + (r.nachname || '') + ' in Whatsapp';
     document.getElementById('wa-modal-tel').value = r.tel || '';
     const cat = guessCategory(r);
     document.querySelectorAll('input[name="wa-cat"]').forEach(rd => rd.checked = (rd.value === cat));
@@ -1196,15 +1212,16 @@
   function updateWaPreview() {
     if (!waModalRow) return;
     const cat = document.querySelector('input[name="wa-cat"]:checked')?.value || 'neu';
-    document.getElementById('wa-preview').textContent = buildWaMessage(waModalRow, cat);
+    document.getElementById('wa-preview').value = buildWaMessage(waModalRow, cat);
   }
+  function onWaTextEdit() { /* no-op; Text bleibt bis Kategorie-Wechsel oder Send */ }
 
   async function waModalSend() {
     if (!waModalRow) return;
-    const cat = document.querySelector('input[name="wa-cat"]:checked')?.value || 'neu';
     const tel = normalizePhone(waModalRow.tel);
     if (!tel) { alert('Keine Nummer vorhanden.'); return; }
-    const url = waUrl(tel, buildWaMessage(waModalRow, cat));
+    const text = document.getElementById('wa-preview').value;
+    const url = waUrl(tel, text);
     window.open(url, '_blank');
     await updateStatusAfterSend(waModalRow);
     closeWaModal();
@@ -1236,6 +1253,59 @@
         }),
       });
     } catch(e) { /* silent */ }
+  }
+
+
+  function saveWaAsLocalDefault() {
+    const cat = document.querySelector('input[name="wa-cat"]:checked')?.value || 'neu';
+    // Text mit Rück-Substitution der aktuellen Werte auf {vorname}/{nachname}/{einladend}
+    const raw = document.getElementById('wa-preview').value;
+    const withPlaceholders = substituteBackToPlaceholders(raw, waModalRow);
+    if (cat === 'bestehend') localStorage.setItem(WA_BESTEHEND_KEY, withPlaceholders);
+    else                     localStorage.setItem(WA_NEU_KEY, withPlaceholders);
+    // Feedback
+    flashSaved('wa-preview');
+  }
+
+  function saveBatchWaAsLocalDefault() {
+    if (batchIdx >= batchQueue.length) return;
+    const r = batchQueue[batchIdx];
+    const cat = document.querySelector('input[name="wa-batch-cat"]:checked')?.value || 'neu';
+    const raw = document.getElementById('wa-batch-preview').value;
+    const withPlaceholders = substituteBackToPlaceholders(raw, r);
+    if (cat === 'bestehend') localStorage.setItem(WA_BESTEHEND_KEY, withPlaceholders);
+    else                     localStorage.setItem(WA_NEU_KEY, withPlaceholders);
+    flashSaved('wa-batch-preview');
+  }
+
+  function substituteBackToPlaceholders(text, r) {
+    if (!r) return text;
+    let out = text;
+    // Reihenfolge wichtig: längere Werte zuerst, damit "Peter & Lars" nicht als "Peter" ersetzt wird
+    const subs = [
+      [r.vorname,   '{vorname}'],
+      [r.nachname,  '{nachname}'],
+      [r.einladend, '{einladend}'],
+    ].filter(([v]) => v && v.length > 0)
+     .sort((a, b) => b[0].length - a[0].length);
+    for (const [val, ph] of subs) {
+      // escape für RegExp
+      const esc = val.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      out = out.replace(new RegExp(esc, 'g'), ph);
+    }
+    return out;
+  }
+
+  function flashSaved(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const originalBorder = el.style.borderColor;
+    el.style.borderColor = 'var(--lime)';
+    el.style.borderStyle = 'solid';
+    setTimeout(() => {
+      el.style.borderColor = originalBorder;
+      el.style.borderStyle = '';
+    }, 800);
   }
 
   // ─── Batch-Modal ───
@@ -1280,15 +1350,16 @@
     if (batchIdx >= batchQueue.length) return;
     const r = batchQueue[batchIdx];
     const cat = document.querySelector('input[name="wa-batch-cat"]:checked')?.value || 'neu';
-    document.getElementById('wa-batch-preview').textContent = buildWaMessage(r, cat);
+    document.getElementById('wa-batch-preview').value = buildWaMessage(r, cat);
   }
+  function onWaBatchTextEdit() { /* no-op */ }
 
   async function waBatchOpenAndNext() {
     const r = batchQueue[batchIdx];
     const tel = normalizePhone(r.tel);
     if (!tel) { waBatchSkip(); return; }
-    const cat = document.querySelector('input[name="wa-batch-cat"]:checked')?.value || 'neu';
-    window.open(waUrl(tel, buildWaMessage(r, cat)), '_blank');
+    const text = document.getElementById('wa-batch-preview').value;
+    window.open(waUrl(tel, text), '_blank');
     await updateStatusAfterSend(r);
     batchIdx++;
     showBatchStep();
