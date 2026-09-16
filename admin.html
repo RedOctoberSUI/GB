@@ -712,7 +712,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.061</span>
+      <span class="topbar-version">CLv0.062</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -954,6 +954,14 @@
     <textarea id="wa-bestehend" class="settings-textarea"></textarea>
 
     <p class="settings-hint">Platzhalter: <code>{vorname}</code> · <code>{nachname}</code> · <code>{einladend}</code> — werden pro Gast automatisch ersetzt.</p>
+
+    <div style="margin-top:1.4rem;padding-top:1.2rem;border-top:1px dashed var(--border);">
+      <label style="display:flex;align-items:center;gap:0.6rem;margin-top:0;cursor:pointer;text-transform:none;letter-spacing:normal;font-size:0.85rem;color:var(--mint);font-weight:300;">
+        <input type="checkbox" id="wa-use-desktop" style="accent-color:var(--lime);cursor:pointer;width:auto;" />
+        WhatsApp Desktop-App verwenden (statt Web)
+      </label>
+      <p class="settings-hint" style="margin-top:0.4rem;">Öffnet <code>whatsapp://</code> statt <code>web.whatsapp.com</code>. Funktioniert nur wenn die Desktop-App installiert ist.</p>
+    </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeSettingsModal()">Abbrechen</button>
       <button class="btn-save" onclick="saveSettings()">Speichern</button>
@@ -972,7 +980,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.061 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.062 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1458,6 +1466,9 @@ Peter & Lars`;
 
   const WA_NEU_KEY       = 'gb-admin-wa-neu-v1';
   const WA_BESTEHEND_KEY = 'gb-admin-wa-bestehend-v1';
+  const WA_DESKTOP_KEY   = 'gb-admin-wa-use-desktop-v1';
+
+  function getWaUseDesktop() { return localStorage.getItem(WA_DESKTOP_KEY) === '1'; }
 
   function getWaTemplateNeu()       { return localStorage.getItem(WA_NEU_KEY)       || WA_DEFAULT_NEU; }
   function getWaTemplateBestehend() { return localStorage.getItem(WA_BESTEHEND_KEY) || WA_DEFAULT_BESTEHEND; }
@@ -1504,6 +1515,7 @@ Peter & Lars`;
   function waUrl(tel, msg) {
     const encoded = encodeURIComponent(msg);
     if (isMobile()) return `https://wa.me/${tel}?text=${encoded}`;
+    if (getWaUseDesktop()) return `whatsapp://send?phone=${tel}&text=${encoded}`;
     return `https://web.whatsapp.com/send/?phone=${tel}&text=${encoded}`;
   }
 
@@ -1552,6 +1564,7 @@ Peter & Lars`;
   function openSettingsModal() {
     document.getElementById('wa-neu').value = getWaTemplateNeu();
     document.getElementById('wa-bestehend').value = getWaTemplateBestehend();
+    document.getElementById('wa-use-desktop').checked = getWaUseDesktop();
     document.getElementById('settings-modal').classList.add('open');
   }
   function closeSettingsModal() { document.getElementById('settings-modal').classList.remove('open'); }
@@ -1559,8 +1572,10 @@ Peter & Lars`;
   function saveSettings() {
     const neu       = document.getElementById('wa-neu').value.trim();
     const bestehend = document.getElementById('wa-bestehend').value.trim();
+    const useDesk   = document.getElementById('wa-use-desktop').checked;
     if (neu)       localStorage.setItem(WA_NEU_KEY,       neu);       else localStorage.removeItem(WA_NEU_KEY);
     if (bestehend) localStorage.setItem(WA_BESTEHEND_KEY, bestehend); else localStorage.removeItem(WA_BESTEHEND_KEY);
+    if (useDesk)   localStorage.setItem(WA_DESKTOP_KEY, '1');        else localStorage.removeItem(WA_DESKTOP_KEY);
     closeSettingsModal();
     applyFilter();
   }
