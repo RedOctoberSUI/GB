@@ -19,10 +19,11 @@
  *   L=12 2026
  */
 
-const SHEET_ID    = '1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc';
-const SHEET_NAME  = 'Anmeldungen GB';   // ggf. anpassen wenn das Tab anders heisst
-const HEADER_ROW  = 1;
-const SECRET_TOKEN= 'oEmhvp6yDaS7XVAp3q2MyhsELMClhtq-';
+const SHEET_ID       = '1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc';
+const SHEET_NAME     = 'Anmeldungen GB';   // ggf. anpassen wenn das Tab anders heisst
+const SETTINGS_SHEET = 'Settings';         // 2. Tab für Key/Value-Einstellungen
+const HEADER_ROW     = 1;
+const SECRET_TOKEN   = 'oEmhvp6yDaS7XVAp3q2MyhsELMClhtq-';
 
 const COL = {
   timestamp:   1,
@@ -47,7 +48,8 @@ function doGet(e) {
     return jsonResponse({ ok: false, error: 'Unauthorized' });
   }
   const action = params.action || 'getAll';
-  if (action === 'getAll') return jsonResponse({ ok: true, rows: getAllRows() });
+  if (action === 'getAll')      return jsonResponse({ ok: true, rows: getAllRows() });
+  if (action === 'getSettings') return jsonResponse({ ok: true, settings: getAllSettings() });
   return jsonResponse({ ok: false, error: 'Unknown action: ' + action });
 }
 
@@ -59,7 +61,8 @@ function doPost(e) {
     }
     const action = body.action || 'insert';
 
-    if (action === 'update') return handleUpdate(body);
+    if (action === 'update')     return handleUpdate(body);
+    if (action === 'setSetting') return handleSetSetting(body);
     return handleUpsert(body);
   } catch (err) {
     return jsonResponse({ ok: false, error: String(err) });
@@ -233,3 +236,52 @@ function jsonResponse(obj) {
 }
 
 
+// ─── Settings (2. Tab "Settings" mit Key/Value) ──────────────────────────
+
+function getSettingsSheet_() {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  let sheet = ss.getSheetByName(SETTINGS_SHEET);
+  if (!sheet) {
+    sheet = ss.insertSheet(SETTINGS_SHEET);
+    sheet.getRange(1, 1, 1, 2).setValues([['Key', 'Value']]);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function getAllSettings() {
+  const sheet = getSettingsSheet_();
+  const last = sheet.getLastRow();
+  if (last <= 1) return {};
+  const data = sheet.getRange(2, 1, last - 1, 2).getValues();
+  const out = {};
+  for (const r of data) {
+    const k = (r[0] || '').toString().trim();
+    if (k) out[k] = (r[1] || '').toString();
+  }
+  return out;
+}
+
+function handleSetSetting(body) {
+  const key   = (body.key   || '').toString().trim();
+  const value = (body.value || '').toString();
+  if (!key) return jsonResponse({ ok: false, error: 'Key fehlt' });
+  const sheet = getSettingsSheet_();
+  const last = sheet.getLastRow();
+  let targetRow = -1;
+  if (last > 1) {
+    const keys = sheet.getRange(2, 1, last - 1, 1).getValues();
+    for (let i = 0; i < keys.length; i++) {
+      if ((keys[i][0] || '').toString().trim() === key) {
+        targetRow = i + 2;
+        break;
+      }
+    }
+  }
+  if (targetRow > 0) {
+    sheet.getRange(targetRow, 2).setValue(value);
+  } else {
+    sheet.appendRow([key, value]);
+  }
+  return jsonResponse({ ok: true, key: key });
+}
