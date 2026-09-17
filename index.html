@@ -279,6 +279,19 @@
       letter-spacing: 0.25em; text-transform: uppercase;
       color: var(--lime); margin-bottom: 0.4rem;
     }
+    .welcome-specials-subtitle {
+      display: block;
+      font-size: 0.72em;
+      opacity: 0.72;
+      margin-top: 2px;
+      font-style: italic;
+    }
+    .welcome-specials-main {
+      display: block;
+    }
+    .welcome-specials-item + .welcome-specials-item {
+      margin-top: 0.5rem;
+    }
     .welcome-hours-time, .welcome-specials-item {
       font-family: 'IM Fell English', serif;
       font-size: 1.155rem; font-style: italic;
@@ -528,7 +541,7 @@
         </div>
         <div style="margin-top:1.3rem;"></div>
         <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.067 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.068 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -708,7 +721,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.067</div>
+<div class="version-tag">CLv0.068</div>
 
 <script>
   const PASSWORD        = 'Bier!';
@@ -785,9 +798,12 @@
       if (t) t.textContent = s['program_time_' + i] || t.textContent;
       if (d) d.innerHTML   = s['program_text_' + i] || d.innerHTML;
     }
-    // "Kinder bis 21:00" wandert mit Programmpunkt 3
+    // "Kinder bis 21:00" wandert mit Programmpunkt 3 (extract erste HH:MM aus dem Text-Feld)
     const kids = document.getElementById('kids-until-time');
-    if (kids) kids.textContent = s.program_time_3 || '21:00';
+    if (kids) {
+      const m = (s.program_time_3 || '').match(/\d{1,2}:\d{2}/);
+      kids.textContent = m ? m[0] : '21:00';
+    }
 
     // Öffnungszeiten
     const hrs = document.getElementById('welcome-hours-time');
@@ -816,11 +832,21 @@
       return;
     }
     container.style.display = '';
+    // Backward-compat: alte {date,text} → title
+    arr = arr.map(sp => ({
+      date:     sp.date     || '',
+      title:    sp.title    !== undefined ? sp.title : (sp.text || ''),
+      subtitle: sp.subtitle || '',
+    }));
     arr.sort((a,b) => (a.date||'').localeCompare(b.date||''));
     list.innerHTML = arr.map(sp => {
-      const dt = sp.date ? fmtDateGerman(sp.date) : '';
-      const sep = (dt && sp.text) ? ' – ' : '';
-      return `<p class="welcome-specials-item">${dt}${sep}${sp.text || ''}</p>`;
+      const dt   = sp.date ? fmtDateGerman(sp.date) : '';
+      const sep  = (dt && sp.title) ? ' – ' : '';
+      const sub  = sp.subtitle ? `<span class="welcome-specials-subtitle">${sp.subtitle}</span>` : '';
+      return `<div class="welcome-specials-item">
+        <span class="welcome-specials-main">${dt}${sep}${sp.title || ''}</span>
+        ${sub}
+      </div>`;
     }).join('');
   }
 
