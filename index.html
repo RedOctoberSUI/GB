@@ -539,7 +539,7 @@
         </div>
         <div style="margin-top:1.3rem;"></div>
         <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.072 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.073 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -719,7 +719,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.072</div>
+<div class="version-tag">CLv0.073</div>
 
 <script>
   const PASSWORD        = 'Bier!';
@@ -766,7 +766,22 @@
     const x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x;
   }
 
+  const SETTINGS_CACHE_KEY = 'gb-public-settings-v1';
+
   async function loadPublicSettings() {
+    // 1. Sofort aus Cache anwenden (falls vorhanden) — für schnelles Rendering
+    try {
+      const cached = localStorage.getItem(SETTINGS_CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        for (const k in publicSettings) {
+          if (parsed[k] !== undefined && parsed[k] !== '') publicSettings[k] = parsed[k];
+        }
+        applyPublicSettings();
+      }
+    } catch(e) { /* silent */ }
+
+    // 2. Frisch vom Sheet holen und ggf. neu anwenden + Cache aktualisieren
     try {
       const res  = await fetch(APPS_SCRIPT_URL + '?action=getSettings&token=' + encodeURIComponent(API_TOKEN));
       const json = await res.json();
@@ -776,9 +791,10 @@
             publicSettings[k] = json.settings[k];
           }
         }
+        try { localStorage.setItem(SETTINGS_CACHE_KEY, JSON.stringify(publicSettings)); } catch(e) {}
+        applyPublicSettings();
       }
-    } catch(e) { /* silent — use defaults */ }
-    applyPublicSettings();
+    } catch(e) { /* silent — verwende Cache/Defaults */ }
   }
 
   function applyPublicSettings() {
