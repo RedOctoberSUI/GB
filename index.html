@@ -501,7 +501,7 @@
       <div class="banderole" id="banderole">
         <span class="banderole-line1">Achtung</span>
         <span class="banderole-line2">Betriebsferien</span>
-        <span class="banderole-line3">22.11.2025 – 19.11.2026</span>
+        <span class="banderole-line3" id="banderole-dates">22.11.2025 – 19.11.2026</span>
       </div>
 
       <!-- ══ SCREEN 1: Passwort ══ -->
@@ -517,16 +517,18 @@
           <p class="welcome-body">Auf unserer Speisekarte finden Sie frische Brezen, warme Suppen und die weltberühmten Meatballs aus der renommierten Sterneküche des Hotels Wängirain. Diese exquisite Köstlichkeit wird in mühsamster Handarbeit von Küschescheffin Beatrice und Ihrem Team für Sie hergestellt.</p>
           <div class="welcome-hours">
             <p class="welcome-hours-label">Unsere Öffnungszeiten</p>
-            <p class="welcome-hours-time">Täglich 18:00 – Zapfenstreich</p>
+            <p class="welcome-hours-time" id="welcome-hours-time">Täglich 18:00 – Zapfenstreich</p>
           </div>
-          <div class="welcome-specials">
+          <div class="welcome-specials" id="welcome-specials-container">
             <p class="welcome-specials-label">Aktuelle Specials</p>
-            <p class="welcome-specials-item">20.11.2026 – Live DJ 20cmvonäbedrah!</p>
+            <div id="welcome-specials-list">
+              <p class="welcome-specials-item">20.11.2026 – Live DJ 20cmvonäbedrah!</p>
+            </div>
           </div>
         </div>
         <div style="margin-top:1.3rem;"></div>
         <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.054 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.067 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -541,21 +543,21 @@
         <div class="text-block">
           <p>Seit über vier Jahrzehnten feiern wir mit dem <strong>Fest zum Grünen Baum</strong> den Beginn der Weihnachtszeit. Gerne möchten wir diesen besonderen Moment gemeinsam mit Euch feiern — auf das vergangene Jahr, die bevorstehende Weihnachtszeit und die Zukunft anstossen.</p>
           <p>Wir treffen uns mit Menschen, die uns im vergangenen Jahr begleitet haben, und solchen, die wir schon viel zu lange nicht mehr sehen durften.</p>
-          <p>Wir laden Euch herzlich ein, mit uns am <strong>Freitag, 20. November 2026</strong> zu feiern:</p>
+          <p>Wir laden Euch herzlich ein, mit uns am <strong id="invite-date-text">Freitag, 20. November 2026</strong> zu feiern:</p>
         </div>
 
-        <div class="program">
+        <div class="program" id="program-container">
           <div class="program-row">
-            <span class="program-time">18:00</span>
-            <span class="program-desc">Ruhiges Warm-up inkl. Verpflegung im Bierkeller «zum Grünen Baum»</span>
+            <span class="program-time" id="prog-time-1">18:00</span>
+            <span class="program-desc" id="prog-text-1">Ruhiges Warm-up inkl. Verpflegung im Bierkeller «zum Grünen Baum»</span>
           </div>
           <div class="program-row">
-            <span class="program-time">20:00</span>
-            <span class="program-desc">Baumfeier mit allen Gästen und Glühwein</span>
+            <span class="program-time" id="prog-time-2">20:00</span>
+            <span class="program-desc" id="prog-text-2">Baumfeier mit allen Gästen und Glühwein</span>
           </div>
           <div class="program-row">
-            <span class="program-time">21:00</span>
-            <span class="program-desc">Dann geht's richtig los im Bierkeller «zum Grünen Baum» <span style="opacity:0.6;font-style:italic;">(nur Erwachsene)</span></span>
+            <span class="program-time" id="prog-time-3">21:00</span>
+            <span class="program-desc" id="prog-text-3">Dann geht's richtig los im Bierkeller «zum Grünen Baum» <span style="opacity:0.6;font-style:italic;">(nur Erwachsene)</span></span>
           </div>
         </div>
 
@@ -567,7 +569,7 @@
         <div class="ornament"><span class="ornament-inner">✦</span></div>
 
         <div class="text-block">
-          <p>Auch kleine Gäste sind bis 21:00 Uhr herzlich willkommen.</p>
+          <p>Auch kleine Gäste sind bis <span id="kids-until-time">21:00</span> Uhr herzlich willkommen.</p>
           <p>Wir freuen uns auf einen grossartigen Abend mit Euch.</p>
         </div>
 
@@ -628,7 +630,7 @@
           </div>
 
           <div class="kinder-block" id="kinder-block">
-            <label for="f-kinder">Anzahl Kinder unter 55 und sonstige alkoholfreie Hilfspersonen</label>
+            <label for="f-kinder">Anzahl Kinder (Alkoholfreies Hilfspersonal unter 18)</label>
             <input type="number" id="f-kinder" min="0" max="20" placeholder="0" style="width:80px" />
           </div>
 
@@ -706,12 +708,124 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.054</div>
+<div class="version-tag">CLv0.067</div>
 
 <script>
   const PASSWORD        = 'Bier!';
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwxiEIW7zYPQJx3WNZhEm8xmmhi239uCJ8COleqDfat7j8t7eHM520kbFbg4b6kII/exec';
   const API_TOKEN       = 'oEmhvp6yDaS7XVAp3q2MyhsELMClhtq-';
+
+  // ══════ Settings (aus Sheet Tab "Settings") ══════
+  const WOCHENTAGE = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  const MONATE     = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+  let publicSettings = {
+    event_date:       '2026-11-20',
+    event_start_time: '18:00',
+    event_end_time:   '04:00',
+    holidays_start:   '2025-11-22',
+    program_time_1:   '18:00',
+    program_text_1:   'Ruhiges Warm-up inkl. Verpflegung im Bierkeller «zum Grünen Baum»',
+    program_time_2:   '20:00',
+    program_text_2:   'Baumfeier mit allen Gästen und Glühwein',
+    program_time_3:   '21:00',
+    program_text_3:   'Dann geht\'s richtig los im Bierkeller «zum Grünen Baum» <span style="opacity:0.6;font-style:italic;">(nur Erwachsene)</span>',
+    specials:         '[]',
+  };
+
+  function parseIsoDate(s) {
+    if (!s) return null;
+    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return null;
+    return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
+  }
+  function fmtDateShort(d) {
+    if (!d) return '';
+    return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
+  }
+  function fmtDateLong(d) {
+    if (!d) return '';
+    return WOCHENTAGE[d.getDay()] + ', ' + d.getDate() + '. ' + MONATE[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  function fmtDateGerman(iso) {
+    const d = parseIsoDate(iso); if (!d) return '';
+    return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
+  }
+  function addDays(d, n) {
+    const x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x;
+  }
+
+  async function loadPublicSettings() {
+    try {
+      const res  = await fetch(APPS_SCRIPT_URL + '?action=getSettings&token=' + encodeURIComponent(API_TOKEN));
+      const json = await res.json();
+      if (json && json.settings) {
+        for (const k in publicSettings) {
+          if (json.settings[k] !== undefined && json.settings[k] !== '') {
+            publicSettings[k] = json.settings[k];
+          }
+        }
+      }
+    } catch(e) { /* silent — use defaults */ }
+    applyPublicSettings();
+  }
+
+  function applyPublicSettings() {
+    const s = publicSettings;
+    const eventDate = parseIsoDate(s.event_date);
+
+    // Einladungsdatum "Freitag, 20. November 2026"
+    const inv = document.getElementById('invite-date-text');
+    if (inv && eventDate) inv.textContent = fmtDateLong(eventDate);
+
+    // Programm
+    for (let i = 1; i <= 3; i++) {
+      const t = document.getElementById('prog-time-' + i);
+      const d = document.getElementById('prog-text-' + i);
+      if (t) t.textContent = s['program_time_' + i] || t.textContent;
+      if (d) d.innerHTML   = s['program_text_' + i] || d.innerHTML;
+    }
+    // "Kinder bis 21:00" wandert mit Programmpunkt 3
+    const kids = document.getElementById('kids-until-time');
+    if (kids) kids.textContent = s.program_time_3 || '21:00';
+
+    // Öffnungszeiten
+    const hrs = document.getElementById('welcome-hours-time');
+    if (hrs) hrs.textContent = 'Täglich ' + (s.event_start_time || '18:00') + ' – Zapfenstreich';
+
+    // Banderole (Betriebsferien)
+    const band = document.getElementById('banderole-dates');
+    const holStart = parseIsoDate(s.holidays_start);
+    if (band && holStart && eventDate) {
+      const holEnd = addDays(eventDate, -1);
+      band.textContent = fmtDateShort(holStart) + ' – ' + fmtDateShort(holEnd);
+    }
+
+    // Specials
+    renderSpecials();
+  }
+
+  function renderSpecials() {
+    const container = document.getElementById('welcome-specials-container');
+    const list      = document.getElementById('welcome-specials-list');
+    if (!container || !list) return;
+    let arr = [];
+    try { arr = JSON.parse(publicSettings.specials || '[]'); } catch(e) { arr = []; }
+    if (!Array.isArray(arr) || arr.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+    container.style.display = '';
+    arr.sort((a,b) => (a.date||'').localeCompare(b.date||''));
+    list.innerHTML = arr.map(sp => {
+      const dt = sp.date ? fmtDateGerman(sp.date) : '';
+      const sep = (dt && sp.text) ? ' – ' : '';
+      return `<p class="welcome-specials-item">${dt}${sep}${sp.text || ''}</p>`;
+    }).join('');
+  }
+
+  // Initial laden
+  loadPublicSettings();
 
   document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key==='Enter') checkPassword(); });
 
@@ -878,6 +992,50 @@
     }
   }
 
+  function icsDateTime(isoDate, hhmm) {
+    // "2026-11-20", "18:00" → "20261120T180000"
+    const d = parseIsoDate(isoDate);
+    const [hh, mm] = (hhmm || '00:00').split(':');
+    if (!d) return '20261120T180000';
+    return d.getFullYear()
+         + String(d.getMonth()+1).padStart(2,'0')
+         + String(d.getDate()).padStart(2,'0')
+         + 'T' + (hh || '00').padStart(2,'0') + (mm || '00').padStart(2,'0') + '00';
+  }
+  function icsEndDateTime(isoDate, startHHMM, endHHMM) {
+    // Wenn End-Zeit < Start-Zeit → nächster Tag
+    const d = parseIsoDate(isoDate);
+    if (!d) return '20261121T040000';
+    const [sh] = (startHHMM || '18:00').split(':').map(Number);
+    const [eh, em] = (endHHMM || '04:00').split(':').map(Number);
+    const rollover = (eh * 60 + em) < (sh * 60);
+    const target = rollover ? addDays(d, 1) : d;
+    return target.getFullYear()
+         + String(target.getMonth()+1).padStart(2,'0')
+         + String(target.getDate()).padStart(2,'0')
+         + 'T' + String(eh || 0).padStart(2,'0') + String(em || 0).padStart(2,'0') + '00';
+  }
+  function icsDescription() {
+    const s = publicSettings;
+    const lines = [
+      'Wirtschaft zum Grünen Baum',
+      '',
+      (s.program_time_1 || '18:00') + ' — ' + stripHtml(s.program_text_1 || ''),
+      (s.program_time_2 || '20:00') + ' — ' + stripHtml(s.program_text_2 || ''),
+      (s.program_time_3 || '21:00') + ' — ' + stripHtml(s.program_text_3 || ''),
+      '',
+      'Kinder bis ' + (s.program_time_3 || '21:00') + ' herzlich willkommen',
+      '',
+      'Eure Gastgeber',
+      'Peter & Lars',
+    ];
+    return lines.join('\\n');
+  }
+  function stripHtml(s) {
+    const tmp = document.createElement('div'); tmp.innerHTML = s || '';
+    return (tmp.textContent || tmp.innerText || '').trim();
+  }
+
   function downloadICS() {
     const ics = [
       'BEGIN:VCALENDAR',
@@ -888,12 +1046,12 @@
       'BEGIN:VEVENT',
       'UID:wgb-2026-' + Date.now() + '@zumgruenenbaum.ch',
       'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z',
-      'DTSTART:20261120T180000',
-      'DTEND:20261121T040000',
+      'DTSTART:' + icsDateTime(publicSettings.event_date, publicSettings.event_start_time),
+      'DTEND:'   + icsEndDateTime(publicSettings.event_date, publicSettings.event_start_time, publicSettings.event_end_time),
       'SUMMARY:Grüner Baum 2026',
       'LOCATION:Rämistrasse 50\\, 8001 Zürich',
       'GEO:47.371112;8.550497',
-      'DESCRIPTION:Wirtschaft zum Grünen Baum\\n\\n18:00 — Ruhiges Warm-up inkl. Verpflegung\\n20:00 — Baumfeier mit allen Gästen und Glühwein\\n21:00 — Feier im Bierkeller «zum Grünen Baum»\\n\\nKinder bis 21:00 herzlich willkommen\\n\\nEure Gastgeber\\nPeter & Lars',
+      'DESCRIPTION:' + icsDescription(),
       'END:VEVENT',
       'END:VCALENDAR'
     ].join('\r\n');
@@ -910,6 +1068,7 @@
 </script>
 </body>
 </html>
+
 
 
 
