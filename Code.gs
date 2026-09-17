@@ -287,3 +287,4 @@ function handleSetSetting(body) {
   }
   return jsonResponse({ ok: true, key: key });
 }
+
