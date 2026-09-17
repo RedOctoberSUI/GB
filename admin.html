@@ -840,7 +840,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.076 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.078 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -853,7 +853,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.076</span>
+      <span class="topbar-version">CLv0.078</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -1030,6 +1030,23 @@
   </div>
 </div>
 
+
+<!-- ══ Import-Bestätigungs-Modal ══ -->
+<div class="modal-overlay" id="import-modal" onclick="closeImportOnOverlay(event)">
+  <div class="modal" style="max-width:560px;max-height:90vh;overflow-y:auto;">
+    <div class="eyebrow">CSV-Import</div>
+    <div class="modal-title">Daten wirklich ersetzen?</div>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
+    <div id="import-summary" style="background:rgba(12,25,31,0.35);border:1px dashed var(--border);border-radius:6px;padding:0.85rem;font-size:0.85rem;line-height:1.7;margin-bottom:1rem;"></div>
+    <p style="font-size:0.82rem;color:rgba(220,120,120,0.85);line-height:1.5;"><strong>Alle bestehenden Zeilen werden gelöscht</strong> und durch die CSV-Zeilen ersetzt. Diese Aktion kann nicht rückgängig gemacht werden.</p>
+    <div class="modal-actions" style="flex-wrap:wrap;gap:0.5rem;justify-content:flex-end;">
+      <button class="btn-secondary" onclick="closeImportModal()">Abbrechen</button>
+      <button class="btn-secondary" onclick="exportGuestsCSV()">Erst Backup exportieren</button>
+      <button class="btn-save" onclick="doImport()">Import durchführen</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ WhatsApp Einzelversand-Modal ══ -->
 <div class="modal-overlay" id="wa-modal" onclick="closeWaModalOnOverlay(event)">
   <div class="modal" style="max-width:440px">
@@ -1094,6 +1111,7 @@
       <button type="button" class="settings-tab"        data-tab="einladungen" onclick="switchSettingsTab('einladungen')">Einladungen</button>
       <button type="button" class="settings-tab"        data-tab="anlass" onclick="switchSettingsTab('anlass')">Anlass</button>
       <button type="button" class="settings-tab"        data-tab="zitate" onclick="switchSettingsTab('zitate')">Zitate</button>
+      <button type="button" class="settings-tab"        data-tab="daten" onclick="switchSettingsTab('daten')">Daten</button>
     </div>
 
     <!-- Tab 1: WhatsApp -->
@@ -1175,6 +1193,18 @@
       <p class="settings-hint">Pro Situation wird zufällig eines der Zitate mit passendem Tag gewählt. Situationen: <code>Passwort</code>, <code>Anmeldung Solo</code>, <code>Anmeldung Begleitung</code>.</p>
     </div>
 
+    <!-- Tab 5: Daten -->
+    <div class="settings-pane" data-pane="daten">
+      <label style="margin-top:0;">Backup / Export</label>
+      <p class="settings-hint" style="margin-top:0.3rem;">Lädt die komplette Gästeliste als CSV herunter — kann in Excel geöffnet werden. Empfohlen vor jedem Import und für Jahres-Archive.</p>
+      <button class="btn-secondary" onclick="exportGuestsCSV()" style="width:100%;margin-top:0.6rem;">💾 Gästeliste als CSV exportieren</button>
+
+      <label style="margin-top:1.6rem;padding-top:1.2rem;border-top:1px dashed var(--border);">Import (ersetzt alle Daten)</label>
+      <p class="settings-hint" style="margin-top:0.3rem;color:rgba(220,120,120,0.85);"><strong>⚠ Achtung:</strong> Beim Import wird die komplette bestehende Gästeliste durch die CSV-Daten <strong>ersetzt</strong>. Vorher unbedingt Backup exportieren.</p>
+      <input type="file" id="csv-import-file" accept=".csv,text/csv" style="margin-top:0.6rem;width:100%;padding:0.5rem;background:rgba(12,25,31,0.35);border:1px solid var(--border);border-radius:6px;color:var(--mint);font-family:'Jost',sans-serif;font-size:0.85rem;" />
+      <button class="btn-secondary" onclick="previewImport()" style="width:100%;margin-top:0.6rem;">Datei prüfen</button>
+    </div>
+
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeSettingsModal()">Abbrechen</button>
       <button class="btn-save" onclick="saveSettings()">Speichern</button>
@@ -1193,7 +1223,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.076 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.078 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1746,6 +1776,171 @@
     clearSelection();
   }
   function closeWaBatchOnOverlay(e) { if (e.target === document.getElementById('wa-batch-modal')) waBatchAbort(); }
+
+
+  // ─── CSV Export / Import ──────────────────
+  const CSV_HEADER = ['Timestamp','Vorname','Nachname','Email','Tel','Begleitung Vorname','Begleitung Nachname','Kinder','Einladend','Kommentar','2025','2026'];
+
+  function csvEscape(v) {
+    const s = (v === null || v === undefined) ? '' : v.toString();
+    if (/[";\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function rowsToCsv(rows) {
+    const lines = [CSV_HEADER.map(csvEscape).join(';')];
+    for (const r of rows) {
+      lines.push([
+        r.timestamp   || '',
+        r.vorname     || '',
+        r.nachname    || '',
+        r.email       || '',
+        r.tel         || '',
+        r.b_vorname   || '',
+        r.b_nachname  || '',
+        r.bier        || '',
+        r.einladend   || '',
+        r.kommentar   || '',
+        r.status_2025 || '',
+        r.status_2026 || '',
+      ].map(csvEscape).join(';'));
+    }
+    return '\ufeff' + lines.join('\r\n');  // UTF-8 BOM für Excel
+  }
+
+  function exportGuestsCSV() {
+    const csv = rowsToCsv(allRows);
+    const now = new Date();
+    const stamp = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0')
+                + '_' + String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'gruenerbaum_gaeste_' + stamp + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // RFC-4180 CSV Parser (auto-detect , oder ; als Delimiter)
+  function parseCsv(text) {
+    // BOM entfernen
+    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    // Delimiter aus erster Zeile erraten
+    const firstLine = text.split(/\r?\n/)[0] || '';
+    const delim = (firstLine.split(';').length > firstLine.split(',').length) ? ';' : ',';
+    const rows = [];
+    let field = '', row = [], inQuotes = false, i = 0;
+    while (i < text.length) {
+      const c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i+1] === '"') { field += '"'; i += 2; continue; }
+          inQuotes = false; i++; continue;
+        }
+        field += c; i++;
+      } else {
+        if (c === '"') { inQuotes = true; i++; continue; }
+        if (c === delim) { row.push(field); field = ''; i++; continue; }
+        if (c === '\n' || c === '\r') {
+          row.push(field); rows.push(row); row = []; field = '';
+          if (c === '\r' && text[i+1] === '\n') i++;
+          i++; continue;
+        }
+        field += c; i++;
+      }
+    }
+    if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+    return rows.filter(r => r.length > 1 || (r.length === 1 && r[0] !== ''));
+  }
+
+  let pendingImportRows = null;
+
+  function previewImport() {
+    const fileInput = document.getElementById('csv-import-file');
+    const file = fileInput.files[0];
+    if (!file) { alert('Bitte CSV-Datei wählen.'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const parsed = parseCsv(e.target.result);
+        if (parsed.length < 2) { alert('CSV enthält keine Datenzeilen.'); return; }
+        const header = parsed[0].map(s => s.trim().toLowerCase());
+        // Mapping: Header-Name → Feldname
+        const map = {
+          'timestamp': 'timestamp', 'vorname': 'vorname', 'nachname': 'nachname',
+          'email': 'email', 'e-mail': 'email', 'tel': 'tel', 'telefon': 'tel',
+          'begleitung vorname': 'b_vorname', 'begleitung nachname': 'b_nachname',
+          'kinder': 'bier', 'anzahl kinder': 'bier',
+          'einladend': 'einladend', 'kommentar': 'kommentar',
+          '2025': 'status_2025', 'status 2025': 'status_2025',
+          '2026': 'status_2026', 'status 2026': 'status_2026',
+        };
+        const colIdx = {};
+        header.forEach((h, i) => { if (map[h]) colIdx[map[h]] = i; });
+        if (colIdx.vorname === undefined || colIdx.nachname === undefined) {
+          alert('CSV muss mindestens die Spalten "Vorname" und "Nachname" enthalten.');
+          return;
+        }
+        const rows = [];
+        for (let i = 1; i < parsed.length; i++) {
+          const r = parsed[i];
+          const obj = {};
+          for (const k in colIdx) obj[k] = (r[colIdx[k]] || '').trim();
+          if (!obj.vorname && !obj.nachname) continue;
+          rows.push(obj);
+        }
+        pendingImportRows = rows;
+
+        // Preview: erste 5 Zeilen
+        const preview = rows.slice(0, 5).map(r =>
+          `<div style="font-size:0.78rem;color:var(--mint-dim);">${esc(r.vorname)} ${esc(r.nachname)} — ${esc(r.status_2026 || r.status_2025 || '')}</div>`
+        ).join('');
+        document.getElementById('import-summary').innerHTML = `
+          <div><strong style="color:var(--lime);">${rows.length} Zeile(n)</strong> werden importiert.</div>
+          <div style="margin-top:0.5rem;color:var(--mint-dim);font-size:0.75rem;">Bestehend: ${allRows.length} Zeile(n) — werden vollständig ersetzt.</div>
+          <div style="margin-top:0.8rem;padding-top:0.6rem;border-top:1px dashed var(--border);">
+            <div style="font-size:0.72rem;color:var(--mint-dim);margin-bottom:0.3rem;">Vorschau erste 5 Zeilen:</div>
+            ${preview}
+          </div>
+        `;
+        document.getElementById('import-modal').classList.add('open');
+      } catch(err) {
+        alert('CSV konnte nicht gelesen werden: ' + err.message);
+      }
+    };
+    reader.readAsText(file, 'utf-8');
+  }
+
+  function closeImportModal() {
+    document.getElementById('import-modal').classList.remove('open');
+    pendingImportRows = null;
+  }
+  function closeImportOnOverlay(e) { if (e.target === document.getElementById('import-modal')) closeImportModal(); }
+
+  async function doImport() {
+    if (!pendingImportRows) return;
+    const btn = document.querySelector('#import-modal .btn-save');
+    btn.textContent = 'Importiere …'; btn.disabled = true;
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: API_TOKEN,
+          action: 'replaceAll',
+          rows: pendingImportRows,
+        }),
+      });
+      closeImportModal();
+      closeSettingsModal();
+      alert('Import gestartet. Liste wird neu geladen.');
+      setTimeout(loadData, 1500);
+    } catch(e) { alert('Fehler: ' + e.message); }
+    finally { btn.textContent = 'Import durchführen'; btn.disabled = false; }
+  }
 
   // ─── Column Resize ───
   const COL_WIDTH_KEY = 'gb-admin-col-widths-v1';
