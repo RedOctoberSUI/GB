@@ -81,12 +81,14 @@ function handleUpsert(data) {
   if (!sheet) return jsonResponse({ ok: false, error: 'Sheet "' + SHEET_NAME + '" nicht gefunden' });
 
   let status2026;
-  if (data.year_2026 !== undefined && data.year_2026 !== null && data.year_2026 !== '') {
+  if (data.year_2026 !== undefined && data.year_2026 !== null) {
+    // Explizit gesetzter Wert (auch '' für Offen) wird 1:1 verwendet
     status2026 = data.year_2026;
   } else if (data.typ === 'Absage')            status2026 = 'Abgemeldet';
   else if (data.typ === 'PNG')                 status2026 = 'PNG';
   else if (data.typ === 'Einzuladen')          status2026 = 'Einzuladen';
   else if (data.typ === 'Einladung gesendet')  status2026 = 'Einladung gesendet';
+  else if (data.typ === 'Offen')               status2026 = '';
   else                                          status2026 = 'Angemeldet';
   const vn = (data.vorname  || '').toString().trim();
   const nn = (data.nachname || '').toString().trim();
