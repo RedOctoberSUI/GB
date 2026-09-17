@@ -712,7 +712,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.063</span>
+      <span class="topbar-version">CLv0.064</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -739,11 +739,6 @@
       <span class="filter-label" style="margin-left:0.5rem">Einladend</span>
       <select id="filter-einladend" onchange="applyFilter()">
         <option value="">Alle</option>
-        <option value="Peter">Peter</option>
-        <option value="Lars">Lars</option>
-        <option value="Beatrice">Beatrice</option>
-        <option value="Peter & Lars">Peter &amp; Lars</option>
-        <option value="__empty__">(leer)</option>
       </select>
       <span class="filter-label" style="margin-left:0.5rem">Filter</span>
       <select id="filter-typ" onchange="applyFilter()">
@@ -786,10 +781,6 @@
       <div><label for="m-einladend">Einladend</label>
         <select id="m-einladend">
           <option value="">— Keine —</option>
-          <option value="Peter">Peter</option>
-          <option value="Lars">Lars</option>
-          <option value="Beatrice">Beatrice</option>
-          <option value="Peter & Lars">Peter &amp; Lars</option>
         </select>
       </div>
       <div class="full">
@@ -825,10 +816,6 @@
         <label for="an-einladend">Einladend</label>
         <select id="an-einladend">
           <option value="">— Auswählen —</option>
-          <option value="Peter">Peter</option>
-          <option value="Lars">Lars</option>
-          <option value="Beatrice">Beatrice</option>
-          <option value="Peter & Lars">Peter & Lars</option>
         </select>
       </div>
       <div class="full">
@@ -956,6 +943,12 @@
     <p class="settings-hint">Platzhalter: <code>{vorname}</code> · <code>{nachname}</code> · <code>{einladend}</code> — werden pro Gast automatisch ersetzt.</p>
 
     <div style="margin-top:1.4rem;padding-top:1.2rem;border-top:1px dashed var(--border);">
+      <label for="settings-einladende" style="margin-top:0;">Einladende Personen</label>
+      <textarea id="settings-einladende" class="settings-textarea" style="min-height:100px;" placeholder="Ein Name pro Zeile"></textarea>
+      <p class="settings-hint">Ein Name pro Zeile. Wird für alle Admins gespeichert (im Sheet).</p>
+    </div>
+
+    <div style="margin-top:1.4rem;padding-top:1.2rem;border-top:1px dashed var(--border);">
       <label style="display:flex;align-items:center;gap:0.6rem;margin-top:0;cursor:pointer;text-transform:none;letter-spacing:normal;font-size:0.85rem;color:var(--mint);font-weight:300;">
         <input type="checkbox" id="wa-use-desktop" style="accent-color:var(--lime);cursor:pointer;width:auto;" />
         WhatsApp Desktop-App verwenden (statt Web)
@@ -980,7 +973,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.063 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.064 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -992,6 +985,7 @@
   let sortCol    = null;
   let sortDir    = 'asc';
   let scope      = '2026';  // '2026' (default) oder 'all'
+  let einladende = ['Beatrice', 'Peter', 'Lars', 'Lea']; // wird nach loadSettings() aus Sheet befüllt
 
   document.getElementById('admin-pw').addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin(); });
 
@@ -1000,6 +994,7 @@
     if (v === ADMIN_PASSWORD) {
       document.getElementById('login-stage').style.display = 'none';
       document.getElementById('app').style.display = 'flex';
+      loadSettings();
       loadData();
     } else {
       document.getElementById('login-err').style.display = 'block';
@@ -1569,6 +1564,7 @@ Peter & Lars`;
     document.getElementById('wa-neu').value = getWaTemplateNeu();
     document.getElementById('wa-bestehend').value = getWaTemplateBestehend();
     document.getElementById('wa-use-desktop').checked = getWaUseDesktop();
+    document.getElementById('settings-einladende').value = einladende.join('\n');
     document.getElementById('settings-modal').classList.add('open');
   }
   function closeSettingsModal() { document.getElementById('settings-modal').classList.remove('open'); }
@@ -1580,11 +1576,73 @@ Peter & Lars`;
     if (neu)       localStorage.setItem(WA_NEU_KEY,       neu);       else localStorage.removeItem(WA_NEU_KEY);
     if (bestehend) localStorage.setItem(WA_BESTEHEND_KEY, bestehend); else localStorage.removeItem(WA_BESTEHEND_KEY);
     if (useDesk)   localStorage.setItem(WA_DESKTOP_KEY, '1');        else localStorage.removeItem(WA_DESKTOP_KEY);
+
+    // Einladende: aus Textarea parsen, an Sheet schicken
+    const einladendeRaw = document.getElementById('settings-einladende').value;
+    const einladendeList = einladendeRaw.split('\n').map(s => s.trim()).filter(Boolean);
+    if (einladendeList.length > 0) {
+      einladende = einladendeList;
+      saveEinladendeSetting();
+      refreshEinladendeDropdowns();
+    }
+
     closeSettingsModal();
     applyFilter();
   }
   function resetWaNeu()       { document.getElementById('wa-neu').value       = WA_DEFAULT_NEU; }
   function resetWaBestehend() { document.getElementById('wa-bestehend').value = WA_DEFAULT_BESTEHEND; }
+
+  async function loadSettings() {
+    try {
+      const res  = await fetch(APPS_SCRIPT_URL + '?action=getSettings&token=' + encodeURIComponent(API_TOKEN));
+      const json = await res.json();
+      if (json && json.settings && typeof json.settings.einladende === 'string' && json.settings.einladende.trim()) {
+        const list = json.settings.einladende.split('\n').map(s => s.trim()).filter(Boolean);
+        if (list.length > 0) einladende = list;
+      }
+    } catch(e) { /* fallback: default */ }
+    refreshEinladendeDropdowns();
+  }
+
+  async function saveEinladendeSetting() {
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: API_TOKEN,
+          action: 'setSetting',
+          key: 'einladende',
+          value: einladende.join('\n'),
+        }),
+      });
+    } catch(e) { /* silent */ }
+  }
+
+  function refreshEinladendeDropdowns() {
+    const optsBase   = '<option value="">— Keine —</option>';
+    const optsFilter = '<option value="">Alle</option>';
+    const opts = einladende.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+
+    const filterSel = document.getElementById('filter-einladend');
+    if (filterSel) {
+      const current = filterSel.value;
+      filterSel.innerHTML = optsFilter + opts + '<option value="__empty__">(leer)</option>';
+      filterSel.value = current;
+    }
+    const editSel = document.getElementById('m-einladend');
+    if (editSel) {
+      const current = editSel.value;
+      editSel.innerHTML = optsBase + opts;
+      editSel.value = current;
+    }
+    const anSel = document.getElementById('an-einladend');
+    if (anSel) {
+      const current = anSel.value;
+      anSel.innerHTML = '<option value="">— Auswählen —</option>' + opts;
+      anSel.value = current;
+    }
+  }
 
   async function loadData() {
     document.getElementById('table-container').innerHTML =
@@ -1914,6 +1972,7 @@ Peter & Lars`;
 </script>
 </body>
 </html>
+
 
 
 
