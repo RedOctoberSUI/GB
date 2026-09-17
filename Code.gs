@@ -63,6 +63,7 @@ function doPost(e) {
 
     if (action === 'update')     return handleUpdate(body);
     if (action === 'setSetting') return handleSetSetting(body);
+    if (action === 'replaceAll') return handleReplaceAll(body);
     return handleUpsert(body);
   } catch (err) {
     return jsonResponse({ ok: false, error: String(err) });
@@ -124,7 +125,8 @@ function handleUpsert(data) {
       setIfFilled(sheet, targetRow, COL.b_nachname, data.b_nachname);
       setIfFilled(sheet, targetRow, COL.kinder,     data.bier);
     }
-    setIfFilled(sheet, targetRow, COL.kommentar,  data.kommentar);
+    // Kommentar immer überschreiben (auch mit leer) — sonst bleibt alter Kommentar aus Vorjahr
+    sheet.getRange(targetRow, COL.kommentar).setValue(data.kommentar || '');
     sheet.getRange(targetRow, COL.year_2026).setValue(status2026);
     return jsonResponse({ ok: true, action: 'updated', row: targetRow });
   }
@@ -313,3 +315,38 @@ function handleSetSetting(body) {
 }
 
 
+// ─── ReplaceAll (CSV-Import: löscht alle Daten und schreibt neue Zeilen) ─
+function handleReplaceAll(body) {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  if (!sheet) return jsonResponse({ ok: false, error: 'Sheet "' + SHEET_NAME + '" nicht gefunden' });
+
+  const rows = body.rows;
+  if (!Array.isArray(rows)) return jsonResponse({ ok: false, error: 'rows fehlt oder kein Array' });
+
+  const lastRow = sheet.getLastRow();
+  const lastCol = sheet.getLastColumn();
+  if (lastRow > HEADER_ROW) {
+    // Alle Daten-Zeilen löschen
+    sheet.getRange(HEADER_ROW + 1, 1, lastRow - HEADER_ROW, lastCol).clearContent();
+  }
+
+  if (rows.length === 0) return jsonResponse({ ok: true, action: 'replaced', rows: 0 });
+
+  // Zeilen aufbauen im festen Spalten-Layout
+  const data = rows.map(r => [
+    r.timestamp   || '',
+    r.vorname     || '',
+    r.nachname    || '',
+    r.email       || '',
+    r.tel         || '',
+    r.b_vorname   || '',
+    r.b_nachname  || '',
+    r.bier        || '',
+    r.einladend   || '',
+    r.kommentar   || '',
+    r.status_2025 || '',
+    r.status_2026 || '',
+  ]);
+  sheet.getRange(HEADER_ROW + 1, 1, data.length, 12).setValues(data);
+  return jsonResponse({ ok: true, action: 'replaced', rows: rows.length });
+}
