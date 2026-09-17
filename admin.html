@@ -712,7 +712,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.064</span>
+      <span class="topbar-version">CLv0.066</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -870,6 +870,25 @@
 
 
 
+
+<!-- ══ Duplikat-Modal ══ -->
+<div class="modal-overlay" id="dup-modal" onclick="closeDupOnOverlay(event)">
+  <div class="modal" style="max-width:520px">
+    <div class="eyebrow">Möglicher Doppeleintrag</div>
+    <div class="modal-title" id="dup-title">Ähnlicher Eintrag gefunden</div>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
+    <p style="font-size:0.9rem;color:var(--mint-dim);margin-bottom:1rem;line-height:1.5;">
+      Ein Eintrag existiert bereits. Details des bestehenden Datensatzes:
+    </p>
+    <div id="dup-details" style="background:rgba(12,25,31,0.35);border:1px dashed var(--border);border-radius:6px;padding:0.85rem;font-size:0.85rem;line-height:1.7;"></div>
+    <div class="modal-actions" style="flex-wrap:wrap;gap:0.5rem;justify-content:flex-end;">
+      <button class="btn-secondary" onclick="closeDupModal()">Abbrechen</button>
+      <button class="btn-secondary" onclick="dupSaveAsNew()">Trotzdem als neuer Datensatz</button>
+      <button class="btn-save" onclick="dupOverwrite()">Bestehenden überschreiben</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ WhatsApp Einzelversand-Modal ══ -->
 <div class="modal-overlay" id="wa-modal" onclick="closeWaModalOnOverlay(event)">
   <div class="modal" style="max-width:440px">
@@ -973,7 +992,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.064 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.066 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1110,9 +1129,16 @@
   async function saveDatensatz() {
     const vn = val('an-vorname'), nn = val('an-nachname');
     if (!vn || !nn) { alert('Bitte Vor- und Nachname eingeben.'); return; }
+
+    const rawTel = val('an-tel');
+    if (rawTel && !isValidPhone(rawTel)) {
+      alert('Telefonnummer sieht nicht korrekt aus.\nErwartet: mit Ländervorwahl (+41 79 …) oder mit führender 0.');
+      return;
+    }
+    const normTel = normalizePhone(rawTel);
+
     const status = document.getElementById('an-status').value;
 
-    // Typ ableiten
     let typ;
     if (status === 'Abgemeldet') typ = 'Absage';
     else if (status === 'PNG') typ = 'PNG';
@@ -1124,14 +1150,11 @@
 
     let statusValue = status === 'Angemeldet-mit' ? 'Angemeldet' : status;
 
-    const btn = document.querySelector('#anmeldung-modal .btn-save');
-    btn.textContent = '…'; btn.disabled = true;
-
     const payload = {
       token: API_TOKEN,
       typ, source: 'manuell',
       vorname: vn, nachname: nn,
-      email: val('an-email'), tel: val('an-tel'),
+      email: val('an-email'), tel: normTel,
       b_vorname:  val('an-b-vorname'),
       b_nachname: val('an-b-nachname'),
       bier:       val('an-kinder') || '',
@@ -1140,6 +1163,17 @@
       year_2026:  statusValue,
       timestamp: new Date().toLocaleString('de-CH'),
     };
+
+    // Frisch vom Sheet holen bevor wir Duplikat prüfen
+    await refetchAllRowsOnly();
+    const dup = findDuplicate(vn, nn, normTel);
+    if (dup) {
+      openDupModal(dup.row, payload, dup.reason);
+      return;
+    }
+
+    const btn = document.querySelector('#anmeldung-modal .btn-save');
+    btn.textContent = '…'; btn.disabled = true;
     try {
       await fetch(APPS_SCRIPT_URL, {
         method: 'POST', mode: 'no-cors',
@@ -1152,6 +1186,138 @@
     finally { btn.textContent = 'Speichern'; btn.disabled = false; }
   }
 
+
+
+  // ─── Fuzzy-Namen + Duplikat-Check ─────────
+  function fuzzyName(s) {
+    if (!s) return '';
+    let out = s.toLowerCase().trim();
+    const subs = {'ä':'ae','ö':'oe','ü':'ue','ß':'ss','é':'e','è':'e','ê':'e','à':'a','á':'a','â':'a','ô':'o','ó':'o','ò':'o','ì':'i','í':'i','î':'i','ù':'u','ú':'u','û':'u','ç':'c','ñ':'n'};
+    for (const k in subs) out = out.split(k).join(subs[k]);
+    return out.replace(/[^a-z]/g, '');
+  }
+
+  function findDuplicate(vn, nn, tel, excludeRowIndex) {
+    const fvn = fuzzyName(vn), fnn = fuzzyName(nn);
+    const nTel = normalizePhone(tel);
+    if (fvn && fnn) {
+      for (const r of allRows) {
+        if (excludeRowIndex && r._rowIndex === excludeRowIndex) continue;
+        if (fuzzyName(r.vorname) === fvn && fuzzyName(r.nachname) === fnn) {
+          return { row: r, reason: 'name' };
+        }
+      }
+    }
+    if (nTel) {
+      for (const r of allRows) {
+        if (excludeRowIndex && r._rowIndex === excludeRowIndex) continue;
+        if (r.tel && normalizePhone(r.tel) === nTel) return { row: r, reason: 'tel' };
+      }
+    }
+    return null;
+  }
+
+  // Telefon-Validierung: nach Normalisierung 10-15 Ziffern
+  function isValidPhone(tel) {
+    if (!tel) return true;
+    const norm = normalizePhone(tel);
+    return /^[0-9]{10,15}$/.test(norm);
+  }
+
+  // Silent reload (nur allRows, kein UI-Rerender)
+  async function refetchAllRowsOnly() {
+    try {
+      const res  = await fetch(APPS_SCRIPT_URL + '?action=getAll&token=' + encodeURIComponent(API_TOKEN));
+      const json = await res.json();
+      if (json && json.rows) allRows = json.rows;
+    } catch(e) { /* silent */ }
+  }
+
+  // ─── Duplikat-Modal ──────────────────
+  let dupPendingPayload = null;
+  let dupExistingRow    = null;
+
+  function openDupModal(existingRow, payload, reason) {
+    dupPendingPayload = payload;
+    dupExistingRow    = existingRow;
+    const r = existingRow;
+    const title = reason === 'tel'
+      ? 'Diese Telefonnummer existiert bereits'
+      : 'Ähnlicher Name gefunden';
+    document.getElementById('dup-title').textContent = title;
+    const rows = [
+      ['Name',        (r.vorname||'') + ' ' + (r.nachname||'')],
+      ['Status 2026', r.typ || '—'],
+      ['Status 2025', r.status_2025 || '—'],
+      ['Einladend',   r.einladend || '—'],
+      ['E-Mail',      r.email || '—'],
+      ['Telefon',     r.tel || '—'],
+      ['Begleitung',  ((r.b_vorname||'')+' '+(r.b_nachname||'')).trim() || '—'],
+      ['Kinder',      r.bier || '—'],
+      ['Kommentar',   r.kommentar || '—'],
+    ];
+    document.getElementById('dup-details').innerHTML = rows.map(([k,v]) =>
+      `<div style="display:flex;gap:0.6rem;"><div style="min-width:110px;color:var(--mint-dim);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;">${esc(k)}</div><div>${esc(v)}</div></div>`
+    ).join('');
+    document.getElementById('dup-modal').classList.add('open');
+  }
+  function closeDupModal() {
+    document.getElementById('dup-modal').classList.remove('open');
+    dupPendingPayload = null;
+    dupExistingRow    = null;
+  }
+  function closeDupOnOverlay(e) { if (e.target === document.getElementById('dup-modal')) closeDupModal(); }
+
+  async function dupOverwrite() {
+    const p = dupPendingPayload, r = dupExistingRow;
+    if (!p || !r) return;
+    const merged = {
+      vorname:    p.vorname   || r.vorname   || '',
+      nachname:   p.nachname  || r.nachname  || '',
+      email:      p.email     || r.email     || '',
+      tel:        p.tel       || r.tel       || '',
+      b_vorname:  p.b_vorname || r.b_vorname || '',
+      b_nachname: p.b_nachname|| r.b_nachname|| '',
+      bier:       p.bier      || r.bier      || '',
+      einladend:  p.einladend || r.einladend || '',
+      kommentar:  p.kommentar || r.kommentar || '',
+      year_2026:  (p.year_2026 !== undefined && p.year_2026 !== '') ? p.year_2026 : r.status_2026,
+    };
+    const btn = document.querySelector('#dup-modal .btn-save');
+    btn.textContent = '…'; btn.disabled = true;
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: API_TOKEN, action: 'update',
+          rowIndex: r._rowIndex, data: merged,
+        }),
+      });
+      closeDupModal();
+      closeAnmeldungModal();
+      setTimeout(loadData, 600);
+    } catch(e) { alert('Fehler: ' + e.message); }
+    finally { btn.textContent = 'Bestehenden überschreiben'; btn.disabled = false; }
+  }
+
+  async function dupSaveAsNew() {
+    const p = dupPendingPayload;
+    if (!p) return;
+    const btn = document.querySelector('#dup-modal .btn-secondary:nth-of-type(2)');
+    if (btn) { btn.textContent = '…'; btn.disabled = true; }
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(p),
+      });
+      closeDupModal();
+      closeAnmeldungModal();
+      setTimeout(loadData, 600);
+    } catch(e) { alert('Fehler: ' + e.message); }
+    finally { if (btn) { btn.textContent = 'Trotzdem als neuer Datensatz'; btn.disabled = false; } }
+  }
 
   // ─── Multi-Select ───
   const selectedIds = new Set();
@@ -1484,15 +1650,14 @@ Peter & Lars`;
   function normalizePhone(raw) {
     if (!raw) return '';
     let s = raw.toString().trim();
-    // Alle Nicht-Ziffern ausser + entfernen
     s = s.replace(/[^0-9+]/g, '');
-    // + entfernen
     s = s.replace(/^\+/, '');
-    // 00 (internationale Vorwahl) → weg
     s = s.replace(/^00/, '');
-    // Führende 0 → 41 (Schweiz default) — nur wenn Nummer nicht schon international aussieht
     if (s.length > 0 && s.startsWith('0') && !s.startsWith('00')) {
       s = '41' + s.substring(1);
+    } else if (s.length === 9 && /^7[0-9]/.test(s)) {
+      // CH Mobile ohne führende 0: 9 Ziffern, beginnt mit 7 → prepend 41
+      s = '41' + s;
     }
     return s;
   }
@@ -1844,12 +2009,17 @@ Peter & Lars`;
 
   async function saveEdit() {
     const r = allRows[editRowIdx];
+    const rawTelEdit = val('m-tel');
+    if (rawTelEdit && !isValidPhone(rawTelEdit)) {
+      alert('Telefonnummer sieht nicht korrekt aus.\nErwartet: mit Ländervorwahl (+41 79 …) oder mit führender 0.');
+      return;
+    }
     const updated = { ...r,
       source:     r.source || 'form',
       vorname:    val('m-vorname'),
       nachname:   val('m-nachname'),
       email:      val('m-email'),
-      tel:        val('m-tel'),
+      tel:        normalizePhone(rawTelEdit),
       b_vorname:  val('m-b-vorname'),
       b_nachname: val('m-b-nachname'),
       bier:       val('m-kinder') || '',
