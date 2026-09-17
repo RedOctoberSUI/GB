@@ -548,6 +548,54 @@
       min-height: 44px;
       width: 100%;
     }
+    .zitat-row {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 0.7rem;
+      background: rgba(12,25,31,0.25);
+    }
+    .zitat-row .zitat-head {
+      display: grid;
+      grid-template-columns: 1fr 180px 40px;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      align-items: center;
+    }
+    .zitat-row select, .zitat-row input {
+      background: rgba(12,25,31,0.35);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.7rem;
+      color: var(--mint);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.85rem;
+      width: 100%;
+    }
+    .zitat-row textarea {
+      background: rgba(12,25,31,0.35);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.7rem;
+      color: var(--mint);
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      resize: vertical;
+      min-height: 60px;
+      width: 100%;
+    }
+    .zitat-row button.rm {
+      background: transparent;
+      border: 1px solid rgba(200,80,80,0.4);
+      color: rgba(220,120,120,0.8);
+      border-radius: 4px;
+      padding: 0.4rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .zitat-row button.rm:hover { border-color: rgba(220,80,80,0.8); background: rgba(200,80,80,0.15); }
+
 
     /* ── WhatsApp Radios / Preview ── */
     .wa-radio-group {
@@ -792,7 +840,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.068 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.076 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -805,7 +853,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.068</span>
+      <span class="topbar-version">CLv0.076</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -1045,6 +1093,7 @@
       <button type="button" class="settings-tab active" data-tab="whatsapp" onclick="switchSettingsTab('whatsapp')">WhatsApp</button>
       <button type="button" class="settings-tab"        data-tab="einladungen" onclick="switchSettingsTab('einladungen')">Einladungen</button>
       <button type="button" class="settings-tab"        data-tab="anlass" onclick="switchSettingsTab('anlass')">Anlass</button>
+      <button type="button" class="settings-tab"        data-tab="zitate" onclick="switchSettingsTab('zitate')">Zitate</button>
     </div>
 
     <!-- Tab 1: WhatsApp -->
@@ -1116,6 +1165,16 @@
       <p class="settings-hint">Werden auf dem Anmelde-Screen unter «Aktuelle Specials» angezeigt.</p>
     </div>
 
+    <!-- Tab 4: Zitate -->
+    <div class="settings-pane" data-pane="zitate">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.4rem;">
+        <label style="margin-top:0;">Zitate</label>
+        <button class="filter-reset" onclick="addZitat()" style="font-size:0.6rem;padding:0.25rem 0.6rem;">+ Neu</button>
+      </div>
+      <div id="zitate-list"></div>
+      <p class="settings-hint">Pro Situation wird zufällig eines der Zitate mit passendem Tag gewählt. Situationen: <code>Passwort</code>, <code>Anmeldung Solo</code>, <code>Anmeldung Begleitung</code>.</p>
+    </div>
+
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeSettingsModal()">Abbrechen</button>
       <button class="btn-save" onclick="saveSettings()">Speichern</button>
@@ -1134,7 +1193,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.068 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.076 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1887,7 +1946,6 @@ Peter & Lars`;
     try {
       specialsEditorArr = JSON.parse(s.specials || '[]');
       if (!Array.isArray(specialsEditorArr)) specialsEditorArr = [];
-      // Backward-compat: alte {date,text} → {date,title,subtitle}
       specialsEditorArr = specialsEditorArr.map(sp => ({
         date:     sp.date     || '',
         title:    sp.title    !== undefined ? sp.title : (sp.text || ''),
@@ -1895,6 +1953,14 @@ Peter & Lars`;
       }));
     } catch(e) { specialsEditorArr = []; }
     renderSpecialsEditor();
+
+    // Zitate laden (leer → mit Defaults befüllen)
+    try {
+      zitateEditorArr = JSON.parse(s.zitate || '[]');
+      if (!Array.isArray(zitateEditorArr)) zitateEditorArr = [];
+    } catch(e) { zitateEditorArr = []; }
+    if (zitateEditorArr.length === 0) zitateEditorArr = ZITAT_DEFAULTS.map(z => ({...z}));
+    renderZitateEditor();
 
     // Reset auf ersten Tab
     switchSettingsTab('whatsapp');
@@ -1933,6 +1999,7 @@ Peter & Lars`;
       program_time_3:   document.getElementById('s-prog-time-3').value,
       program_text_3:   document.getElementById('s-prog-text-3').value,
       specials:         JSON.stringify(specialsEditorArr.filter(sp => sp.date || sp.title || sp.subtitle)),
+      zitate:           JSON.stringify(zitateEditorArr.filter(z => (z.text || '').trim())),
     };
     for (const k in newAnlass) {
       if (newAnlass[k] !== anlassSettings[k]) {
@@ -1961,8 +2028,50 @@ Peter & Lars`;
     program_time_3:   '21:00',
     program_text_3:   'Dann geht\'s richtig los im Bierkeller «zum Grünen Baum» <span style="opacity:0.6;font-style:italic;">(nur Erwachsene)</span>',
     specials:         '[]',
+    zitate:           '[]',
   };
   let specialsEditorArr = [];
+  let zitateEditorArr    = [];  // {tag, text, author}
+
+  const ZITAT_TAGS = ['Passwort', 'Anmeldung Solo', 'Anmeldung Begleitung'];
+  const ZITAT_DEFAULTS = [
+    { tag: 'Passwort',              text: '„Der gute Gast mit heitrem Sein, kennt das Wort und tritt hier ein."',                                                    author: 'Laird Peter Michael Jansen, erster Laird des Hauses' },
+    { tag: 'Anmeldung Solo',        text: '„Ein Gentleman trinkt nie allein. Weihnachten sorgt dafür."',                                                              author: 'Laird Peter Michael Jansen, erster Laird des Hauses' },
+    { tag: 'Anmeldung Begleitung',  text: '„An Weihnachten zählen nicht die Kalorien, die Geschenke oder die Promille – sondern die Geschichten danach."',           author: 'Laird Lars „The Grinch" Loepfe' },
+  ];
+
+  function renderZitateEditor() {
+    const list = document.getElementById('zitate-list');
+    if (!list) return;
+    if (zitateEditorArr.length === 0) {
+      list.innerHTML = '<p style="font-size:0.75rem;color:var(--mint-dim);font-style:italic;margin:0.5rem 0;">Noch keine Zitate — «+ Neu» klicken.</p>';
+      return;
+    }
+    list.innerHTML = zitateEditorArr.map((z, i) =>
+      `<div class="zitat-row">
+        <div class="zitat-head">
+          <input type="text" value="${esc(z.author || '')}" oninput="updateZitat(${i}, 'author', this.value)" placeholder="Autor (frei)" />
+          <select onchange="updateZitat(${i}, 'tag', this.value)">
+            ${ZITAT_TAGS.map(t => `<option value="${t}" ${z.tag === t ? 'selected' : ''}>${t}</option>`).join('')}
+          </select>
+          <button class="rm" type="button" onclick="removeZitat(${i})" title="Löschen">✕</button>
+        </div>
+        <textarea oninput="updateZitat(${i}, 'text', this.value)" placeholder="Zitat">${esc(z.text || '')}</textarea>
+      </div>`
+    ).join('');
+  }
+  function addZitat() {
+    zitateEditorArr.push({ tag: 'Passwort', text: '', author: '' });
+    renderZitateEditor();
+  }
+  function updateZitat(idx, field, value) {
+    if (!zitateEditorArr[idx]) return;
+    zitateEditorArr[idx][field] = value;
+  }
+  function removeZitat(idx) {
+    zitateEditorArr.splice(idx, 1);
+    renderZitateEditor();
+  }
 
   function switchSettingsTab(name) {
     document.querySelectorAll('.settings-tab').forEach(el => {
@@ -2407,6 +2516,7 @@ Peter & Lars`;
 </script>
 </body>
 </html>
+
 
 
 
