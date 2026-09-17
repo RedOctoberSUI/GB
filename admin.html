@@ -495,6 +495,9 @@
       margin-bottom: 0.5rem;
       align-items: center;
     }
+    .special-row-3 {
+      grid-template-columns: 140px 1fr 1fr 40px;
+    }
     .special-row input {
       background: rgba(12,25,31,0.35);
       border: 1px solid var(--border);
@@ -789,7 +792,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.067 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.068 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -802,7 +805,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.067</span>
+      <span class="topbar-version">CLv0.068</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -1092,15 +1095,15 @@
 
       <label style="margin-top:1.4rem;">Programm</label>
       <div class="prog-row">
-        <input type="time" id="s-prog-time-1" class="prog-time" />
+        <input type="text" id="s-prog-time-1" class="prog-time" placeholder="18:00 – 20:00" />
         <textarea id="s-prog-text-1" class="prog-text"></textarea>
       </div>
       <div class="prog-row">
-        <input type="time" id="s-prog-time-2" class="prog-time" />
+        <input type="text" id="s-prog-time-2" class="prog-time" placeholder="20:00" />
         <textarea id="s-prog-text-2" class="prog-text"></textarea>
       </div>
       <div class="prog-row">
-        <input type="time" id="s-prog-time-3" class="prog-time" />
+        <input type="text" id="s-prog-time-3" class="prog-time" placeholder="ab 21:00" />
         <textarea id="s-prog-text-3" class="prog-text"></textarea>
       </div>
       <p class="settings-hint">«Kinder bis …» wandert automatisch mit Zeit von Programmpunkt 3.</p>
@@ -1131,7 +1134,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.067 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.068 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1881,8 +1884,16 @@ Peter & Lars`;
       if (el('s-prog-time-' + i)) el('s-prog-time-' + i).value = s['program_time_' + i] || '';
       if (el('s-prog-text-' + i)) el('s-prog-text-' + i).value = s['program_text_' + i] || '';
     }
-    try { specialsEditorArr = JSON.parse(s.specials || '[]'); if (!Array.isArray(specialsEditorArr)) specialsEditorArr = []; }
-    catch(e) { specialsEditorArr = []; }
+    try {
+      specialsEditorArr = JSON.parse(s.specials || '[]');
+      if (!Array.isArray(specialsEditorArr)) specialsEditorArr = [];
+      // Backward-compat: alte {date,text} → {date,title,subtitle}
+      specialsEditorArr = specialsEditorArr.map(sp => ({
+        date:     sp.date     || '',
+        title:    sp.title    !== undefined ? sp.title : (sp.text || ''),
+        subtitle: sp.subtitle || '',
+      }));
+    } catch(e) { specialsEditorArr = []; }
     renderSpecialsEditor();
 
     // Reset auf ersten Tab
@@ -1921,7 +1932,7 @@ Peter & Lars`;
       program_text_2:   document.getElementById('s-prog-text-2').value,
       program_time_3:   document.getElementById('s-prog-time-3').value,
       program_text_3:   document.getElementById('s-prog-text-3').value,
-      specials:         JSON.stringify(specialsEditorArr.filter(sp => sp.date || sp.text)),
+      specials:         JSON.stringify(specialsEditorArr.filter(sp => sp.date || sp.title || sp.subtitle)),
     };
     for (const k in newAnlass) {
       if (newAnlass[k] !== anlassSettings[k]) {
@@ -1966,15 +1977,16 @@ Peter & Lars`;
     const list = document.getElementById('specials-list');
     if (!list) return;
     list.innerHTML = specialsEditorArr.map((sp, i) =>
-      `<div class="special-row">
+      `<div class="special-row special-row-3">
         <input type="date"  value="${esc(sp.date || '')}" oninput="updateSpecial(${i}, 'date', this.value)" />
-        <input type="text"  value="${esc(sp.text || '')}" oninput="updateSpecial(${i}, 'text', this.value)" placeholder="z.B. Live DJ 20cmvonäbedrah!" />
+        <input type="text"  value="${esc(sp.title || '')}" oninput="updateSpecial(${i}, 'title', this.value)" placeholder="Titel" />
+        <input type="text"  value="${esc(sp.subtitle || '')}" oninput="updateSpecial(${i}, 'subtitle', this.value)" placeholder="Subtitel (optional)" />
         <button type="button" onclick="removeSpecial(${i})" title="Löschen">✕</button>
       </div>`
     ).join('') || '<p style="font-size:0.75rem;color:var(--mint-dim);font-style:italic;margin:0.5rem 0;">Noch keine Specials — «+ Neu» klicken.</p>';
   }
   function addSpecial() {
-    specialsEditorArr.push({ date: '', text: '' });
+    specialsEditorArr.push({ date: '', title: '', subtitle: '' });
     renderSpecialsEditor();
   }
   function updateSpecial(idx, field, value) {
