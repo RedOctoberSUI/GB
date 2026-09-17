@@ -539,7 +539,7 @@
         </div>
         <div style="margin-top:1.3rem;"></div>
         <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.075 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.076 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -710,8 +710,8 @@
 <!-- ══ Passwort-Modal ══ -->
 <div class="pw-modal-overlay" id="pw-modal-overlay" onclick="closePwModalOnOverlay(event)">
   <div class="pw-modal">
-    <p class="pw-quote">„Der gute Gast mit heitrem Sein,<br>kennt das Wort und tritt hier ein."</p>
-    <p class="pw-quote-author">— Laird Peter Michael Jansen, erster Laird des Hauses</p>
+    <p class="pw-quote" id="pw-quote-text">„Der gute Gast mit heitrem Sein,<br>kennt das Wort und tritt hier ein."</p>
+    <p class="pw-quote-author" id="pw-quote-author">— Laird Peter Michael Jansen, erster Laird des Hauses</p>
     <div class="ornament"><span class="ornament-inner">✦</span></div>
     <input type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" />
     <p class="pw-error-quote" id="pw-error" style="display:none">—</p>
@@ -719,7 +719,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.075</div>
+<div class="version-tag">CLv0.076</div>
 
 <script>
   const PASSWORD        = 'Bier!';
@@ -742,6 +742,7 @@
     program_time_3:   '21:00',
     program_text_3:   'Dann geht\'s richtig los im Bierkeller «zum Grünen Baum» <span style="opacity:0.6;font-style:italic;">(nur Erwachsene)</span>',
     specials:         '[]',
+    zitate:           '[]',
   };
 
   function parseIsoDate(s) {
@@ -832,6 +833,27 @@
     }
 
     // Specials sind hart codiert im HTML (Sheet-basiertes Rendering deaktiviert)
+
+    // Zitat für Passwort-Modal random wählen
+    applyRandomZitat('Passwort', 'pw-quote-text', 'pw-quote-author');
+  }
+
+  function pickRandomZitat(tag) {
+    let arr = [];
+    try { arr = JSON.parse(publicSettings.zitate || '[]'); } catch(e) { arr = []; }
+    if (!Array.isArray(arr)) arr = [];
+    const pool = arr.filter(z => z && z.tag === tag && (z.text || '').trim());
+    if (pool.length === 0) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function applyRandomZitat(tag, textId, authorId) {
+    const z = pickRandomZitat(tag);
+    if (!z) return;  // Fallback: HTML-Default bleibt
+    const t = document.getElementById(textId);
+    const a = document.getElementById(authorId);
+    if (t) t.innerHTML   = z.text || '';
+    if (a) a.textContent = (z.author ? '— ' + z.author : '');
   }
 
   function renderSpecials() {
@@ -983,15 +1005,24 @@
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify(payload)
       });
-      document.getElementById('success-msg').textContent = mit
-        ? '„An Weihnachten zählen nicht die Kalorien, die Geschenke oder die Promille – sondern die Geschichten danach."'
-        : '„Ein Gentleman trinkt nie allein. Weihnachten sorgt dafür."';
       document.getElementById('success-headline').innerHTML = mit
         ? 'Wir freuen uns<br>auf Euch!'
         : 'Wir freuen uns<br>auf Dich!';
-      document.getElementById('success-author').textContent = mit
-        ? '— Laird Lars „The Grinch" Loepfe'
-        : '— Laird Peter Michael Jansen, erster Laird des Hauses';
+
+      // Random Zitat aus Pool oder Fallback auf hart codiert
+      const tag = mit ? 'Anmeldung Begleitung' : 'Anmeldung Solo';
+      const z = pickRandomZitat(tag);
+      if (z) {
+        document.getElementById('success-msg').innerHTML = z.text || '';
+        document.getElementById('success-author').textContent = z.author ? '— ' + z.author : '';
+      } else {
+        document.getElementById('success-msg').textContent = mit
+          ? '„An Weihnachten zählen nicht die Kalorien, die Geschenke oder die Promille – sondern die Geschichten danach."'
+          : '„Ein Gentleman trinkt nie allein. Weihnachten sorgt dafür."';
+        document.getElementById('success-author').textContent = mit
+          ? '— Laird Lars „The Grinch" Loepfe'
+          : '— Laird Peter Michael Jansen, erster Laird des Hauses';
+      }
       showScreen('screen-success');
     } catch(e) {
       btn.disabled = false; btn.innerHTML = 'Anmeldung absenden';
@@ -1107,6 +1138,7 @@
 </script>
 </body>
 </html>
+
 
 
 
