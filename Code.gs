@@ -1,6 +1,6 @@
 /*
  * Wirtschaft zum Grünen Baum 2026 — Apps Script Backend
- * CLv0.041
+ * CLv0.077
  *
  * Sheet: 1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc
  *
@@ -114,9 +114,16 @@ function handleUpsert(data) {
     setIfFilled(sheet, targetRow, COL.timestamp,  timestamp);
     setIfFilled(sheet, targetRow, COL.email,      data.email);
     setIfFilled(sheet, targetRow, COL.tel,        data.tel);
-    setIfFilled(sheet, targetRow, COL.b_vorname,  data.b_vorname);
-    setIfFilled(sheet, targetRow, COL.b_nachname, data.b_nachname);
-    setIfFilled(sheet, targetRow, COL.kinder,     data.bier);  // 'bier' Feld trägt jetzt Kinderzahl
+    // Bei Solo-Anmeldung: alte Begleitungs- und Kinderfelder aus dem Vorjahr aktiv leeren
+    if (data.typ === 'Solo') {
+      sheet.getRange(targetRow, COL.b_vorname).setValue('');
+      sheet.getRange(targetRow, COL.b_nachname).setValue('');
+      sheet.getRange(targetRow, COL.kinder).setValue('');
+    } else {
+      setIfFilled(sheet, targetRow, COL.b_vorname,  data.b_vorname);
+      setIfFilled(sheet, targetRow, COL.b_nachname, data.b_nachname);
+      setIfFilled(sheet, targetRow, COL.kinder,     data.bier);
+    }
     setIfFilled(sheet, targetRow, COL.kommentar,  data.kommentar);
     sheet.getRange(targetRow, COL.year_2026).setValue(status2026);
     return jsonResponse({ ok: true, action: 'updated', row: targetRow });
@@ -304,4 +311,5 @@ function handleSetSetting(body) {
   }
   return jsonResponse({ ok: true, key: key });
 }
+
 
