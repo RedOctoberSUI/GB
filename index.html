@@ -532,14 +532,14 @@
             <p class="welcome-hours-label">Unsere Öffnungszeiten</p>
             <p class="welcome-hours-time" id="welcome-hours-time">Täglich 18:00 – Zapfenstreich</p>
           </div>
-          <div class="welcome-specials" id="welcome-specials-container" style="display:none;">
+          <div class="welcome-specials">
             <p class="welcome-specials-label">Aktuelle Specials</p>
-            <div id="welcome-specials-list"></div>
+            <p class="welcome-specials-item">20.11.2026 – DJ 20cmvonäbedrah legt seine „Hits" der letzten Jahre neu auf</p>
           </div>
         </div>
         <div style="margin-top:1.3rem;"></div>
         <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.073 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.074 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -719,7 +719,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.073</div>
+<div class="version-tag">CLv0.074</div>
 
 <script>
   const PASSWORD        = 'Bier!';
@@ -831,8 +831,7 @@
       band.textContent = fmtDateShort(holStart) + ' – ' + fmtDateShort(holEnd);
     }
 
-    // Specials
-    renderSpecials();
+    // Specials sind hart codiert im HTML (Sheet-basiertes Rendering deaktiviert)
   }
 
   function renderSpecials() {
