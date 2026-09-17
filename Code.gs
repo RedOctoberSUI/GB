@@ -259,9 +259,25 @@ function getAllSettings() {
   const out = {};
   for (const r of data) {
     const k = (r[0] || '').toString().trim();
-    if (k) out[k] = (r[1] || '').toString();
+    if (k) out[k] = formatSettingValue_(r[1]);
   }
   return out;
+}
+
+function formatSettingValue_(v) {
+  if (v === null || v === undefined || v === '') return '';
+  if (Object.prototype.toString.call(v) === '[object Date]') {
+    if (v.getFullYear() === 1899) {
+      const hh = String(v.getHours()).padStart(2, '0');
+      const mm = String(v.getMinutes()).padStart(2, '0');
+      return hh + ':' + mm;
+    }
+    const y  = v.getFullYear();
+    const mo = String(v.getMonth() + 1).padStart(2, '0');
+    const d  = String(v.getDate()).padStart(2, '0');
+    return y + '-' + mo + '-' + d;
+  }
+  return v.toString();
 }
 
 function handleSetSetting(body) {
@@ -281,9 +297,10 @@ function handleSetSetting(body) {
     }
   }
   if (targetRow > 0) {
-    sheet.getRange(targetRow, 2).setValue(value);
+    sheet.getRange(targetRow, 2).setNumberFormat('@').setValue(value);
   } else {
-    sheet.appendRow([key, value]);
+    sheet.appendRow([key, '']);
+    sheet.getRange(sheet.getLastRow(), 2).setNumberFormat('@').setValue(value);
   }
   return jsonResponse({ ok: true, key: key });
 }
