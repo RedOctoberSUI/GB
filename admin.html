@@ -840,7 +840,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.078 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.080 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -853,7 +853,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.078</span>
+      <span class="topbar-version">CLv0.080</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -884,6 +884,7 @@
       <span class="filter-label" style="margin-left:0.5rem">Filter</span>
       <select id="filter-typ" onchange="applyFilter()">
         <option value="">Alle Typen</option>
+        <option value="__angemeldet__">Angemeldet (Solo + Begleitung)</option>
         <option value="Solo">Solo</option>
         <option value="Mit Begleitung">Mit Begleitung</option>
         <option value="Absage">Absage</option>
@@ -1223,7 +1224,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.078 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.080 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -2442,7 +2443,8 @@ Peter & Lars`;
     const q   = (document.getElementById('filter-search').value || '').trim().toLowerCase();
     const ein = document.getElementById('filter-einladend').value;
     let filtered = getScopedRows();
-    if (typ) filtered = filtered.filter(r => r.typ === typ);
+    if (typ === '__angemeldet__') filtered = filtered.filter(r => r.typ === 'Solo' || r.typ === 'Mit Begleitung');
+    else if (typ) filtered = filtered.filter(r => r.typ === typ);
     if (ein === '__empty__') filtered = filtered.filter(r => !(r.einladend || '').trim());
     else if (ein) filtered = filtered.filter(r => (r.einladend || '') === ein);
     if (q) {
@@ -2542,7 +2544,8 @@ Peter & Lars`;
     const q   = (document.getElementById('filter-search').value || '').trim().toLowerCase();
     const ein = document.getElementById('filter-einladend').value;
     let rows = getScopedRows();
-    if (typ) rows = rows.filter(r => r.typ === typ);
+    if (typ === '__angemeldet__') rows = rows.filter(r => r.typ === 'Solo' || r.typ === 'Mit Begleitung');
+    else if (typ) rows = rows.filter(r => r.typ === typ);
     if (ein === '__empty__') rows = rows.filter(r => !(r.einladend || '').trim());
     else if (ein) rows = rows.filter(r => (r.einladend || '') === ein);
     if (q) rows = rows.filter(r =>
@@ -2711,6 +2714,7 @@ Peter & Lars`;
 </script>
 </body>
 </html>
+
 
 
 
