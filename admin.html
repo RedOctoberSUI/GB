@@ -2636,10 +2636,13 @@ Peter & Lars`;
       admin_notiz:val('m-admin-notiz'),
     };
     // typ neu ableiten für UI
-    updated.typ = updated.status_2026 === 'Abgemeldet' ? 'Absage'
-                : updated.status_2026 === 'Angemeldet'
-                  ? (updated.b_vorname ? 'Mit Begleitung' : 'Solo')
-                  : 'Offen';
+    const s = updated.status_2026;
+    if      (s === 'Abgemeldet')           updated.typ = 'Absage';
+    else if (s === 'PNG')                  updated.typ = 'PNG';
+    else if (s === 'Einzuladen')           updated.typ = 'Einzuladen';
+    else if (s === 'Einladung gesendet')   updated.typ = 'Einladung gesendet';
+    else if (s === 'Angemeldet')           updated.typ = updated.b_vorname ? 'Mit Begleitung' : 'Solo';
+    else                                   updated.typ = 'Offen';
     const btn = document.querySelector('#modal-overlay .btn-save');
     btn.textContent = '…'; btn.disabled = true;
     try {
