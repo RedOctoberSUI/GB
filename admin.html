@@ -840,7 +840,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.080 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.081 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -853,7 +853,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.080</span>
+      <span class="topbar-version">CLv0.081</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -916,7 +916,7 @@
       <div><label for="m-vorname">Vorname</label><input type="text" id="m-vorname" /></div>
       <div><label for="m-nachname">Nachname</label><input type="text" id="m-nachname" /></div>
       <div><label for="m-email">E-Mail</label><input type="email" id="m-email" /></div>
-      <div><label for="m-tel">Telefon</label><input type="tel" id="m-tel" /></div>
+      <div><label for="m-tel">Mobile</label><input type="tel" id="m-tel" /></div>
       <div><label for="m-b-vorname">Begl. Vorname</label><input type="text" id="m-b-vorname" /></div>
       <div><label for="m-b-nachname">Begl. Nachname</label><input type="text" id="m-b-nachname" /></div>
       <div><label for="m-kinder">Kinder</label><input type="number" id="m-kinder" min="0" /></div>
@@ -952,7 +952,7 @@
       <div><label for="an-vorname">Vorname</label><input type="text" id="an-vorname" /></div>
       <div><label for="an-nachname">Nachname</label><input type="text" id="an-nachname" /></div>
       <div><label for="an-email">E-Mail</label><input type="email" id="an-email" /></div>
-      <div><label for="an-tel">Telefon</label><input type="tel" id="an-tel" /></div>
+      <div><label for="an-tel">Mobile</label><input type="tel" id="an-tel" /></div>
 
       <div class="full">
         <label for="an-einladend">Einladend</label>
@@ -1224,7 +1224,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.080 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.081 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1364,7 +1364,7 @@
 
     const rawTel = val('an-tel');
     if (rawTel && !isValidPhone(rawTel)) {
-      alert('Telefonnummer sieht nicht korrekt aus.\nErwartet: mit Ländervorwahl (+41 79 …) oder mit führender 0.');
+      alert('Mobile-Nummer sieht nicht korrekt aus.\nErwartet: mit Ländervorwahl (+41 79 …) oder mit führender 0.');
       return;
     }
     const normTel = normalizePhone(rawTel);
@@ -1474,7 +1474,7 @@
     dupExistingRow    = existingRow;
     const r = existingRow;
     const title = reason === 'tel'
-      ? 'Diese Telefonnummer existiert bereits'
+      ? 'Diese Mobile-Nummer existiert bereits'
       : 'Ähnlicher Name gefunden';
     document.getElementById('dup-title').textContent = title;
     const rows = [
@@ -1483,7 +1483,7 @@
       ['Status 2025', r.status_2025 || '—'],
       ['Einladend',   r.einladend || '—'],
       ['E-Mail',      r.email || '—'],
-      ['Telefon',     r.tel || '—'],
+      ['Mobile',      r.tel || '—'],
       ['Begleitung',  ((r.b_vorname||'')+' '+(r.b_nachname||'')).trim() || '—'],
       ['Kinder',      r.bier || '—'],
       ['Kommentar',   r.kommentar || '—'],
@@ -1780,7 +1780,7 @@
 
 
   // ─── CSV Export / Import ──────────────────
-  const CSV_HEADER = ['Timestamp','Vorname','Nachname','Email','Tel','Begleitung Vorname','Begleitung Nachname','Kinder','Einladend','Kommentar','2025','2026'];
+  const CSV_HEADER = ['Timestamp','Vorname','Nachname','Email','Mobile','Begleitung Vorname','Begleitung Nachname','Kinder','Einladend','Kommentar','2025','2026'];
 
   function csvEscape(v) {
     const s = (v === null || v === undefined) ? '' : v.toString();
@@ -1872,7 +1872,7 @@
         // Mapping: Header-Name → Feldname
         const map = {
           'timestamp': 'timestamp', 'vorname': 'vorname', 'nachname': 'nachname',
-          'email': 'email', 'e-mail': 'email', 'tel': 'tel', 'telefon': 'tel',
+          'email': 'email', 'e-mail': 'email', 'tel': 'tel', 'telefon': 'tel', 'mobile': 'tel',
           'begleitung vorname': 'b_vorname', 'begleitung nachname': 'b_nachname',
           'kinder': 'bier', 'anzahl kinder': 'bier',
           'einladend': 'einladend', 'kommentar': 'kommentar',
@@ -2470,7 +2470,7 @@ Peter & Lars`;
     { key: 'status_2025',label: '2025' },
     { key: 'einladend',  label: 'Einladend' },
     { key: 'email',      label: 'E-Mail' },
-    { key: 'tel',        label: 'Tel' },
+    { key: 'tel',        label: 'Mobile' },
     { key: 'b_vorname',  label: 'Begl. Vorname' },
     { key: 'b_nachname', label: 'Begl. Nachname' },
     { key: 'bier',       label: 'Kinder' },
@@ -2583,7 +2583,7 @@ Peter & Lars`;
     const r = allRows[editRowIdx];
     const rawTelEdit = val('m-tel');
     if (rawTelEdit && !isValidPhone(rawTelEdit)) {
-      alert('Telefonnummer sieht nicht korrekt aus.\nErwartet: mit Ländervorwahl (+41 79 …) oder mit führender 0.');
+      alert('Mobile-Nummer sieht nicht korrekt aus.\nErwartet: mit Ländervorwahl (+41 79 …) oder mit führender 0.');
       return;
     }
     const updated = { ...r,
@@ -2714,6 +2714,7 @@ Peter & Lars`;
 </script>
 </body>
 </html>
+
 
 
 
