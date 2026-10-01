@@ -147,6 +147,7 @@ function handleUpsert(data) {
     data.kommentar || '',
     '',                // 2025 leer
     status2026,        // 2026
+    '',                // Admin-Notiz leer
   ];
   sheet.appendRow(newRow);
   return jsonResponse({ ok: true, action: 'inserted', row: sheet.getLastRow() });
