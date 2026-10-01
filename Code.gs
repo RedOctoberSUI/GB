@@ -26,18 +26,19 @@ const HEADER_ROW     = 1;
 const SECRET_TOKEN   = 'oEmhvp6yDaS7XVAp3q2MyhsELMClhtq-';
 
 const COL = {
-  timestamp:   1,
-  vorname:     2,
-  nachname:    3,
-  email:       4,
-  tel:         5,
-  b_vorname:   6,
-  b_nachname:  7,
-  kinder:      8,
-  einladend:   9,
-  kommentar:  10,
-  year_2025:  11,
-  year_2026:  12,
+  timestamp:    1,
+  vorname:      2,
+  nachname:     3,
+  email:        4,
+  tel:          5,
+  b_vorname:    6,
+  b_nachname:   7,
+  kinder:       8,
+  einladend:    9,
+  kommentar:   10,
+  year_2025:   11,
+  year_2026:   12,
+  admin_notiz: 13,
 };
 
 // ─── Entry points ─────────────────────────────────────────────────────────
@@ -62,6 +63,7 @@ function doPost(e) {
     const action = body.action || 'insert';
 
     if (action === 'update')     return handleUpdate(body);
+    if (action === 'delete')     return handleDelete(body);
     if (action === 'setSetting') return handleSetSetting(body);
     if (action === 'replaceAll') return handleReplaceAll(body);
     return handleUpsert(body);
@@ -172,6 +174,7 @@ function handleUpdate(body) {
   sheet.getRange(rowIndex, COL.kinder).setValue(d.bier        || '');
   sheet.getRange(rowIndex, COL.einladend).setValue(d.einladend   || '');
   sheet.getRange(rowIndex, COL.kommentar).setValue(d.kommentar   || '');
+  if (d.admin_notiz !== undefined) sheet.getRange(rowIndex, COL.admin_notiz).setValue(d.admin_notiz || '');
   if (d.year_2026 !== undefined) sheet.getRange(rowIndex, COL.year_2026).setValue(d.year_2026 || '');
   return jsonResponse({ ok: true, action: 'updated', row: rowIndex });
 }
@@ -181,6 +184,7 @@ function handleUpdate(body) {
 function getAllRows() {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
   if (!sheet) return [];
+  ensureAdminNotizHeader_(sheet);
   const lastRow = sheet.getLastRow();
   if (lastRow <= HEADER_ROW) return [];
   const lastCol = sheet.getLastColumn();
@@ -222,6 +226,7 @@ function getAllRows() {
       bier:       (r[COL.kinder     - 1] || '').toString(),  // Compat: weiterhin 'bier'
       einladend:  (r[COL.einladend  - 1] || '').toString(),
       kommentar:  (r[COL.kommentar  - 1] || '').toString(),
+      admin_notiz:(r[COL.admin_notiz - 1] || '').toString(),
       status_2025:status2025,
       status_2026:year2026,
       typ:        typ,
@@ -346,7 +351,34 @@ function handleReplaceAll(body) {
     r.kommentar   || '',
     r.status_2025 || '',
     r.status_2026 || '',
+    r.admin_notiz || '',
   ]);
-  sheet.getRange(HEADER_ROW + 1, 1, data.length, 12).setValues(data);
+  sheet.getRange(HEADER_ROW + 1, 1, data.length, 13).setValues(data);
   return jsonResponse({ ok: true, action: 'replaced', rows: rows.length });
+}
+
+
+// ─── Delete (löscht komplette Zeile) ─────────────────────────────────────
+
+function handleDelete(body) {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  if (!sheet) return jsonResponse({ ok: false, error: 'Sheet "' + SHEET_NAME + '" nicht gefunden' });
+
+  const rowIndex = parseInt(body.rowIndex, 10);
+  if (!rowIndex || rowIndex <= HEADER_ROW) {
+    return jsonResponse({ ok: false, error: 'Ungültiger rowIndex' });
+  }
+  sheet.deleteRow(rowIndex);
+  return jsonResponse({ ok: true, action: 'deleted', row: rowIndex });
+}
+
+
+// ─── Header-Setup (einmalig: stellt sicher dass Spalte 13 "Admin-Notiz" heisst) ───
+function ensureAdminNotizHeader_(sheet) {
+  if (sheet.getLastColumn() < 13) {
+    sheet.getRange(1, 13).setValue('Admin-Notiz');
+  } else {
+    const h = sheet.getRange(1, 13).getValue();
+    if (!h) sheet.getRange(1, 13).setValue('Admin-Notiz');
+  }
 }
