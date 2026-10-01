@@ -840,7 +840,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.081 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.082 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -853,7 +853,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.081</span>
+      <span class="topbar-version">CLv0.082</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -928,16 +928,23 @@
       <div class="full">
         <label for="m-year2026">Status 2026</label>
         <select id="m-year2026">
-          <option value="">— Keine Antwort —</option>
+          <option value="">Offen (keine Antwort)</option>
+          <option value="Einzuladen">Einzuladen</option>
+          <option value="Einladung gesendet">Einladung gesendet</option>
           <option value="Angemeldet">Angemeldet</option>
           <option value="Abgemeldet">Abgemeldet</option>
+          <option value="PNG">PNG</option>
         </select>
       </div>
-      <div class="full"><label for="m-kommentar">Kommentar</label><textarea id="m-kommentar" maxlength="300" oninput="updateCounter('m-kommentar')"></textarea><div class="char-counter" id="m-kommentar-counter">0 / 300</div></div>
+      <div class="full"><label for="m-kommentar">Kommentar (Gast)</label><textarea id="m-kommentar" maxlength="300" oninput="updateCounter('m-kommentar')"></textarea><div class="char-counter" id="m-kommentar-counter">0 / 300</div></div>
+      <div class="full"><label for="m-admin-notiz">Interne Notiz <span style="opacity:0.6;font-size:0.7rem;font-weight:300;">(persistent, nur Admin)</span></label><textarea id="m-admin-notiz" placeholder="Nur für Admins sichtbar – bleibt über Jahre bestehen"></textarea></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal()">Abbrechen</button>
-      <button class="btn-save" onclick="saveEdit()">Speichern</button>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn-secondary" style="border-color:rgba(200,80,80,0.5);color:rgba(220,120,120,0.9);" onclick="confirmDelete()">🗑 Datensatz löschen</button>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn-secondary" onclick="closeModal()">Abbrechen</button>
+        <button class="btn-save" onclick="saveEdit()">Speichern</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1224,7 +1231,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.081 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.082 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1419,6 +1426,30 @@
   }
 
 
+
+
+
+  // ─── Delete ──────────────────────────────
+  async function confirmDelete() {
+    if (editRowIdx === null) return;
+    const r = allRows[editRowIdx];
+    if (!r) return;
+    const name = (r.vorname || '') + ' ' + (r.nachname || '');
+    if (!confirm('Datensatz von ' + name.trim() + ' wirklich löschen?\n\nDies kann nicht rückgängig gemacht werden.')) return;
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: API_TOKEN,
+          action: 'delete',
+          rowIndex: r._rowIndex,
+        }),
+      });
+      closeModal();
+      setTimeout(loadData, 600);
+    } catch(e) { alert('Fehler: ' + e.message); }
+  }
 
   // ─── Fuzzy-Namen + Duplikat-Check ─────────
   function fuzzyName(s) {
@@ -1780,7 +1811,7 @@
 
 
   // ─── CSV Export / Import ──────────────────
-  const CSV_HEADER = ['Timestamp','Vorname','Nachname','Email','Mobile','Begleitung Vorname','Begleitung Nachname','Kinder','Einladend','Kommentar','2025','2026'];
+  const CSV_HEADER = ['Timestamp','Vorname','Nachname','Email','Mobile','Begleitung Vorname','Begleitung Nachname','Kinder','Einladend','Kommentar','2025','2026','Admin-Notiz'];
 
   function csvEscape(v) {
     const s = (v === null || v === undefined) ? '' : v.toString();
@@ -1804,6 +1835,7 @@
         r.kommentar   || '',
         r.status_2025 || '',
         r.status_2026 || '',
+        r.admin_notiz || '',
       ].map(csvEscape).join(';'));
     }
     return '\ufeff' + lines.join('\r\n');  // UTF-8 BOM für Excel
@@ -1878,6 +1910,7 @@
           'einladend': 'einladend', 'kommentar': 'kommentar',
           '2025': 'status_2025', 'status 2025': 'status_2025',
           '2026': 'status_2026', 'status 2026': 'status_2026',
+          'admin-notiz': 'admin_notiz', 'admin_notiz': 'admin_notiz', 'notiz': 'admin_notiz', 'interne notiz': 'admin_notiz',
         };
         const colIdx = {};
         header.forEach((h, i) => { if (map[h]) colIdx[map[h]] = i; });
@@ -2572,6 +2605,7 @@ Peter & Lars`;
     document.getElementById('m-kinder').value     = r.bier       || '';
     document.getElementById('m-einladend').value  = r.einladend  || '';
     document.getElementById('m-year2026').value   = r.status_2026 || '';
+    document.getElementById('m-admin-notiz').value= r.admin_notiz || '';
     document.getElementById('m-kommentar').value  = r.kommentar  || '';
     updateCounter('m-kommentar');
     document.getElementById('modal-overlay').classList.add('open');
@@ -2599,6 +2633,7 @@ Peter & Lars`;
       year_2026:  document.getElementById('m-year2026').value,
       status_2026:document.getElementById('m-year2026').value,
       kommentar:  val('m-kommentar'),
+      admin_notiz:val('m-admin-notiz'),
     };
     // typ neu ableiten für UI
     updated.typ = updated.status_2026 === 'Abgemeldet' ? 'Absage'
