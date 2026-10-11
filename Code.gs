@@ -1,6 +1,6 @@
 /*
  * Wirtschaft zum Grünen Baum 2026 — Apps Script Backend
- * CLv0.077
+ * CLv0.083
  *
  * Sheet: 1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc
  *
@@ -117,16 +117,16 @@ function handleUpsert(data) {
     setIfFilled(sheet, targetRow, COL.timestamp,  timestamp);
     setIfFilled(sheet, targetRow, COL.email,      data.email);
     setIfFilled(sheet, targetRow, COL.tel,        data.tel);
-    // Bei Solo-Anmeldung: alte Begleitungs- und Kinderfelder aus dem Vorjahr aktiv leeren
+    // Bei Solo-Anmeldung: alte Begleitungsfelder aus dem Vorjahr aktiv leeren
     if (data.typ === 'Solo') {
       sheet.getRange(targetRow, COL.b_vorname).setValue('');
       sheet.getRange(targetRow, COL.b_nachname).setValue('');
-      sheet.getRange(targetRow, COL.kinder).setValue('');
     } else {
       setIfFilled(sheet, targetRow, COL.b_vorname,  data.b_vorname);
       setIfFilled(sheet, targetRow, COL.b_nachname, data.b_nachname);
-      setIfFilled(sheet, targetRow, COL.kinder,     data.bier);
     }
+    // Kinder immer überschreiben — auch Solo-Anmeldungen können Kinder mitbringen
+    sheet.getRange(targetRow, COL.kinder).setValue(data.bier || '');
     // Kommentar immer überschreiben (auch mit leer) — sonst bleibt alter Kommentar aus Vorjahr
     sheet.getRange(targetRow, COL.kommentar).setValue(data.kommentar || '');
     sheet.getRange(targetRow, COL.year_2026).setValue(status2026);

@@ -453,14 +453,17 @@
     .char-counter.over { color: rgba(220,130,130,0.95); }
 
 
-    /* ── Begleitung & Kinder dependent ── */
-    .companion-fields, .kinder-block {
+    /* ── Begleitung (toggle) + Kinder (immer sichtbar) ── */
+    .companion-fields {
       display: none;
       grid-column: 1 / -1;
+      grid-template-columns: 1fr 1fr; gap: 0 1.5rem;
     }
-    .companion-fields { grid-template-columns: 1fr 1fr; gap: 0 1.5rem; }
-    .companion-fields.visible, .kinder-block.visible { display: grid; }
-    .kinder-block.visible { display: block; }
+    .companion-fields.visible { display: grid; }
+    .kinder-block {
+      display: block;
+      grid-column: 1 / -1;
+    }
     .companion-divider {
       grid-column: 1 / -1;
       font-size: 0.66rem; font-weight: 500; letter-spacing: 0.2em;
@@ -539,7 +542,7 @@
         </div>
         <div style="margin-top:1.3rem;"></div>
         <button class="btn-submit" onclick="openPwModal()">Eintreten</button>
-        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.081 · @ Schmutzli and Santas Little Helpers</p>
+        <p style="margin-top:2rem;font-size:0.638rem;color:rgba(199,234,210,0.2);letter-spacing:0.1em;text-align:center;font-family:\'IM Fell English\',serif;font-style:italic;letter-spacing:0.04em;font-size:0.792rem;">CLv0.083 · @ Schmutzli and Santas Little Helpers</p>
       </div>
 
       <!-- ══ SCREEN 2: Einladung ══ -->
@@ -719,7 +722,7 @@
   </div>
 </div>
 
-<div class="version-tag">CLv0.081</div>
+<div class="version-tag">CLv0.083</div>
 
 <script>
   const PASSWORD        = 'Bier!';
@@ -945,7 +948,7 @@
     const val = document.getElementById('f-begleitung').value;
     const mit = val === 'mit';
     document.getElementById('companion-fields').classList.toggle('visible', mit);
-    document.getElementById('kinder-block').classList.toggle('visible', mit);
+    // kinder-block ist immer sichtbar — Kinder können auch ohne Begleitung mitgebracht werden
     if (!mit) {
       document.getElementById('f-b-vorname').value = '';
       document.getElementById('f-b-nachname').value = '';
@@ -994,7 +997,7 @@
       tel:       val('f-tel'),
       b_vorname: mit ? val('f-b-vorname') : '',
       b_nachname:mit ? val('f-b-nachname') : '',
-      bier:      mit ? (val('f-kinder') || '0') : '0',
+      bier:      val('f-kinder') || '0',
       kommentar: val('f-kommentar'),
       timestamp: new Date().toLocaleString('de-CH'),
     };
