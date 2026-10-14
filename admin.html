@@ -840,7 +840,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.082 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.084 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -853,7 +853,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.082</span>
+      <span class="topbar-version">CLv0.084</span>
     </div>
     <div class="topbar-actions">
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
@@ -892,6 +892,7 @@
         <option value="Einladung gesendet">Einladung gesendet</option>
         <option value="PNG">PNG</option>
         <option value="Offen">Offen (ohne Antwort)</option>
+        <option value="__duplicates__">⚠ Doppelte Einträge (Name / Email / Mobile)</option>
       </select>
       <span class="filter-label" style="margin-left:0.5rem">Suche</span>
       <input type="text" id="filter-search" placeholder="Vor- oder Nachname …" oninput="applyFilter()" style="width:auto;min-width:180px;padding:0.4rem 0.85rem 0.4rem 0;font-size:0.82rem;" />
@@ -1231,7 +1232,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.082 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.084 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -2471,12 +2472,56 @@ Peter & Lars`;
     return allRows;
   }
 
+  // Duplikat-Erkennung: liefert nur die Zeilen, die mit mindestens einer anderen
+  // Zeile einen "Match" haben (Name fuzzy, Email oder Mobile normalisiert).
+  // Zurückgegeben werden alle betroffenen Zeilen, gruppiert nach Match-Key,
+  // damit Paare in der Tabelle direkt untereinander erscheinen.
+  function findDuplicateGroups(rows) {
+    const byName  = {};  // fuzzyName(vn)+'|'+fuzzyName(nn) → [row, …]
+    const byEmail = {};  // lower(email) → [row, …]
+    const byTel   = {};  // normalizePhone(tel) → [row, …]
+
+    for (const r of rows) {
+      const fvn = fuzzyName(r.vorname || '');
+      const fnn = fuzzyName(r.nachname || '');
+      if (fvn && fnn) {
+        const k = fvn + '|' + fnn;
+        (byName[k] = byName[k] || []).push(r);
+      }
+      const em = (r.email || '').trim().toLowerCase();
+      if (em) (byEmail[em] = byEmail[em] || []).push(r);
+      const tel = normalizePhone(r.tel || '');
+      if (tel) (byTel[tel] = byTel[tel] || []).push(r);
+    }
+
+    // Nur Gruppen mit ≥2 Zeilen behalten, in Reihenfolge Name → Email → Tel
+    const out = [];
+    const seenRows = new Set();  // _rowIndex
+    const addGroup = (groupRows, reason) => {
+      if (groupRows.length < 2) return;
+      // nur Zeilen aufnehmen, die noch nicht aus einer anderen Gruppe drin sind
+      // (sonst würde dieselbe Zeile mehrfach erscheinen); dafür zeigen wir sie
+      // in der ersten Gruppe die sie trifft
+      const fresh = groupRows.filter(r => !seenRows.has(r._rowIndex));
+      if (fresh.length < 2) return;
+      for (const r of fresh) seenRows.add(r._rowIndex);
+      // Marker ans Row-Objekt hängen (nicht persistent, nur für diesen Render)
+      fresh.forEach(r => { r._dupReason = reason; });
+      out.push(...fresh);
+    };
+    Object.values(byName).forEach(g  => addGroup(g, 'Name'));
+    Object.values(byEmail).forEach(g => addGroup(g, 'Email'));
+    Object.values(byTel).forEach(g   => addGroup(g, 'Mobile'));
+    return out;
+  }
+
   function applyFilter() {
     const typ = document.getElementById('filter-typ').value;
     const q   = (document.getElementById('filter-search').value || '').trim().toLowerCase();
     const ein = document.getElementById('filter-einladend').value;
     let filtered = getScopedRows();
     if (typ === '__angemeldet__') filtered = filtered.filter(r => r.typ === 'Solo' || r.typ === 'Mit Begleitung');
+    else if (typ === '__duplicates__') filtered = findDuplicateGroups(filtered);
     else if (typ) filtered = filtered.filter(r => r.typ === typ);
     if (ein === '__empty__') filtered = filtered.filter(r => !(r.einladend || '').trim());
     else if (ein) filtered = filtered.filter(r => (r.einladend || '') === ein);
@@ -2578,6 +2623,7 @@ Peter & Lars`;
     const ein = document.getElementById('filter-einladend').value;
     let rows = getScopedRows();
     if (typ === '__angemeldet__') rows = rows.filter(r => r.typ === 'Solo' || r.typ === 'Mit Begleitung');
+    else if (typ === '__duplicates__') rows = findDuplicateGroups(rows);
     else if (typ) rows = rows.filter(r => r.typ === typ);
     if (ein === '__empty__') rows = rows.filter(r => !(r.einladend || '').trim());
     else if (ein) rows = rows.filter(r => (r.einladend || '') === ein);
@@ -2585,10 +2631,13 @@ Peter & Lars`;
       (r.vorname  || '').toLowerCase().includes(q) ||
       (r.nachname || '').toLowerCase().includes(q)
     );
-    rows.sort((a, b) => {
-      const av = (a[key]||'').toString().toLowerCase(), bv = (b[key]||'').toString().toLowerCase();
-      return av < bv ? (sortDir==='asc'?-1:1) : av > bv ? (sortDir==='asc'?1:-1) : 0;
-    });
+    // Beim Duplikat-Filter die Gruppierung erhalten — nicht sortieren
+    if (typ !== '__duplicates__') {
+      rows.sort((a, b) => {
+        const av = (a[key]||'').toString().toLowerCase(), bv = (b[key]||'').toString().toLowerCase();
+        return av < bv ? (sortDir==='asc'?-1:1) : av > bv ? (sortDir==='asc'?1:-1) : 0;
+      });
+    }
     renderTable(rows);
   }
 
