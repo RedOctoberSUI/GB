@@ -929,7 +929,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.087 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.088 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -942,7 +942,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.087</span>
+      <span class="topbar-version">CLv0.088</span>
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="btn-view-dashboard" onclick="setView('dashboard')">📊 Dashboard</button>
@@ -1342,7 +1342,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.087 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.088 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -2782,19 +2782,21 @@ Peter & Lars`;
         <div class="kpi-ranking">${provHtml}</div>
       </div>`);
 
-    // 13. Veteran-Faktor — angemeldet 2026 die auch 2025 angemeldet waren
-    const veteranen = angemeldetRows.filter(r => r.status_2025 === 'Angemeldet').length;
-    const neulinge  = angemeldetRows.length - veteranen;
+    // 13. Veteran-Faktor
+    //   Alte Garde      = angemeldet 2026 & 2025 irgendein Eintrag (kennen das Fest schon)
+    //   Neue Freunde    = angemeldet 2026 & 2025 kein Eintrag
+    //   Wiederholungstäter = angemeldet 2026 & 2025 ebenfalls 'Angemeldet'
+    const veteranen        = angemeldetRows.filter(r => (r.status_2025 || '').trim() !== '').length;
+    const neulinge         = angemeldetRows.length - veteranen;
+    const wiederholer      = angemeldetRows.filter(r => r.status_2025 === 'Angemeldet').length;
     cards.push(`
       <div class="kpi">
         <div class="kpi-label">Veteran-Faktor</div>
         <div class="kpi-ranking">
           <div class="rank"><span class="rank-name">Alte Garde</span><span class="rank-val">${veteranen}</span></div>
           <div class="rank"><span class="rank-name">Neue Freunde</span><span class="rank-val">${neulinge}</span></div>
+          <div class="rank" style="padding-top:0.4rem;margin-top:0.3rem;border-top:1px dashed rgba(199,234,210,0.12);"><span class="rank-name">Wiederholungstäter</span><span class="rank-val">${wiederholer}</span></div>
         </div>
-        <div class="kpi-sub" style="margin-top:0.5rem;">${veteranen > 0 || neulinge > 0
-          ? 'von total ' + angemeldetRows.length + ' Zusagen'
-          : 'noch keine Zusagen'}</div>
       </div>`);
 
     // 14. Grösste Familie — häufigste Nachnamen Top 4
