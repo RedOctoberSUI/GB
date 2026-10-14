@@ -929,7 +929,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.085 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.086 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -942,7 +942,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.085</span>
+      <span class="topbar-version">CLv0.086</span>
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="btn-view-dashboard" onclick="setView('dashboard')">📊 Dashboard</button>
@@ -1342,7 +1342,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.085 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.086 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -2599,9 +2599,9 @@ Peter & Lars`;
     const first    = sortedTs[0];
     const last     = sortedTs[sortedTs.length - 1];
 
-    // Meiste Kinder
-    const withKids = rows.filter(r => parseInt(r.bier, 10) > 0)
-                         .map(r => ({ r, n: parseInt(r.bier, 10) }));
+    // Meiste Kinder — nur bei effektiv Angemeldeten
+    const withKids = angemeldetRows.filter(r => parseInt(r.bier, 10) > 0)
+                                   .map(r => ({ r, n: parseInt(r.bier, 10) }));
     withKids.sort((a,b) => b.n - a.n);
     const topKids = withKids[0];
     const totalKids = withKids.reduce((s,x) => s + x.n, 0);
@@ -2779,6 +2779,84 @@ Peter & Lars`;
       <div class="kpi">
         <div class="kpi-label">E-Mail-Provider</div>
         <div class="kpi-ranking">${provHtml}</div>
+      </div>`);
+
+    // 13. Veteran-Faktor — angemeldet 2026 die auch 2025 angemeldet waren
+    const veteranen = angemeldetRows.filter(r => r.status_2025 === 'Angemeldet').length;
+    const neulinge  = angemeldetRows.length - veteranen;
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Veteran-Faktor</div>
+        <div class="kpi-ranking">
+          <div class="rank"><span class="rank-name">Alte Garde</span><span class="rank-val">${veteranen}</span></div>
+          <div class="rank"><span class="rank-name">Neue Freunde</span><span class="rank-val">${neulinge}</span></div>
+        </div>
+        <div class="kpi-sub" style="margin-top:0.5rem;">${veteranen > 0 || neulinge > 0
+          ? 'von total ' + angemeldetRows.length + ' Zusagen'
+          : 'noch keine Zusagen'}</div>
+      </div>`);
+
+    // 14. Grösste Familie — häufigste Nachnamen Top 4
+    const lastNameCount = {};
+    for (const r of rows) {
+      const n = (r.nachname || '').trim();
+      if (!n) continue;
+      lastNameCount[n] = (lastNameCount[n] || 0) + 1;
+    }
+    const familyRank = Object.entries(lastNameCount).filter(([k,v]) => v > 1).sort((a,b) => b[1] - a[1]);
+    const famHtml = familyRank.length > 0
+      ? familyRank.slice(0, 4).map(([k,v]) =>
+          `<div class="rank"><span class="rank-name">${esc(k)}</span><span class="rank-val">${v}×</span></div>`
+        ).join('')
+      : '<div class="kpi-sub">lauter Einzelkämpfer</div>';
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Grösste Familie</div>
+        <div class="kpi-ranking">${famHtml}</div>
+      </div>`);
+
+    // 15. Tageszeit-Favorit — wann werden Anmeldungen erfasst
+    const buckets = { Morgens: 0, Mittags: 0, Abends: 0, Nachts: 0 };
+    // Morgens 05-11, Mittags 11-17, Abends 17-23, Nachts 23-05
+    for (const x of withTs) {
+      const h = x.t.getHours();
+      if (h >= 5 && h < 11)       buckets['Morgens']++;
+      else if (h >= 11 && h < 17) buckets['Mittags']++;
+      else if (h >= 17 && h < 23) buckets['Abends']++;
+      else                        buckets['Nachts']++;
+    }
+    const bucketRank = Object.entries(buckets).sort((a,b) => b[1] - a[1]);
+    const topBucket = bucketRank[0];
+    const bucketEmoji = { Morgens: '🌅', Mittags: '☀️', Abends: '🌇', Nachts: '🌙' };
+    const buckHtml = topBucket && topBucket[1] > 0
+      ? bucketRank.filter(([,v]) => v > 0).map(([k,v]) =>
+          `<div class="rank"><span class="rank-name">${bucketEmoji[k]} ${esc(k)}</span><span class="rank-val">${v}</span></div>`
+        ).join('')
+      : '<div class="kpi-sub">noch keine Anmeldungen</div>';
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Tageszeit-Favorit</div>
+        <div class="kpi-ranking">${buckHtml}</div>
+      </div>`);
+
+    // 16. Pendenzen-Sieger — Einladende mit meisten offenen Pendenzen
+    const pendByInv = {};
+    for (const r of rows) {
+      if (r.typ !== 'Einzuladen' && r.typ !== 'Einladung gesendet') continue;
+      const k = (r.einladend || '(leer)').trim() || '(leer)';
+      pendByInv[k] = (pendByInv[k] || 0) + 1;
+    }
+    const pendRank = Object.entries(pendByInv).sort((a,b) => b[1] - a[1]);
+    const pendHtml = pendRank.length > 0
+      ? pendRank.slice(0, 4).map(([k,v]) =>
+          `<div class="rank"><span class="rank-name">${esc(k)}</span><span class="rank-val">${v}</span></div>`
+        ).join('')
+      : '<div class="kpi-sub">keine offenen Pendenzen 🎉</div>';
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Pendenzen-Sieger</div>
+        <div class="kpi-ranking">${pendHtml}</div>
+        <div class="kpi-sub" style="margin-top:0.5rem;">Offen = Einzuladen oder Einladung gesendet, noch keine Antwort</div>
       </div>`);
 
     grid.innerHTML = cards.join('');
