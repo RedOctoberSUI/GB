@@ -208,6 +208,7 @@
       transition: all var(--trans);
     }
     .icon-btn:hover { border-color: var(--lime); color: var(--lime); background: rgba(180,220,59,0.08); }
+    .icon-btn.active { border-color: var(--lime); color: var(--lime); background: rgba(180,220,59,0.14); }
 
     .main { flex: 1; }
 
@@ -240,6 +241,94 @@
     }
     .stat-card.lime .stat-val { color: var(--lime); }
     .stat-card.red .stat-val { color: var(--red-soft); }
+
+    /* ── Dashboard ── */
+    .dash-header {
+      text-align: center;
+      margin: 1.5rem auto 2.5rem;
+      max-width: 820px;
+    }
+    .dash-eyebrow {
+      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--lime);
+      margin-bottom: 0.8rem;
+    }
+    .dash-title {
+      font-family: 'IM Fell English', serif; font-weight: 400;
+      font-size: 2.4rem; line-height: 1.15; color: var(--mint);
+      margin: 0 0 0.8rem 0;
+    }
+    .dash-subtitle {
+      font-size: 0.95rem; color: var(--mint-dim); font-weight: 300;
+      line-height: 1.5;
+    }
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      max-width: 1280px; margin: 0 auto;
+    }
+    @media (max-width: 640px) {
+      .dash-grid { grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+      .dash-title { font-size: 1.8rem; }
+    }
+    .kpi {
+      background: var(--holly); border-radius: 14px;
+      padding: 1.1rem 1.3rem 1.3rem;
+      position: relative; overflow: hidden;
+      min-height: 148px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .kpi::before {
+      content: '';
+      position: absolute; inset: 6px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+    .kpi > * { position: relative; z-index: 1; }
+    .kpi-label {
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--mint-dim);
+    }
+    .kpi-value {
+      font-family: 'IM Fell English', serif;
+      font-size: 2.2rem; font-weight: 400; line-height: 1.05;
+      color: var(--mint);
+      margin: 0.5rem 0 0.3rem;
+      word-break: break-word;
+    }
+    .kpi-value.small { font-size: 1.5rem; }
+    .kpi-value.lime { color: var(--lime); }
+    .kpi-value.red  { color: var(--red-soft); }
+    .kpi-sub {
+      font-size: 0.72rem; color: var(--mint-dim); line-height: 1.5;
+      font-style: italic;
+    }
+    .kpi-sub strong { color: var(--mint); font-style: normal; font-weight: 500; }
+    .kpi-bar {
+      height: 6px; background: rgba(199,234,210,0.08);
+      border-radius: 3px; overflow: hidden;
+      margin: 0.3rem 0 0.6rem;
+    }
+    .kpi-bar-fill {
+      height: 100%; background: var(--lime); border-radius: 3px;
+      transition: width 0.6s ease-out;
+    }
+    .kpi-ranking {
+      font-size: 0.78rem; line-height: 1.7;
+      color: var(--mint);
+    }
+    .kpi-ranking .rank {
+      display: flex; justify-content: space-between; gap: 0.5rem;
+    }
+    .kpi-ranking .rank-name { color: var(--mint); font-weight: 400; }
+    .kpi-ranking .rank-val  { color: var(--lime); font-family: 'IM Fell English', serif; font-size: 1.05em; }
+    .dash-loading {
+      grid-column: 1 / -1;
+      padding: 3rem; text-align: center; color: var(--mint-dim);
+      font-size: 0.9rem;
+    }
 
     /* ── Action bar ── */
     .action-bar {
@@ -840,7 +929,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.084 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.085 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -853,9 +942,11 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.084</span>
+      <span class="topbar-version">CLv0.085</span>
     </div>
     <div class="topbar-actions">
+      <button class="icon-btn" id="btn-view-dashboard" onclick="setView('dashboard')">📊 Dashboard</button>
+      <button class="icon-btn" id="btn-view-list" onclick="setView('list')">📋 Gästeliste</button>
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
       <button class="icon-btn" onclick="window.print()">🖨 Drucken</button>
       <button class="icon-btn" onclick="loadData()">↻ Aktualisieren</button>
@@ -864,6 +955,24 @@
   </div>
 
   <div class="main">
+
+    <!-- ══════════ Dashboard-View (Welcome) ══════════ -->
+    <div id="view-dashboard" style="display:none;">
+      <div class="dash-header">
+        <div class="dash-eyebrow">Wirtschaft zum Grünen Baum</div>
+        <h1 class="dash-title">Herzlich willkommen hinter der Theke.</h1>
+        <div class="dash-subtitle" id="dash-subtitle">—</div>
+      </div>
+      <div class="dash-grid" id="dash-grid">
+        <div class="dash-loading"><span class="spinner"></span>&nbsp;&nbsp;Lade Statistiken …</div>
+      </div>
+      <div style="text-align:center;margin-top:2.5rem;">
+        <button class="btn-action btn-add-anmeldung" onclick="setView('list')">Zur Gästeliste →</button>
+      </div>
+    </div>
+
+    <!-- ══════════ Listen-View ══════════ -->
+    <div id="view-list">
     <div class="stats-bar" id="stats-bar"></div>
 
     <div class="action-bar">
@@ -904,6 +1013,7 @@
         <div class="spinner-wrap"><span class="spinner"></span>Lade Daten …</div>
       </div>
     </div>
+    </div><!-- /#view-list -->
   </div>
 </div>
 
@@ -1232,7 +1342,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.084 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.085 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1253,6 +1363,7 @@
     if (v === ADMIN_PASSWORD) {
       document.getElementById('login-stage').style.display = 'none';
       document.getElementById('app').style.display = 'flex';
+      setView('dashboard');
       loadSettings();
       loadData();
     } else {
@@ -2421,11 +2532,274 @@ Peter & Lars`;
       const json = await res.json();
       allRows = (json && json.rows) || [];
       renderStats();
+      renderDashboard();
       applyFilter();
     } catch(e) {
       document.getElementById('table-container').innerHTML =
         '<div class="empty-state">⚠️ Fehler beim Laden.<br><small>' + e.message + '</small></div>';
     }
+  }
+
+  // ─── View-Toggle Dashboard / Liste ───────────────────────────────────
+  function setView(view) {
+    const dash = document.getElementById('view-dashboard');
+    const list = document.getElementById('view-list');
+    const btnD = document.getElementById('btn-view-dashboard');
+    const btnL = document.getElementById('btn-view-list');
+    if (view === 'dashboard') {
+      dash.style.display = 'block';
+      list.style.display = 'none';
+      btnD && btnD.classList.add('active');
+      btnL && btnL.classList.remove('active');
+    } else {
+      dash.style.display = 'none';
+      list.style.display = 'block';
+      btnD && btnD.classList.remove('active');
+      btnL && btnL.classList.add('active');
+    }
+  }
+
+  // ─── Dashboard (Welcome Page mit KPIs) ───────────────────────────────
+  function renderDashboard() {
+    const grid     = document.getElementById('dash-grid');
+    const subtitle = document.getElementById('dash-subtitle');
+    if (!grid) return;
+    const rows = allRows.filter(r => (r.vorname||'').trim() || (r.nachname||'').trim());
+
+    // Grundzahlen
+    const angemeldetRows = rows.filter(r => r.typ === 'Solo' || r.typ === 'Mit Begleitung');
+    const abgemeldet     = rows.filter(r => r.typ === 'Absage').length;
+    const einzuladen     = rows.filter(r => r.typ === 'Einzuladen').length;
+    const einlGesendet   = rows.filter(r => r.typ === 'Einladung gesendet').length;
+    const png            = rows.filter(r => r.typ === 'PNG').length;
+    const begleitung     = rows.filter(r => r.typ === 'Mit Begleitung').length;
+    const personenTotal  = angemeldetRows.length + begleitung + rows.filter(r => r.typ === 'Mit Begleitung' && r.b_vorname).length * 0; // begleitung schon einmal gezählt
+    // korrekte Rechnung: 1 pro Angemeldet + 1 pro Begleitung-Person
+    const personen = angemeldetRows.length + begleitung;
+
+    subtitle.textContent = personen + ' Personen bereits angemeldet · '
+                         + angemeldetRows.length + ' Anmeldungen · '
+                         + abgemeldet + ' Absagen';
+
+    // Pool für Response-Rate: alle die eine Einladung bekommen haben
+    const pipeline = angemeldetRows.length + abgemeldet + einzuladen + einlGesendet + png;
+    const antworten = angemeldetRows.length + abgemeldet + png;
+    const rate = pipeline > 0 ? Math.round(antworten / pipeline * 100) : 0;
+
+    // Zu/Absage-Verhältnis
+    const antwortende = angemeldetRows.length + abgemeldet;
+    const zusageRate = antwortende > 0 ? Math.round(angemeldetRows.length / antwortende * 100) : 0;
+
+    // Zeitstempel-Analyse
+    const withTs = angemeldetRows.filter(r => r.timestamp).map(r => ({
+      r, t: parseGermanDate(r.timestamp)
+    })).filter(x => x.t);
+
+    const sortedTs = [...withTs].sort((a,b) => a.t - b.t);
+    const first    = sortedTs[0];
+    const last     = sortedTs[sortedTs.length - 1];
+
+    // Meiste Kinder
+    const withKids = rows.filter(r => parseInt(r.bier, 10) > 0)
+                         .map(r => ({ r, n: parseInt(r.bier, 10) }));
+    withKids.sort((a,b) => b.n - a.n);
+    const topKids = withKids[0];
+    const totalKids = withKids.reduce((s,x) => s + x.n, 0);
+
+    // Durstigste Fraktion — Einladende nach Zusagen
+    const byInviter = {};
+    for (const r of angemeldetRows) {
+      const k = (r.einladend || '(leer)').trim() || '(leer)';
+      byInviter[k] = (byInviter[k] || 0) + 1;
+    }
+    const inviterRank = Object.entries(byInviter).sort((a,b) => b[1] - a[1]);
+
+    // Schönste Nummer — längster Streak gleicher Ziffer in normalizePhone(tel)
+    let bestStreak = { r: null, len: 0, digit: '' };
+    for (const r of rows) {
+      const tel = normalizePhone(r.tel || '');
+      if (!tel) continue;
+      let maxRun = 0, maxDigit = '', run = 0, cur = '';
+      for (const c of tel) {
+        if (c === cur) { run++; } else { run = 1; cur = c; }
+        if (run > maxRun) { maxRun = run; maxDigit = c; }
+      }
+      if (maxRun > bestStreak.len) bestStreak = { r, len: maxRun, digit: maxDigit, tel };
+    }
+
+    // Alphabet-König — längster Nachname
+    const nameSorted = [...rows].filter(r => r.nachname).sort((a,b) => (b.nachname||'').length - (a.nachname||'').length);
+    const longestName = nameSorted[0];
+
+    // Namens-Doppelgänger — Vornamen die mehrfach vorkommen
+    const firstNameCount = {};
+    for (const r of rows) {
+      const v = (r.vorname || '').trim();
+      if (!v) continue;
+      firstNameCount[v] = (firstNameCount[v] || 0) + 1;
+    }
+    const doppelt = Object.entries(firstNameCount).filter(([k,v]) => v > 1).sort((a,b) => b[1] - a[1]);
+
+    // E-Mail Provider Ranking
+    const providerCount = {};
+    for (const r of rows) {
+      const em = (r.email || '').trim().toLowerCase();
+      const at = em.lastIndexOf('@');
+      if (at < 0) continue;
+      const dom = em.substring(at+1);
+      providerCount[dom] = (providerCount[dom] || 0) + 1;
+    }
+    const providerRank = Object.entries(providerCount).sort((a,b) => b[1] - a[1]);
+
+    // ──────── KPI-Karten rendern ────────
+    const cards = [];
+
+    // 1. Response-Rate
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Response-Rate</div>
+        <div>
+          <div class="kpi-value lime">${rate}%</div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${rate}%"></div></div>
+          <div class="kpi-sub"><strong>${antworten}</strong> von <strong>${pipeline}</strong> Eingeladenen haben geantwortet</div>
+        </div>
+      </div>`);
+
+    // 2. Zusage-Rate
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Zu- / Absage-Verhältnis</div>
+        <div>
+          <div class="kpi-value">${zusageRate}% <span style="font-size:0.5em;opacity:0.6;">Zusagen</span></div>
+          <div class="kpi-sub"><strong>${angemeldetRows.length}</strong> Zusagen · <strong>${abgemeldet}</strong> Absagen</div>
+        </div>
+      </div>`);
+
+    // 3. Erste Rückmeldung
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Erste Rückmeldung</div>
+        <div>
+          <div class="kpi-value small">${first ? esc(first.r.vorname + ' ' + first.r.nachname) : '—'}</div>
+          <div class="kpi-sub">${first ? esc(fmtDate(first.t)) : 'noch keine Anmeldung'}</div>
+        </div>
+      </div>`);
+
+    // 4. Letzte Rückmeldung
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Letzte Rückmeldung</div>
+        <div>
+          <div class="kpi-value small">${last ? esc(last.r.vorname + ' ' + last.r.nachname) : '—'}</div>
+          <div class="kpi-sub">${last ? esc(fmtDate(last.t)) : 'noch keine Anmeldung'}</div>
+        </div>
+      </div>`);
+
+    // 5. Antwort-Durchschnitt (Spanne)
+    const spanDays = (first && last && first.t && last.t) ? Math.round((last.t - first.t) / 86400000) : 0;
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Zeitspanne der Anmeldungen</div>
+        <div>
+          <div class="kpi-value">${spanDays}<span style="font-size:0.5em;opacity:0.6;"> Tage</span></div>
+          <div class="kpi-sub">zwischen erster und letzter Anmeldung</div>
+        </div>
+      </div>`);
+
+    // 6. Meiste Kinder
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Meiste Kinder</div>
+        <div>
+          <div class="kpi-value">${topKids ? topKids.n : 0}</div>
+          <div class="kpi-sub">${topKids
+            ? '<strong>' + esc(topKids.r.vorname + ' ' + topKids.r.nachname) + '</strong> bringt die Rasselbande · insgesamt ' + totalKids + ' Kinder'
+            : 'Erfreulich kinderfrei bisher'}</div>
+        </div>
+      </div>`);
+
+    // 7. Durstigste Fraktion
+    const invHtml = inviterRank.length > 0
+      ? inviterRank.slice(0, 4).map(([k,v]) =>
+          `<div class="rank"><span class="rank-name">${esc(k)}</span><span class="rank-val">${v}</span></div>`
+        ).join('')
+      : '<div class="kpi-sub">keine Zusagen bisher</div>';
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Durstigste Fraktion</div>
+        <div class="kpi-ranking">${invHtml}</div>
+      </div>`);
+
+    // 9. Schönste Nummer
+    const telDisplay = bestStreak.r && bestStreak.tel
+      ? '+' + bestStreak.tel.replace(/(\d{2})(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5')
+      : '—';
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Schönste Mobile-Nummer</div>
+        <div>
+          <div class="kpi-value small">${bestStreak.r ? esc(bestStreak.r.vorname + ' ' + bestStreak.r.nachname) : '—'}</div>
+          <div class="kpi-sub">${bestStreak.r
+            ? esc(telDisplay) + '<br>' + bestStreak.len + '× die Ziffer <strong>' + bestStreak.digit + '</strong> in Folge'
+            : 'keine Nummern vorhanden'}</div>
+        </div>
+      </div>`);
+
+    // 10. Alphabet-König
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Alphabet-König</div>
+        <div>
+          <div class="kpi-value small">${longestName ? esc(longestName.nachname) : '—'}</div>
+          <div class="kpi-sub">${longestName
+            ? '<strong>' + esc(longestName.vorname + ' ' + longestName.nachname) + '</strong> trägt ' + longestName.nachname.length + ' Buchstaben in den Keller'
+            : 'noch keine Namen'}</div>
+        </div>
+      </div>`);
+
+    // 11. Namens-Doppelgänger
+    const dopHtml = doppelt.length > 0
+      ? doppelt.slice(0, 4).map(([k,v]) =>
+          `<div class="rank"><span class="rank-name">${esc(k)}</span><span class="rank-val">${v}×</span></div>`
+        ).join('')
+      : '<div class="kpi-sub">lauter Unikate</div>';
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">Namens-Doppelgänger</div>
+        <div class="kpi-ranking">${dopHtml}</div>
+      </div>`);
+
+    // 12. E-Mail-Provider
+    const provHtml = providerRank.length > 0
+      ? providerRank.slice(0, 5).map(([k,v]) =>
+          `<div class="rank"><span class="rank-name">${esc(k)}</span><span class="rank-val">${v}</span></div>`
+        ).join('')
+      : '<div class="kpi-sub">keine E-Mail-Adressen</div>';
+    cards.push(`
+      <div class="kpi">
+        <div class="kpi-label">E-Mail-Provider</div>
+        <div class="kpi-ranking">${provHtml}</div>
+      </div>`);
+
+    grid.innerHTML = cards.join('');
+  }
+
+  function parseGermanDate(s) {
+    if (!s) return null;
+    // Format: "25.10.2026, 14:32:11" oder "25.10.2026 14:32"
+    const m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})(?:,?\s+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+    if (!m) {
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return new Date(+m[3], +m[2]-1, +m[1], +(m[4]||0), +(m[5]||0), +(m[6]||0));
+  }
+
+  function fmtDate(d) {
+    if (!d) return '';
+    const pad = n => String(n).padStart(2,'0');
+    return pad(d.getDate()) + '.' + pad(d.getMonth()+1) + '.' + d.getFullYear()
+         + ', ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
   }
 
   function renderStats() {
@@ -2441,7 +2815,7 @@ Peter & Lars`;
     const gesendet   = rows.filter(r => r.typ === 'Einladung gesendet').length;
     const png        = rows.filter(r => r.typ === 'PNG').length;
 
-    document.getElementById('count-badge').textContent = total;
+    document.getElementById('count-badge').textContent = personen;
 
     let cards = '';
     cards += `<div class="stat-card"><div class="stat-label">Anmeldungen</div><div class="stat-val">${total}</div></div>`;
