@@ -929,7 +929,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.086 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.087 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -942,7 +942,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.086</span>
+      <span class="topbar-version">CLv0.087</span>
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="btn-view-dashboard" onclick="setView('dashboard')">📊 Dashboard</button>
@@ -1342,7 +1342,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.086 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.087 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -2606,11 +2606,12 @@ Peter & Lars`;
     const topKids = withKids[0];
     const totalKids = withKids.reduce((s,x) => s + x.n, 0);
 
-    // Durstigste Fraktion — Einladende nach Zusagen
+    // Durstigste Fraktion — Einladende nach Personen (Gast + Begleitperson)
     const byInviter = {};
     for (const r of angemeldetRows) {
       const k = (r.einladend || '(leer)').trim() || '(leer)';
-      byInviter[k] = (byInviter[k] || 0) + 1;
+      const persons = 1 + (r.typ === 'Mit Begleitung' ? 1 : 0);
+      byInviter[k] = (byInviter[k] || 0) + persons;
     }
     const inviterRank = Object.entries(byInviter).sort((a,b) => b[1] - a[1]);
 
