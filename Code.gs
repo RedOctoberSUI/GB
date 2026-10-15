@@ -1,6 +1,6 @@
 /*
  * Wirtschaft zum Grünen Baum 2026 — Apps Script Backend
- * CLv0.083
+ * CLv0.089
  *
  * Sheet: 1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc
  *
@@ -51,6 +51,7 @@ function doGet(e) {
   const action = params.action || 'getAll';
   if (action === 'getAll')      return jsonResponse({ ok: true, rows: getAllRows() });
   if (action === 'getSettings') return jsonResponse({ ok: true, settings: getAllSettings() });
+  if (action === 'getWishes')   return jsonResponse({ ok: true, wishes: getAllWishes() });
   return jsonResponse({ ok: false, error: 'Unknown action: ' + action });
 }
 
@@ -66,6 +67,7 @@ function doPost(e) {
     if (action === 'delete')     return handleDelete(body);
     if (action === 'setSetting') return handleSetSetting(body);
     if (action === 'replaceAll') return handleReplaceAll(body);
+    if (action === 'addWish')    return handleAddWish(body);
     return handleUpsert(body);
   } catch (err) {
     return jsonResponse({ ok: false, error: String(err) });
@@ -382,4 +384,42 @@ function ensureAdminNotizHeader_(sheet) {
     const h = sheet.getRange(1, 13).getValue();
     if (!h) sheet.getRange(1, 13).setValue('Admin-Notiz');
   }
+}
+
+// ─── Wishes (Wunschliste aus Roadmap-Seite) ──────────────────────────────
+
+const WISHES_SHEET = 'Wishes';
+
+function getWishesSheet_() {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  let sheet = ss.getSheetByName(WISHES_SHEET);
+  if (!sheet) {
+    sheet = ss.insertSheet(WISHES_SHEET);
+    sheet.getRange(1, 1, 1, 2).setValues([['Timestamp', 'Wish']]);
+    sheet.setFrozenRows(1);
+    sheet.setColumnWidth(1, 160);
+    sheet.setColumnWidth(2, 600);
+  }
+  return sheet;
+}
+
+function getAllWishes() {
+  const sheet = getWishesSheet_();
+  const last = sheet.getLastRow();
+  if (last <= 1) return [];
+  const data = sheet.getRange(2, 1, last - 1, 2).getValues();
+  return data.map(r => ({
+    timestamp: formatSettingValue_(r[0]),
+    text:      (r[1] || '').toString(),
+  })).filter(w => w.text.trim());
+}
+
+function handleAddWish(body) {
+  const text = (body.text || '').toString().trim();
+  if (!text) return jsonResponse({ ok: false, error: 'Text fehlt' });
+  if (text.length > 500) return jsonResponse({ ok: false, error: 'Zu lang (max 500 Zeichen)' });
+  const sheet = getWishesSheet_();
+  const ts = new Date().toLocaleString('de-CH');
+  sheet.appendRow([ts, text]);
+  return jsonResponse({ ok: true, action: 'wish-added' });
 }

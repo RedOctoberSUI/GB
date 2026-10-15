@@ -330,6 +330,125 @@
       font-size: 0.9rem;
     }
 
+    /* ── Roadmap ── */
+    .roadmap-list {
+      max-width: 820px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 0.9rem;
+    }
+    .roadmap-item {
+      background: var(--holly); border-radius: 12px;
+      padding: 1rem 1.3rem;
+      position: relative;
+    }
+    .roadmap-item::before {
+      content: '';
+      position: absolute; inset: 5px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+    .roadmap-item > * { position: relative; z-index: 1; }
+    .roadmap-row {
+      display: flex; align-items: flex-start; gap: 0.9rem;
+    }
+    .roadmap-pill {
+      flex-shrink: 0;
+      font-size: 0.6rem; font-weight: 500; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid;
+      margin-top: 0.1rem;
+      min-width: 90px; text-align: center;
+    }
+    .roadmap-pill.planned {
+      border-color: rgba(199,234,210,0.3);
+      color: var(--mint-dim);
+      background: rgba(199,234,210,0.04);
+    }
+    .roadmap-pill.in-progress {
+      border-color: var(--lime);
+      color: var(--lime);
+      background: rgba(180,220,59,0.1);
+    }
+    .roadmap-pill.done {
+      border-color: rgba(199,234,210,0.2);
+      color: rgba(199,234,210,0.5);
+      background: rgba(199,234,210,0.03);
+    }
+    .roadmap-content { flex: 1; }
+    .roadmap-item-title {
+      font-size: 0.98rem; color: var(--mint);
+      font-weight: 400;
+      line-height: 1.35;
+      margin-bottom: 0.25rem;
+    }
+    .roadmap-item.done .roadmap-item-title {
+      color: rgba(199,234,210,0.5);
+      text-decoration: line-through;
+      text-decoration-color: rgba(199,234,210,0.25);
+    }
+    .roadmap-item-desc {
+      font-size: 0.82rem; color: var(--mint-dim);
+      line-height: 1.55;
+    }
+    .roadmap-group-label {
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--mint-dim);
+      padding: 1.2rem 0 0.3rem;
+    }
+    .roadmap-group-label:first-child { padding-top: 0; }
+
+    /* ── Wishes ── */
+    .wishes-section {
+      max-width: 820px; margin: 3rem auto 2rem;
+      padding-top: 2rem;
+      border-top: 1px dashed var(--border);
+    }
+    .wishes-title {
+      font-family: 'IM Fell English', serif; font-weight: 400;
+      font-size: 1.5rem; color: var(--mint);
+      margin: 0 0 0.4rem;
+      text-align: center;
+    }
+    .wishes-intro {
+      font-size: 0.85rem; color: var(--mint-dim);
+      text-align: center;
+      margin: 0 0 1.3rem;
+    }
+    .wish-input {
+      width: 100%;
+      min-height: 90px;
+      background: rgba(12,25,31,0.4);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.92rem;
+      color: var(--mint);
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+    }
+    .wish-input:focus { border-color: var(--lime); }
+    .wish-entry {
+      padding: 0.85rem 1rem;
+      background: rgba(12,25,31,0.3);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      margin-bottom: 0.6rem;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: var(--mint);
+    }
+    .wish-entry-ts {
+      font-size: 0.68rem; color: var(--mint-dim);
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.06em;
+    }
+    .wish-entry-text { white-space: pre-wrap; }
+
     /* ── Action bar ── */
     .action-bar {
       display: flex; gap: 0.6rem; margin-bottom: 1rem; justify-content: flex-end; flex-wrap: wrap;
@@ -929,7 +1048,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.088 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.089 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -942,11 +1061,12 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.088</span>
+      <span class="topbar-version">CLv0.089</span>
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="btn-view-dashboard" onclick="setView('dashboard')">📊 Dashboard</button>
       <button class="icon-btn" id="btn-view-list" onclick="setView('list')">📋 Gästeliste</button>
+      <button class="icon-btn" id="btn-view-roadmap" onclick="setView('roadmap')">🗺 Roadmap</button>
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
       <button class="icon-btn" onclick="window.print()">🖨 Drucken</button>
       <button class="icon-btn" onclick="loadData()">↻ Aktualisieren</button>
@@ -1014,6 +1134,27 @@
       </div>
     </div>
     </div><!-- /#view-list -->
+
+    <!-- ══════════ Roadmap-View ══════════ -->
+    <div id="view-roadmap" style="display:none;">
+      <div class="dash-header">
+        <div class="dash-eyebrow">Entwicklung</div>
+        <h1 class="dash-title">Roadmap</h1>
+        <div class="dash-subtitle">Was im Hintergrund schon gewerkelt wird — und was auf der Theke noch wartet.</div>
+      </div>
+      <div class="roadmap-list" id="roadmap-list"></div>
+
+      <div class="wishes-section">
+        <h2 class="wishes-title">Wunschzettel</h2>
+        <p class="wishes-intro">Was fehlt noch? Hier aufschreiben — alle Admins sehen es.</p>
+        <textarea id="wish-input" class="wish-input" maxlength="500" placeholder="Was wäre nützlich? Was nervt noch? Was fehlt?"></textarea>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem;">
+          <span id="wish-counter" style="font-size:0.7rem;color:var(--mint-dim);">0 / 500</span>
+          <button class="btn-action btn-add-anmeldung" onclick="submitWish()" id="wish-submit-btn">Wunsch senden</button>
+        </div>
+        <div id="wishes-list" style="margin-top:1.8rem;"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1342,7 +1483,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.088 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.089 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -1366,6 +1507,11 @@
       setView('dashboard');
       loadSettings();
       loadData();
+      // Wish-Counter aktivieren
+      const wi = document.getElementById('wish-input');
+      if (wi) wi.addEventListener('input', () => {
+        document.getElementById('wish-counter').textContent = wi.value.length + ' / 500';
+      });
     } else {
       document.getElementById('login-err').style.display = 'block';
       document.getElementById('admin-pw').focus();
@@ -2540,23 +2686,124 @@ Peter & Lars`;
     }
   }
 
-  // ─── View-Toggle Dashboard / Liste ───────────────────────────────────
+  // ─── View-Toggle Dashboard / Liste / Roadmap ─────────────────────────
   function setView(view) {
     const dash = document.getElementById('view-dashboard');
     const list = document.getElementById('view-list');
+    const road = document.getElementById('view-roadmap');
     const btnD = document.getElementById('btn-view-dashboard');
     const btnL = document.getElementById('btn-view-list');
-    if (view === 'dashboard') {
-      dash.style.display = 'block';
-      list.style.display = 'none';
-      btnD && btnD.classList.add('active');
-      btnL && btnL.classList.remove('active');
-    } else {
-      dash.style.display = 'none';
-      list.style.display = 'block';
-      btnD && btnD.classList.remove('active');
-      btnL && btnL.classList.add('active');
+    const btnR = document.getElementById('btn-view-roadmap');
+    dash.style.display = (view === 'dashboard') ? 'block' : 'none';
+    list.style.display = (view === 'list')      ? 'block' : 'none';
+    road.style.display = (view === 'roadmap')   ? 'block' : 'none';
+    btnD && btnD.classList.toggle('active', view === 'dashboard');
+    btnL && btnL.classList.toggle('active', view === 'list');
+    btnR && btnR.classList.toggle('active', view === 'roadmap');
+    if (view === 'roadmap') {
+      renderRoadmap();
+      loadWishes();
     }
+  }
+
+  // ─── Roadmap (statisch, von Claude bei jedem Build gepflegt) ─────────
+  const ROADMAP = [
+    { group: 'In Arbeit', status: 'in-progress', items: [
+      { title: 'Welcome-Dashboard mit KPIs', desc: 'Mehr spielerische Statistiken, Finetuning der Berechnungen.' },
+    ]},
+    { group: 'Geplant (nach dem Anlass 2026)', status: 'planned', items: [
+      { title: 'Persistente Contact-IDs mit personalisierten Links',
+        desc: 'Jeder Kontakt bekommt eine UUID. WhatsApp-Nachricht enthält z.B. zumgruenenbaum.ch/?c=abc123. Beim Öffnen werden Vor- und Nachname vorbefüllt und der Datensatz per ID aktualisiert — Lukas vs. Luki ergibt dann nur noch einen Eintrag.' },
+      { title: 'E-Mail-Benachrichtigung bei neuen Anmeldungen',
+        desc: 'Peter/Lars bekommen eine E-Mail wenn jemand das Formular ausgefüllt hat.' },
+      { title: 'Druckbare Gästeliste optimieren',
+        desc: 'Separates Layout fürs Drucken: nur Name/Begleitung/Kinder/Kommentar, mit Platz für handschriftliche Notizen am Türempfang.' },
+    ]},
+    { group: 'Erledigt', status: 'done', items: [
+      { title: 'Datensatz-Löschen im Edit-Modal', desc: 'CLv0.082' },
+      { title: 'Interne Admin-Notiz (persistent über Jahre)', desc: 'CLv0.082 — eigenes Feld pro Zeile, bleibt bei neuer Anmeldung erhalten.' },
+      { title: 'Status-Dropdown im Edit-Modal vervollständigt', desc: 'CLv0.082 — alle 6 Status-Werte wählbar statt nur Angemeldet/Abgemeldet.' },
+      { title: 'CSV-Export und -Import (Jahres-Backup)', desc: 'CLv0.078' },
+      { title: 'Welcome-Dashboard nach Login mit KPIs', desc: 'CLv0.085–088 — 15+ Statistiken, von Response-Rate bis Alphabet-König.' },
+      { title: 'Filter «Doppelte Einträge»', desc: 'CLv0.084 — findet Dubletten per Name/Email/Mobile und zeigt Paare gruppiert.' },
+      { title: 'Kinder-Feld auch bei Solo-Anmeldung sichtbar', desc: 'CLv0.083' },
+      { title: 'Fuzzy-Duplikat-Check beim Erfassen', desc: 'CLv0.064 — warnt bei ähnlichen Namen vor dem Speichern.' },
+      { title: 'WhatsApp-Batchversand mit editierbaren Vorlagen', desc: 'CLv0.060–063' },
+      { title: 'Zitate-Pool mit zufälliger Auswahl', desc: 'CLv0.076' },
+      { title: 'Alle Texte und Datum aus Settings editierbar', desc: 'CLv0.067' },
+    ]},
+  ];
+
+  function renderRoadmap() {
+    const el = document.getElementById('roadmap-list');
+    if (!el) return;
+    let html = '';
+    const labelMap = { 'in-progress': 'In Arbeit', 'planned': 'Geplant', 'done': 'Erledigt' };
+    for (const group of ROADMAP) {
+      html += `<div class="roadmap-group-label">${esc(group.group)}</div>`;
+      for (const item of group.items) {
+        html += `
+          <div class="roadmap-item ${group.status === 'done' ? 'done' : ''}">
+            <div class="roadmap-row">
+              <div class="roadmap-pill ${group.status}">${esc(labelMap[group.status] || group.status)}</div>
+              <div class="roadmap-content">
+                <div class="roadmap-item-title">${esc(item.title)}</div>
+                ${item.desc ? `<div class="roadmap-item-desc">${esc(item.desc)}</div>` : ''}
+              </div>
+            </div>
+          </div>`;
+      }
+    }
+    el.innerHTML = html;
+  }
+
+  // ─── Wishes (Wunschzettel aus Sheet) ─────────────────────────────────
+  async function loadWishes() {
+    const list = document.getElementById('wishes-list');
+    if (!list) return;
+    list.innerHTML = '<div style="text-align:center;color:var(--mint-dim);font-size:0.8rem;padding:1rem;">Lade Wünsche …</div>';
+    try {
+      const res  = await fetch(APPS_SCRIPT_URL + '?action=getWishes&token=' + encodeURIComponent(API_TOKEN));
+      const json = await res.json();
+      const wishes = (json && json.wishes) || [];
+      if (wishes.length === 0) {
+        list.innerHTML = '<div style="text-align:center;color:var(--mint-dim);font-size:0.8rem;padding:1rem;font-style:italic;">Noch keine Wünsche eingetragen.</div>';
+        return;
+      }
+      // neueste zuerst
+      wishes.reverse();
+      list.innerHTML = wishes.map(w =>
+        `<div class="wish-entry">
+          <div class="wish-entry-ts">${esc(w.timestamp || '')}</div>
+          <div class="wish-entry-text">${esc(w.text || '')}</div>
+        </div>`
+      ).join('');
+    } catch(e) {
+      list.innerHTML = '<div style="text-align:center;color:rgba(220,120,120,0.8);font-size:0.8rem;padding:1rem;">Fehler beim Laden: ' + esc(e.message) + '</div>';
+    }
+  }
+
+  async function submitWish() {
+    const input = document.getElementById('wish-input');
+    const text = input.value.trim();
+    if (!text) { input.focus(); return; }
+    const btn = document.getElementById('wish-submit-btn');
+    btn.textContent = 'Sende …'; btn.disabled = true;
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: API_TOKEN,
+          action: 'addWish',
+          text: text,
+        }),
+      });
+      input.value = '';
+      document.getElementById('wish-counter').textContent = '0 / 500';
+      setTimeout(loadWishes, 800);
+    } catch(e) { alert('Fehler: ' + e.message); }
+    finally { btn.textContent = 'Wunsch senden'; btn.disabled = false; }
   }
 
   // ─── Dashboard (Welcome Page mit KPIs) ───────────────────────────────
