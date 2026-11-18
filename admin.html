@@ -1171,6 +1171,9 @@
       table { font-size: 0.8rem; }
       thead tr { background: #0c191f !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .table-wrap, .stat-card { background: #fff; }
+      /* Rezept-Druck: Zubereitung auf neue Seite nach Zutaten */
+      .recipe-detail-actions { display: none !important; }
+      .ingredients-table { page-break-after: always; break-after: page; }
     }
 
     @media (max-width: 600px) {
@@ -1198,7 +1201,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.090 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.091 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -1211,7 +1214,7 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.090</span>
+      <span class="topbar-version">CLv0.091</span>
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="btn-view-dashboard" onclick="setView('dashboard')">📊 Dashboard</button>
@@ -1696,7 +1699,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.090 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.091 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
