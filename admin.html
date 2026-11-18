@@ -449,6 +449,156 @@
     }
     .wish-entry-text { white-space: pre-wrap; }
 
+    /* ── Rezepte ── */
+    .recipes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .recipe-card {
+      background: var(--holly); border-radius: 14px;
+      padding: 1.3rem 1.4rem 1.4rem;
+      position: relative;
+      cursor: pointer;
+      transition: transform var(--trans), box-shadow var(--trans);
+    }
+    .recipe-card::before {
+      content: '';
+      position: absolute; inset: 6px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      pointer-events: none;
+      transition: border-color var(--trans);
+    }
+    .recipe-card:hover { transform: translateY(-2px); }
+    .recipe-card:hover::before { border-color: var(--lime); }
+    .recipe-card > * { position: relative; z-index: 1; }
+    .recipe-card-eyebrow {
+      font-size: 0.58rem; font-weight: 500; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--lime);
+      margin-bottom: 0.5rem;
+    }
+    .recipe-card-title {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.5rem; font-weight: 400; line-height: 1.15;
+      color: var(--mint);
+      margin-bottom: 0.35rem;
+    }
+    .recipe-card-subtitle {
+      font-size: 0.85rem; color: var(--mint-dim); line-height: 1.5;
+    }
+    .recipe-card-meta {
+      margin-top: 1rem; padding-top: 0.75rem;
+      border-top: 1px dashed var(--border);
+      font-size: 0.7rem; color: var(--mint-dim); letter-spacing: 0.06em;
+      display: flex; justify-content: space-between; gap: 0.5rem;
+    }
+    .recipe-card-meta a {
+      color: var(--lime); cursor: pointer; text-decoration: none;
+    }
+    .recipe-card-meta a:hover { text-decoration: underline; }
+
+    /* ── Rezept-Detail ── */
+    .recipe-detail {
+      max-width: 820px; margin: 0 auto;
+      background: var(--holly); border-radius: 14px;
+      padding: 2.2rem 2.5rem 2.5rem;
+      position: relative;
+    }
+    .recipe-detail::before {
+      content: '';
+      position: absolute; inset: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+    .recipe-detail > * { position: relative; z-index: 1; }
+    @media (max-width: 640px) {
+      .recipe-detail { padding: 1.5rem 1.3rem 1.8rem; }
+    }
+    .recipe-detail-eyebrow {
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--lime);
+      text-align: center; margin-bottom: 0.7rem;
+    }
+    .recipe-detail-title {
+      font-family: 'IM Fell English', serif;
+      font-size: 2.3rem; font-weight: 400; line-height: 1.15;
+      color: var(--mint);
+      text-align: center;
+      margin: 0 0 0.3rem;
+    }
+    .recipe-detail-subtitle {
+      font-size: 1rem; color: var(--mint-dim); line-height: 1.5;
+      text-align: center; font-style: italic;
+      margin-bottom: 0.3rem;
+    }
+    .recipe-detail-info {
+      font-size: 0.85rem; color: var(--mint-dim); line-height: 1.6;
+      text-align: center;
+      max-width: 520px; margin: 1rem auto 0;
+      padding: 0.8rem 1rem;
+      background: rgba(12,25,31,0.3);
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+    }
+    .recipe-section-divider {
+      text-align: center; margin: 2.2rem 0 1.3rem;
+      color: rgba(199,234,210,0.3);
+    }
+    .recipe-section-divider::before {
+      content: '✦';
+      font-size: 0.9rem;
+    }
+    .recipe-section-title {
+      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--lime);
+      text-align: center; margin-bottom: 1rem;
+    }
+
+    .ingredients-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .ingredients-table tr {
+      border-bottom: 1px dashed rgba(199,234,210,0.15);
+    }
+    .ingredients-table tr:last-child { border-bottom: none; }
+    .ingredients-table td {
+      padding: 0.55rem 0.5rem; vertical-align: top;
+      color: var(--mint);
+    }
+    .ingredients-table td:last-child {
+      text-align: right; white-space: nowrap;
+      font-family: 'IM Fell English', serif;
+      font-style: italic; color: var(--lime);
+      font-size: 1.05em;
+      min-width: 110px;
+    }
+
+    .prep-section-title {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.4rem; font-weight: 400;
+      color: var(--mint);
+      margin: 1.8rem 0 0.9rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px dashed var(--border);
+    }
+    .prep-section-title:first-child { margin-top: 0; }
+    .prep-paragraph {
+      font-size: 0.95rem; line-height: 1.7;
+      color: var(--mint);
+      margin: 0 0 1rem;
+    }
+    .prep-paragraph:last-child { margin-bottom: 0; }
+
+    .recipe-detail-actions {
+      display: flex; justify-content: flex-end; gap: 0.5rem;
+      margin-top: 2rem; padding-top: 1.2rem;
+      border-top: 1px dashed var(--border);
+    }
+
     /* ── Action bar ── */
     .action-bar {
       display: flex; gap: 0.6rem; margin-bottom: 1rem; justify-content: flex-end; flex-wrap: wrap;
@@ -1048,7 +1198,7 @@
       <input type="password" id="admin-pw" placeholder="••••••••" autocomplete="current-password" />
       <div class="error-msg" id="login-err">Falsches Passwort.</div>
       <button class="btn-submit" onclick="adminLogin()">Einloggen</button>
-      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.089 · @ Schmutzli and Santas Little Helpers</div>
+      <div style="margin-top:1.4rem;text-align:center;font-size:0.7rem;color:rgba(199,234,210,0.35);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:0.06em;">CLv0.090 · @ Schmutzli and Santas Little Helpers</div>
     </div>
   </div>
 </div>
@@ -1061,12 +1211,13 @@
       <img src="logo.png" alt="WGB" class="topbar-logo" />
       <span class="topbar-title">Gästeliste</span>
       <span class="topbar-badge" id="count-badge">–</span>
-      <span class="topbar-version">CLv0.089</span>
+      <span class="topbar-version">CLv0.090</span>
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="btn-view-dashboard" onclick="setView('dashboard')">📊 Dashboard</button>
       <button class="icon-btn" id="btn-view-list" onclick="setView('list')">📋 Gästeliste</button>
       <button class="icon-btn" id="btn-view-roadmap" onclick="setView('roadmap')">🗺 Roadmap</button>
+      <button class="icon-btn" id="btn-view-recipes" onclick="setView('recipes')">🍲 Rezepte</button>
       <a href="https://docs.google.com/spreadsheets/d/1u31CdcQt4BFJkpZDC5_ShIzkHcHh23bJBt2L8mTDOgc/edit" target="_blank" class="icon-btn">📄 Sheet</a>
       <button class="icon-btn" onclick="window.print()">🖨 Drucken</button>
       <button class="icon-btn" onclick="loadData()">↻ Aktualisieren</button>
@@ -1153,6 +1304,68 @@
           <button class="btn-action btn-add-anmeldung" onclick="submitWish()" id="wish-submit-btn">Wunsch senden</button>
         </div>
         <div id="wishes-list" style="margin-top:1.8rem;"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ Rezepte-View ══════════ -->
+    <div id="view-recipes" style="display:none;">
+      <!-- Liste -->
+      <div id="recipes-list-view">
+        <div class="dash-header">
+          <div class="dash-eyebrow">Küche</div>
+          <h1 class="dash-title">Rezepte</h1>
+          <div class="dash-subtitle">Was wird gekocht, geschöpft und ausgeschenkt. Für den Grünen Baum.</div>
+        </div>
+        <div style="max-width:820px;margin:0 auto 1.5rem;text-align:right;">
+          <button class="btn-action btn-add-anmeldung" onclick="openRecipeEditor(null)">+ Neues Rezept</button>
+        </div>
+        <div class="recipes-grid" id="recipes-grid">
+          <div class="dash-loading"><span class="spinner"></span>&nbsp;&nbsp;Lade Rezepte …</div>
+        </div>
+      </div>
+
+      <!-- Detail -->
+      <div id="recipes-detail-view" style="display:none;">
+        <div style="max-width:820px;margin:0 auto 1.3rem;">
+          <button class="icon-btn" onclick="showRecipeList()">← Zurück zur Übersicht</button>
+        </div>
+        <div id="recipes-detail-content"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ Rezept-Editor Modal ══ -->
+<div class="modal-overlay" id="recipe-modal" onclick="closeRecipeOnOverlay(event)">
+  <div class="modal" style="max-width:720px;max-height:90vh;overflow-y:auto;">
+    <div class="eyebrow">Rezept</div>
+    <div class="modal-title" id="recipe-modal-title">Neues Rezept</div>
+    <div class="ornament"><span class="ornament-inner">✦</span></div>
+    <input type="hidden" id="recipe-id" />
+
+    <label for="recipe-title">Titel</label>
+    <input type="text" id="recipe-title" placeholder="z.B. Zöldfa gulyáslevese" />
+
+    <label for="recipe-subtitle" style="margin-top:0.9rem;">Untertitel (optional)</label>
+    <input type="text" id="recipe-subtitle" placeholder="z.B. Gulaschsuppe für den Grünen Baum" />
+
+    <label for="recipe-info" style="margin-top:0.9rem;">Info / Vorbemerkung (optional)</label>
+    <textarea id="recipe-info" style="min-height:60px;" placeholder="z.B. Vorkochen am Mittwoch oder Donnerstag …"></textarea>
+
+    <label for="recipe-ingredients" style="margin-top:0.9rem;">Zutaten</label>
+    <p class="settings-hint" style="margin-top:0;margin-bottom:0.35rem;">Eine Zeile pro Zutat. Format: <code>Name | Menge</code></p>
+    <textarea id="recipe-ingredients" class="settings-textarea" style="min-height:220px;font-family:'Jost',sans-serif;" placeholder="Rindfleisch zum Schmoren | 5 Kg&#10;Zwiebeln (geschält, gehackt) | 5 Kg&#10;…"></textarea>
+
+    <label for="recipe-preparation" style="margin-top:0.9rem;">Zubereitung</label>
+    <p class="settings-hint" style="margin-top:0;margin-bottom:0.35rem;">Freitext. Für Abschnittsüberschriften eine Zeile mit <code>## Abschnittstitel</code>. Leerzeilen trennen Absätze.</p>
+    <textarea id="recipe-preparation" class="settings-textarea" style="min-height:260px;font-family:'Jost',sans-serif;" placeholder="## Vorkochen&#10;&#10;Butter schmelzen. Zwiebeln und Knoblauch …"></textarea>
+
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn-secondary" id="recipe-delete-btn" style="border-color:rgba(200,80,80,0.5);color:rgba(220,120,120,0.9);display:none;" onclick="deleteRecipe()">🗑 Löschen</button>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn-secondary" onclick="closeRecipeModal()">Abbrechen</button>
+        <button class="btn-save" onclick="saveRecipe()">Speichern</button>
       </div>
     </div>
   </div>
@@ -1483,7 +1696,7 @@
   <div class="status-popover-item" onclick="setStatus('')"><span class="badge badge-offen">Offen</span></div>
 </div>
 
-<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.089 · @ Schmutzli and Santas Little Helpers</div>
+<div style="position:fixed;bottom:0.7rem;right:0.9rem;font-size:0.55rem;color:rgba(199,234,210,0.2);pointer-events:none;letter-spacing:0.08em;font-family:\'IM Fell English\',serif;font-style:italic;font-size:0.7rem;letter-spacing:0.04em">CLv0.090 · @ Schmutzli and Santas Little Helpers</div>
 
 <script>
   const ADMIN_PASSWORD  = 'ichweissalles';
@@ -2686,23 +2899,31 @@ Peter & Lars`;
     }
   }
 
-  // ─── View-Toggle Dashboard / Liste / Roadmap ─────────────────────────
+  // ─── View-Toggle Dashboard / Liste / Roadmap / Rezepte ───────────────
   function setView(view) {
     const dash = document.getElementById('view-dashboard');
     const list = document.getElementById('view-list');
     const road = document.getElementById('view-roadmap');
+    const rec  = document.getElementById('view-recipes');
     const btnD = document.getElementById('btn-view-dashboard');
     const btnL = document.getElementById('btn-view-list');
     const btnR = document.getElementById('btn-view-roadmap');
+    const btnC = document.getElementById('btn-view-recipes');
     dash.style.display = (view === 'dashboard') ? 'block' : 'none';
     list.style.display = (view === 'list')      ? 'block' : 'none';
     road.style.display = (view === 'roadmap')   ? 'block' : 'none';
+    rec  && (rec.style.display  = (view === 'recipes') ? 'block' : 'none');
     btnD && btnD.classList.toggle('active', view === 'dashboard');
     btnL && btnL.classList.toggle('active', view === 'list');
     btnR && btnR.classList.toggle('active', view === 'roadmap');
+    btnC && btnC.classList.toggle('active', view === 'recipes');
     if (view === 'roadmap') {
       renderRoadmap();
       loadWishes();
+    }
+    if (view === 'recipes') {
+      showRecipeList();
+      loadRecipes();
     }
   }
 
@@ -2804,6 +3025,188 @@ Peter & Lars`;
       setTimeout(loadWishes, 800);
     } catch(e) { alert('Fehler: ' + e.message); }
     finally { btn.textContent = 'Wunsch senden'; btn.disabled = false; }
+  }
+
+  // ─── Rezepte ─────────────────────────────────────────────────────────
+  let recipesCache = [];
+
+  async function loadRecipes() {
+    const grid = document.getElementById('recipes-grid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="dash-loading"><span class="spinner"></span>&nbsp;&nbsp;Lade Rezepte …</div>';
+    try {
+      const res  = await fetch(APPS_SCRIPT_URL + '?action=getRecipes&token=' + encodeURIComponent(API_TOKEN));
+      const json = await res.json();
+      recipesCache = (json && json.recipes) || [];
+      renderRecipeList();
+    } catch(e) {
+      grid.innerHTML = '<div class="dash-loading" style="color:rgba(220,120,120,0.9);">Fehler beim Laden: ' + esc(e.message) + '</div>';
+    }
+  }
+
+  function renderRecipeList() {
+    const grid = document.getElementById('recipes-grid');
+    if (!grid) return;
+    if (recipesCache.length === 0) {
+      grid.innerHTML = '<div class="dash-loading" style="font-style:italic;">Noch keine Rezepte vorhanden. «+ Neues Rezept» klicken um das erste zu erfassen.</div>';
+      return;
+    }
+    grid.innerHTML = recipesCache.map((r, idx) => `
+      <div class="recipe-card" onclick="showRecipeDetail('${esc(r.id)}')">
+        <div class="recipe-card-eyebrow">Rezept</div>
+        <div class="recipe-card-title">${esc(r.title)}</div>
+        ${r.subtitle ? `<div class="recipe-card-subtitle">${esc(r.subtitle)}</div>` : ''}
+        <div class="recipe-card-meta">
+          <span>${countIngredients(r.ingredients)} Zutaten</span>
+          <a onclick="event.stopPropagation(); openRecipeEditor('${esc(r.id)}')">Bearbeiten ›</a>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function countIngredients(txt) {
+    if (!txt) return 0;
+    return txt.split('\n').filter(l => l.trim() && l.indexOf('|') >= 0).length;
+  }
+
+  function showRecipeList() {
+    document.getElementById('recipes-list-view').style.display = 'block';
+    document.getElementById('recipes-detail-view').style.display = 'none';
+  }
+
+  function showRecipeDetail(id) {
+    const r = recipesCache.find(x => x.id === id);
+    if (!r) return;
+    document.getElementById('recipes-list-view').style.display = 'none';
+    const dv = document.getElementById('recipes-detail-view');
+    dv.style.display = 'block';
+    renderRecipeDetail(r);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderRecipeDetail(r) {
+    const el = document.getElementById('recipes-detail-content');
+    if (!el) return;
+
+    // Zutaten als Tabelle
+    const ingLines = (r.ingredients || '').split('\n').map(l => l.trim()).filter(Boolean);
+    const ingTable = ingLines.map(line => {
+      const idx = line.indexOf('|');
+      if (idx < 0) return `<tr><td colspan="2">${esc(line)}</td></tr>`;
+      const name = line.substring(0, idx).trim();
+      const menge = line.substring(idx + 1).trim();
+      return `<tr><td>${esc(name)}</td><td>${esc(menge)}</td></tr>`;
+    }).join('');
+
+    // Zubereitung als Abschnitte
+    const prepHtml = renderPreparation(r.preparation || '');
+
+    el.innerHTML = `
+      <div class="recipe-detail">
+        <div class="recipe-detail-eyebrow">Rezept</div>
+        <h1 class="recipe-detail-title">${esc(r.title)}</h1>
+        ${r.subtitle ? `<div class="recipe-detail-subtitle">${esc(r.subtitle)}</div>` : ''}
+        ${r.info ? `<div class="recipe-detail-info">${esc(r.info)}</div>` : ''}
+
+        <div class="recipe-section-divider"></div>
+        <div class="recipe-section-title">Zutaten</div>
+        <table class="ingredients-table"><tbody>${ingTable}</tbody></table>
+
+        <div class="recipe-section-divider"></div>
+        <div class="recipe-section-title">Zubereitung</div>
+        ${prepHtml}
+
+        <div class="recipe-detail-actions">
+          <button class="btn-secondary" onclick="window.print()">🖨 Drucken</button>
+          <button class="btn-secondary" onclick="openRecipeEditor('${esc(r.id)}')">Bearbeiten</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPreparation(txt) {
+    if (!txt.trim()) return '<p class="prep-paragraph" style="font-style:italic;color:var(--mint-dim);">Keine Zubereitung erfasst.</p>';
+    const lines = txt.split('\n');
+    let html = '';
+    let buffer = [];
+    const flush = () => {
+      if (buffer.length === 0) return;
+      const para = buffer.join(' ').trim();
+      if (para) html += `<p class="prep-paragraph">${esc(para)}</p>`;
+      buffer = [];
+    };
+    for (const line of lines) {
+      const t = line.trim();
+      if (t.startsWith('## ')) {
+        flush();
+        html += `<h3 class="prep-section-title">${esc(t.substring(3).trim())}</h3>`;
+      } else if (t === '') {
+        flush();
+      } else {
+        buffer.push(t);
+      }
+    }
+    flush();
+    return html;
+  }
+
+  // Editor
+  function openRecipeEditor(id) {
+    const r = id ? recipesCache.find(x => x.id === id) : null;
+    document.getElementById('recipe-modal-title').textContent = r ? 'Rezept bearbeiten' : 'Neues Rezept';
+    document.getElementById('recipe-id').value          = r ? r.id          : '';
+    document.getElementById('recipe-title').value       = r ? r.title       : '';
+    document.getElementById('recipe-subtitle').value    = r ? r.subtitle    : '';
+    document.getElementById('recipe-info').value        = r ? r.info        : '';
+    document.getElementById('recipe-ingredients').value = r ? r.ingredients : '';
+    document.getElementById('recipe-preparation').value = r ? r.preparation : '';
+    document.getElementById('recipe-delete-btn').style.display = r ? '' : 'none';
+    document.getElementById('recipe-modal').classList.add('open');
+  }
+  function closeRecipeModal() {
+    document.getElementById('recipe-modal').classList.remove('open');
+  }
+  function closeRecipeOnOverlay(e) { if (e.target === document.getElementById('recipe-modal')) closeRecipeModal(); }
+
+  async function saveRecipe() {
+    const recipe = {
+      id:          document.getElementById('recipe-id').value.trim(),
+      title:       document.getElementById('recipe-title').value.trim(),
+      subtitle:    document.getElementById('recipe-subtitle').value.trim(),
+      info:        document.getElementById('recipe-info').value.trim(),
+      ingredients: document.getElementById('recipe-ingredients').value,
+      preparation: document.getElementById('recipe-preparation').value,
+    };
+    if (!recipe.title) { alert('Titel fehlt.'); return; }
+    const btn = document.querySelector('#recipe-modal .btn-save');
+    btn.textContent = 'Speichere …'; btn.disabled = true;
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: API_TOKEN, action: 'saveRecipe', recipe: recipe }),
+      });
+      closeRecipeModal();
+      setTimeout(loadRecipes, 800);
+    } catch(e) { alert('Fehler: ' + e.message); }
+    finally { btn.textContent = 'Speichern'; btn.disabled = false; }
+  }
+
+  async function deleteRecipe() {
+    const id = document.getElementById('recipe-id').value.trim();
+    if (!id) return;
+    const r = recipesCache.find(x => x.id === id);
+    if (!confirm('Rezept «' + (r ? r.title : '?') + '» wirklich löschen?')) return;
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: API_TOKEN, action: 'deleteRecipe', id: id }),
+      });
+      closeRecipeModal();
+      showRecipeList();
+      setTimeout(loadRecipes, 800);
+    } catch(e) { alert('Fehler: ' + e.message); }
   }
 
   // ─── Dashboard (Welcome Page mit KPIs) ───────────────────────────────
